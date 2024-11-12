@@ -1,0 +1,158 @@
+/* Footer container */
+.footer {
+    color: black;
+    padding: 4rem 0;
+  }
+  
+  .footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  
+  /* Main content wrapper */
+  .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+  }
+  
+  /* Logo section */
+  .footer-logo {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  
+  .footer-logo img {
+    width: 8rem;
+  }
+  
+  .footer-logo h1 {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  /* Navigation sections wrapper */
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Individual nav sections */
+  .footer-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .footer-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-section ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .footer-section a {
+    transition: all 0.3s ease;
+  }
+  
+  .footer-section a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Bottom section */
+  .footer-bottom {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .footer-bottom p {
+    font-size: 0.875rem;
+  }
+  
+  .footer-bottom-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .back-to-top {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .back-to-top:hover {
+    text-decoration: underline;
+  }
+  
+  .back-to-top span {
+    margin-left: 0.5rem;
+    border: 1px solid black;
+    padding: 0 0.5rem;
+  }
+  
+  /* Responsive design */
+  @media (min-width: 768px) {
+    .footer-logo {
+      width: 25%;
+      margin-bottom: 0;
+    }
+  
+    .footer-nav {
+      width: 75%;
+      flex-wrap: nowrap;
+    }
+  
+    .footer-section {
+      width: 33.333%;
+      margin-bottom: 0;
+    }
+  }
+  
+  /* Hover effects */
+  .footer-section a {
+    position: relative;
+  }
+  
+  .footer-section a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: black;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+  }
+  
+  .footer-section a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  /* Animation for back to top */
+  .back-to-top span {
+    transition: transform 0.3s ease;
+  }
+  
+  .back-to-top:hover span {
+    transform: translateY(-2px);
+  }
