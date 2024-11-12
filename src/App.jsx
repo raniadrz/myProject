@@ -26,6 +26,11 @@ import About from "./pages/footer/about/About";
 import Contact from "./pages/footer/contact/Contact";
 import PPolicy from "./pages/footer/privacyPolicy/privacyPolicy";
 import ReturnPolicy from './pages/footer/returnPolicy/ReturnPolicy';
+import Mission from './pages/footer/mission/Mission';
+import Team from './pages/footer/team/Team';
+import Newsletter from './pages/footer/newsletter/Newsletter';
+
+
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -52,6 +57,9 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/*" element={<NoPage />} />
+          <Route path="/mission" element={<Mission />} />
+<Route path="/team" element={<Team />} />
+<Route path="/newsletter" element={<Newsletter />} />
           <Route path="/privacypolicy" element={<PPolicy />} />
           <Route path="/returnpolicy" element={<ReturnPolicy />} />
           <Route path="/contact" element={<Contact />} />

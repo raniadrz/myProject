@@ -1,0 +1,58 @@
+.footer-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .footer-page h1 {
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-page p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-page ul {
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .team-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  .team-member {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .team-member h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .newsletter-form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .newsletter-form input {
+    flex: 1;
+    padding: 0.5rem;
+  }
+  
+  .newsletter-form button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .newsletter-form button:hover {
+    background-color: #0056b3;
+  }
