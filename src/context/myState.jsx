@@ -249,27 +249,18 @@ const fetchTestimonials = async () => {
   };
 
   // Update User Role
-  const updateUserRole = async (uid, currentRole) => {
+  const updateUserRole = async (uid, newRole) => {
     setLoading(true);
-    const newRole = currentRole === "admin" ? "user" : "admin";
     try {
         const userDocRef = doc(fireDB, "user", uid);
-        const userDoc = await getDoc(userDocRef);
         
-        if (!userDoc.exists()) {
-            throw new Error("User document not found");
-        }
-        
-        const userData = userDoc.data();
-        
+        // Update only the role field
         await updateDoc(userDocRef, {
-            ...userData, // Spread existing data
-            role: newRole,
-            time: Timestamp.now() // Update timestamp
+            role: newRole
         });
 
         toast.success(`Role updated to ${newRole}`);
-        getAllUserFunction();
+        getAllUserFunction(); // Refresh the users list
     } catch (error) {
         console.error("Error updating role: ", error);
         toast.error("Failed to update role");
