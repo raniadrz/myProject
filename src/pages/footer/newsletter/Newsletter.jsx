@@ -28,6 +28,7 @@ const Newsletter = () => {
       setUser(currentUser);
       if (currentUser?.email) {
         checkSubscriptionStatus(currentUser.email);
+        setEmail(currentUser.email);
       }
     });
 
@@ -36,6 +37,7 @@ const Newsletter = () => {
 
   const checkSubscriptionStatus = async (userEmail) => {
     try {
+      setEmail(userEmail);
       const q = query(
         collection(fireDB, "newsletter_subscribers"), 
         where("email", "==", userEmail),
@@ -52,6 +54,38 @@ const Newsletter = () => {
       }
     } catch (error) {
       console.error("Error checking subscription status:", error);
+    }
+  };
+
+  const checkEmailSubscription = async (emailToCheck) => {
+    try {
+      const q = query(
+        collection(fireDB, "newsletter_subscribers"), 
+        where("email", "==", emailToCheck),
+        where("active", "==", true)
+      );
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        setIsSubscribed(true);
+        setSubscriberDocId(querySnapshot.docs[0].id);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking email subscription:", error);
+      return false;
+    }
+  };
+
+  const handleEmailChange = async (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (newEmail) {
+      await checkEmailSubscription(newEmail);
+    } else {
+      setIsSubscribed(false);
+      setSubscriberDocId(null);
     }
   };
 
@@ -150,32 +184,30 @@ const Newsletter = () => {
         <h2>Get tail-wagging updates straight to your inbox!</h2>
 
         <div className="form-container">
-          {isSubscribed ? (
-            <div className="unsubscribe-container">
-              <p>You're part of our pack! Want to unsubscribe?</p>
+          <form onSubmit={handleSubmit} className="newsletter-form">
+            <input
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Your email address"
+              required
+              disabled={loading}
+            />
+            {isSubscribed ? (
               <button 
+                type="button" 
                 onClick={handleUnsubscribe} 
                 disabled={loading}
                 className="unsubscribe-button"
               >
                 {loading ? 'Processing...' : 'Unsubscribe'}
               </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="newsletter-form">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email address"
-                required
-                disabled={loading}
-              />
+            ) : (
               <button type="submit" disabled={loading}>
                 {loading ? 'Joining...' : 'Join Now'}
               </button>
-            </form>
-          )}
+            )}
+          </form>
         </div>
 
         <div className="decorative-elements">

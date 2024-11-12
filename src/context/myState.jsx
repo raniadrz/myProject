@@ -3,6 +3,9 @@ import {
   deleteUser as fbDeleteUser,
   getAuth,
   updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "firebase/auth";
 import {
   addDoc,
@@ -127,49 +130,49 @@ const fetchTestimonials = async () => {
   };
 
   // Create or Update User Details
-  const updateUserDetails = async (uid, newName, newEmail, photoURL) => {
+  const updateUserDetails = async (userId, name, email, photoURL, profession, country) => {
     setLoading(true);
-    const auth = getAuth();
-    const user = auth.currentUser;
-
     try {
-      if (user) {
-        // Update displayName and photoURL in Firebase Authentication
-        await updateProfile(user, { 
-          displayName: newName, 
-          photoURL: photoURL 
-        });
-
-        // Update in Firestore - Note: collection is "user" not "users"
-        const userDocRef = doc(fireDB, "user", uid);
-        const docSnapshot = await getDoc(userDocRef);
-
-        if (docSnapshot.exists()) {
-          await updateDoc(userDocRef, {
-            name: newName,
-            email: newEmail,
-            photoURL: photoURL,
-          });
-        } else {
-          await setDoc(userDocRef, {
-            name: newName,
-            email: newEmail,
-            photoURL: photoURL,
-            role: "user",
+        const userDocRef = doc(fireDB, "user", userId);
+        
+        // Check if document exists
+        const docSnap = await getDoc(userDocRef);
+        
+        const userData = {
+            name,
+            email,
+            photoURL,
+            profession,
+            country,
             time: Timestamp.now(),
-          });
+            role: 'user' // default role
+        };
+
+        if (!docSnap.exists()) {
+            // Create new document if it doesn't exist
+            await setDoc(userDocRef, userData);
+        } else {
+            // Update existing document
+            await updateDoc(userDocRef, userData);
         }
 
-        toast.success("User details updated successfully");
-        getAllUserFunction();
-      }
+        // Update Auth profile
+        const auth = getAuth();
+        if (auth.currentUser) {
+            await updateProfile(auth.currentUser, {
+                photoURL: photoURL,
+                displayName: name
+            });
+        }
+
+        toast.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Error updating user details: ", error);
-      toast.error("Failed to update user details");
+        console.error("Error updating user details:", error);
+        toast.error("Error updating profile");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // Get All Products
   const getAllProductFunction = async () => {
@@ -368,6 +371,63 @@ const fetchTestimonials = async () => {
     }
   };
 
+  // Add this function in MyState
+  const updateUserPassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    try {
+      // First, re-authenticate the user
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+
+      // Then update the password
+      await updatePassword(user, newPassword);
+      
+      toast.success("Password updated successfully");
+    } catch (error) {
+      console.error("Error updating password: ", error);
+      if (error.code === 'auth/wrong-password') {
+        toast.error("Current password is incorrect");
+      } else {
+        toast.error("Failed to update password");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add these new functions in MyState component
+  const saveUserCart = async (userId, cartItems) => {
+    try {
+      const cartRef = doc(fireDB, "userCarts", userId);
+      await setDoc(cartRef, {
+        items: cartItems,
+        updatedAt: Timestamp.now()
+      });
+    } catch (error) {
+      console.error("Error saving cart:", error);
+    }
+  };
+
+  const loadUserCart = async (userId) => {
+    try {
+      const cartRef = doc(fireDB, "userCarts", userId);
+      const cartDoc = await getDoc(cartRef);
+      if (cartDoc.exists()) {
+        return cartDoc.data().items;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error loading cart:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     getAllProductFunction();
     getAllOrderFunction();
@@ -396,6 +456,9 @@ const fetchTestimonials = async () => {
         deleteTestimonial,
         updateProductStock,
         calculateAverageRating,
+        updateUserPassword,
+        saveUserCart,
+        loadUserCart,
       }}
     >
       {children}
@@ -404,3 +467,4 @@ const fetchTestimonials = async () => {
 }
 
 export default MyState;
+

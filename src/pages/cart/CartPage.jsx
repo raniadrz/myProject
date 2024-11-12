@@ -18,18 +18,37 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import emailjs from 'emailjs-com';
 import { useNavigate } from 'react-router-dom';
 import { initializeCart } from '../../redux/cartSlice';
+import { useContext } from "react";
+import MyContext from "../../context/myContext";
 
 const CartPage = () => {
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const auth = getAuth();
+    const { saveUserCart, loadUserCart } = useContext(MyContext);
 
+    // Load cart when user logs in
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                const savedCart = await loadUserCart(user.uid);
+                if (savedCart && savedCart.length > 0) {
+                    dispatch(initializeCart(savedCart));
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, [auth, dispatch]);
+
+    // Save cart whenever it changes
     useEffect(() => {
         if (auth.currentUser) {
-            dispatch(initializeCart());
+            saveUserCart(auth.currentUser.uid, cartItems);
         }
-    }, [dispatch, auth.currentUser]);
+    }, [cartItems, auth.currentUser]);
 
     const deleteCart = (item) => {
         dispatch(deleteFromCart(item));
@@ -62,12 +81,6 @@ const CartPage = () => {
     console.log(`Shipping Cost: ${shippingCost}€`);
     console.log(`Total Amount: ${totalAmount}€`);
     
-
-    useEffect(() => {
-        if (auth.currentUser) {
-            localStorage.setItem(`cart_${auth.currentUser.uid}`, JSON.stringify(cartItems));
-        }
-    }, [cartItems, auth.currentUser]);
 
     // Buy Now Function
     const [addressInfo, setAddressInfo] = useState({

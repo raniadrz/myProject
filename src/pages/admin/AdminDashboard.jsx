@@ -111,22 +111,25 @@ const AdminDashboard = () => {
             <div className="min-h-screen bg-gray-50">
                 {/* Stats Cards */}
                 <div className="dashboard-stats">
-                    <div className="stat-card">
+                    <div className="stat-card bg-blue-50">
                         <Inventory2 className="text-3xl mb-2 text-blue-500" />
-                        <div className="stat-value">{getAllProduct?.length || 0}</div>
-                        <div className="stat-label">Total Products</div>
+                        <div className="stat-value text-blue-900">{getAllProduct?.length || 0}</div>
+                        <div className="stat-label text-blue-700">Total Products</div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-value">{getAllOrder.length}</div>
-                        <div className="stat-label">Total Orders</div>
+                    <div className="stat-card bg-green-50">
+                        <ShoppingCart className="text-3xl mb-2 text-green-500" />
+                        <div className="stat-value text-green-900">{getAllOrder.length}</div>
+                        <div className="stat-label text-green-700">Total Orders</div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-value">{getAllUser.length}</div>
-                        <div className="stat-label">Total Users</div>
+                    <div className="stat-card bg-purple-50">
+                        <People className="text-3xl mb-2 text-purple-500" />
+                        <div className="stat-value text-purple-900">{getAllUser.length}</div>
+                        <div className="stat-label text-purple-700">Total Users</div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-value">{getAllTestimonials.length}</div>
-                        <div className="stat-label">Total Testimonials</div>
+                    <div className="stat-card bg-orange-50">
+                        <Comment className="text-3xl mb-2 text-orange-500" />
+                        <div className="stat-value text-orange-900">{getAllTestimonials.length}</div>
+                        <div className="stat-label text-orange-700">Total Testimonials</div>
                     </div>
                 </div>
 
@@ -212,7 +215,6 @@ const AdminDashboard = () => {
                                         style={{ fill: '#666' }}
                                     />
                                 </Bar>
-                                
                             </BarChart>
                         </ResponsiveContainer>
                     )}

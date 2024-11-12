@@ -1,7 +1,6 @@
 .newsletter-container {
   /* background-color: #f8f6f2; */
-  padding: 2rem;
-  min-height: 100vh;
+  padding: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,7 +10,6 @@
   max-width: 600px;
   text-align: center;
   position: relative;
-  padding: 2rem;
 }
 
 .header-icon {
@@ -37,7 +35,7 @@ h2 {
 
 .form-container {
   background-color: white;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 2rem 0;
