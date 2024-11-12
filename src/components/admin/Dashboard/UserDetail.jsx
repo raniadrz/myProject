@@ -110,9 +110,13 @@ const UserDetail = () => {
         setSelectedUser(null);
     };
 
-    const handleConfirmRoleChange = () => {
-        updateUserRole(selectedUser.uid, selectedUser.role);
-        handleCloseRoleDialog();
+    const [selectedRole, setSelectedRole] = useState('');
+
+    const handleRoleChange = (newRole) => {
+        if (selectedUser) {
+            setSelectedRole(newRole);
+            updateUserRole(selectedUser.uid, selectedUser.role);
+        }
     };
 
     const handleDelete = async (user) => {
@@ -594,36 +598,38 @@ const UserDetail = () => {
                     </DialogContentText>
                     <div className="flex flex-col gap-3">
                         <Button
-                            variant="outlined"
+                            variant={selectedUser?.role === 'admin' ? 'contained' : 'outlined'}
                             startIcon={<AdminPanelSettingsIcon />}
-                            onClick={() => handleRoleChange('admin')}
+                            onClick={() => setSelectedRole('admin')}
                             className="justify-start"
                             sx={{
                                 borderColor: '#e0e0e0',
-                                color: '#2e7d32',
+                                color: selectedUser?.role === 'admin' ? '#fff' : '#2e7d32',
+                                backgroundColor: selectedUser?.role === 'admin' ? '#2e7d32' : 'transparent',
                                 textTransform: 'none',
                                 padding: '12px 16px',
                                 '&:hover': {
                                     borderColor: '#2e7d32',
-                                    backgroundColor: '#e8f5e9',
+                                    backgroundColor: selectedUser?.role === 'admin' ? '#2e7d32' : '#e8f5e9',
                                 }
                             }}
                         >
                             Admin
                         </Button>
                         <Button
-                            variant="outlined"
+                            variant={selectedUser?.role === 'user' ? 'contained' : 'outlined'}
                             startIcon={<PersonIcon />}
-                            onClick={() => handleRoleChange('user')}
+                            onClick={() => setSelectedRole('user')}
                             className="justify-start"
                             sx={{
                                 borderColor: '#e0e0e0',
-                                color: '#1976d2',
+                                color: selectedUser?.role === 'user' ? '#fff' : '#1976d2',
+                                backgroundColor: selectedUser?.role === 'user' ? '#1976d2' : 'transparent',
                                 textTransform: 'none',
                                 padding: '12px 16px',
                                 '&:hover': {
                                     borderColor: '#1976d2',
-                                    backgroundColor: '#e3f2fd',
+                                    backgroundColor: selectedUser?.role === 'user' ? '#1976d2' : '#e3f2fd',
                                 }
                             }}
                         >
