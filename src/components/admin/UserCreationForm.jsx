@@ -8,7 +8,7 @@ import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import { Toaster } from 'react-hot-toast';
 import CustomToast from '../../components/CustomToast/CustomToast';
 
-import "./userCreationForm.css"; 
+import "./UserCreationForm.css"; 
 
 const countryList = [
   "Albania", "Andorra", "Armenia", "Austria", "Azerbaijan", "Belarus", "Belgium",
