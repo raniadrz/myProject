@@ -1,0 +1,90 @@
+/* Tab styles */
+.tab-button {
+  white-space: nowrap;
+  padding: 1rem 0.25rem;
+  border-bottom-width: 2px;
+  font-medium: true;
+  font-size: 0.875rem;
+}
+
+.tab-button.active {
+  border-color: #3B82F6;
+  color: #2563EB;
+}
+
+.tab-button.inactive {
+  border-color: transparent;
+  color: #6B7280;
+}
+
+.tab-button.inactive:hover {
+  color: #374151 !important;
+  border-color: #D1D5DB !important;
+}
+
+/* Action button styles */
+.action-button {
+  transition: colors 0.2s;
+}
+
+.action-button.edit {
+  color: #2563EB;
+}
+
+.action-button.edit:hover {
+  color: #1D4ED8 !important;
+}
+
+/* Table styles */
+.faq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+  background-color: #F9FAFB;
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #6B7280;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.table-cell {
+  padding: 1rem 1.5rem;
+  white-space: pre-wrap;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.table-row {
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #F9FAFB;
+}
+
+/* Status badge styles */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.answered {
+  background-color: #DEF7EC;
+  color: #03543F;
+}
+
+.status-badge.pending {
+  background-color: #FEF3C7;
+  color: #0e9264;
+} 

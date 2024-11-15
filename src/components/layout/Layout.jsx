@@ -4,11 +4,11 @@ import Navbar from "../navbar/Navbar";
 /* eslint-disable react/prop-types */
 const Layout = ({ children }) => {
     return (
-        <div>
+        <div className="flex flex-col min-h-screen">
             <Navbar />
-            <div className="main-content min-h-screen">
+            <main className="flex-grow">
                 {children}
-            </div>
+            </main>
             <Footer />
         </div>
     );

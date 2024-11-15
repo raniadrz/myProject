@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import Layout from "../../components/layout/Layout";
 import myContext from '../../context/myContext';
-import { Inventory2, ShoppingCart, People, Comment } from '@mui/icons-material';
+import { Inventory2, ShoppingCart, People, Comment, QuestionAnswer } from '@mui/icons-material';
 import {
     BarChart,
     Bar,
@@ -19,13 +19,17 @@ import ProductDetail from '../../components/admin/Dashboard/ProductDetail';
 import OrderDetail from '../../components/admin/Dashboard/OrderDetail';
 import UserDetail from '../../components/admin/Dashboard/UserDetail';
 import TestimonialDetail from '../../components/admin/Dashboard/TestimonialDetail';
+import FAQDetail from '../../components/admin/Dashboard/FAQDetail';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const context = useContext(myContext);
-    const { getAllProduct, getAllOrder, getAllUser, getAllTestimonials } = context;
+    const { getAllProduct, getAllOrder, getAllUser, getAllTestimonials, faqs } = context;
     const [dailyStats, setDailyStats] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Add this to calculate pending questions
+    const pendingQuestions = faqs.filter(faq => !faq.answer || faq.answer.trim() === '').length;
 
     // Helper function to parse Firestore timestamps
     const parseDate = (timestamp) => {
@@ -109,6 +113,15 @@ const AdminDashboard = () => {
     return (
         <Layout>
             <div className="min-h-screen bg-gray-50">
+                {/* Dashboard Title */}
+                <div className="px-6 py-4 bg-white shadow-lg border-b">
+                    <h1 className="text-4xl font-bold text-pink-300">Dashboard</h1>
+                    <p className="text-blue-600">Welcome to your admin control panel</p>
+                </div>
+                
+                
+                
+                
                 {/* Stats Cards */}
                 <div className="dashboard-stats">
                     <div className="stat-card bg-blue-50">
@@ -130,6 +143,11 @@ const AdminDashboard = () => {
                         <Comment className="text-3xl mb-2 text-orange-500" />
                         <div className="stat-value text-orange-900">{getAllTestimonials.length}</div>
                         <div className="stat-label text-orange-700">Total Testimonials</div>
+                    </div>
+                    <div className="stat-card bg-yellow-50">
+                        <QuestionAnswer className="text-3xl mb-2 text-yellow-500" />
+                        <div className="stat-value text-yellow-900">{faqs.length}</div>
+                        <div className="stat-label text-yellow-700">Total FAQs</div>
                     </div>
                 </div>
 
@@ -194,12 +212,7 @@ const AdminDashboard = () => {
                                     name="Profits"
                                     radius={[4, 4, 0, 0]}
                                 >
-                                    <LabelList 
-                                        dataKey="dailyProfits"
-                                        position="top"
-                                        formatter={(value) => value > 0 ? `${value}€` : ''}
-                                        style={{ fill: '#666' }}
-                                    />
+                                   
                                 </Bar>
                                 <Bar 
                                     yAxisId="right"
@@ -208,12 +221,7 @@ const AdminDashboard = () => {
                                     name="Orders"
                                     radius={[4, 4, 0, 0]}
                                 >
-                                    <LabelList 
-                                        dataKey="orders" 
-                                        position="top"
-                                        formatter={(value) => value > 0 ? value : ''}
-                                        style={{ fill: '#666' }}
-                                    />
+                                    
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
@@ -252,6 +260,18 @@ const AdminDashboard = () => {
                                 </div>
                             </Tab>
 
+                            <Tab>
+                                <div className="flex items-center space-x-2">
+                                    <QuestionAnswer className="text-black" />
+                                    <span>FAQs ({faqs.length})</span>
+                                    {pendingQuestions > 0 && (
+                                        <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                            {pendingQuestions}
+                                        </span>
+                                    )}
+                                </div>
+                            </Tab>
+
                         </TabList>
 
                         <TabPanel>
@@ -268,6 +288,10 @@ const AdminDashboard = () => {
 
                         <TabPanel>
                             <TestimonialDetail />
+                        </TabPanel>
+
+                        <TabPanel>
+                            <FAQDetail />
                         </TabPanel>
                     </Tabs>
                 </div>

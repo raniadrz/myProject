@@ -36,6 +36,7 @@ const preloadedState = loadState();
 export const store = configureStore({
   reducer: {
     cart: cartSlice,
+   
   },
   preloadedState,
   middleware: (getDefaultMiddleware) =>
