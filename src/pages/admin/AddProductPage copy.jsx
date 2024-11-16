@@ -6,9 +6,17 @@ import Loader from "../../components/loader/Loader";
 import myContext from "../../context/myContext";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { categoryImages } from "./categoryImages";
-import { categoryList, category2List, subcategoryList } from './categoryLists';
 
+// Updated categoryImages with specific URLs for each category
+const categoryImages = {
+  Bird: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/af6bb496352685.5eac4787a4da7.jpg",
+  Cat: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/775c1b96352685.5eac4787ab295.jpg",
+  Dog: "https://cdn.myportfolio.com/c728a553-9706-473c-adca-fa2ea3652db5/a124d74e-ff6c-4949-aa4f-ea4d43b71224_rw_1200.jpg?h=2a9066a9cacc857be72862cc4e3beb64",
+  Reptile: "https://mir-s3-cdn-cf.behance.net/project_modules/disp/57d31a96352685.5eac4787a3125.jpg",
+  "Little Pet": "https://mir-s3-cdn-cf.behance.net/project_modules/disp/2760ab96352685.5eac47879b914.jpg",
+  Fish: "https://mir-s3-cdn-cf.behance.net/project_modules/hd/abeb4096352685.5eac4787a2292.jpg",
+  Default: "https://via.placeholder.com/150", // Optional default fallback image
+};
 
 const AddProductPage = () => {
   const context = useContext(myContext);
@@ -34,7 +42,6 @@ const AddProductPage = () => {
     productImageUrl: "",
     productType: "New Product",
   });
-  
 
   const [step, setStep] = useState(1); // Track current step
 
@@ -42,7 +49,10 @@ const AddProductPage = () => {
     if (product.category) {
       setProduct((prevProduct) => ({
         ...prevProduct,
-        productImageUrl: categoryImages[product.category] || "default-image-url",
+        productImageUrl:
+          prevProduct.productImageUrl ||
+          categoryImages[product.category] || // Use category-specific URL
+          categoryImages.Default, // Fallback to default if not found
       }));
     }
   }, [product.category]);
@@ -108,31 +118,12 @@ const AddProductPage = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    return false;
-  };
-
   const handleInputChange = (e, { name, value }) => {
-    setProduct(prev => ({
+    setProduct((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
-
-  // Add debugging logs to check the category values
-  useEffect(() => {
-    console.log('Category2 List:', category2List);
-    console.log('Selected category:', product.category);
-    console.log('Available subcategories:', category2List[product.category]);
-  }, [product.category]);
-
-  // Add debugging logs for subcategories
-  useEffect(() => {
-    console.log('Subcategory List:', subcategoryList);
-    console.log('Selected category2:', product.category2);
-    console.log('Available sub-subcategories:', subcategoryList[product.category2]);
-  }, [product.category2]);
 
   return (
     <div
@@ -178,7 +169,7 @@ const AddProductPage = () => {
           </Step.Group>
 
           {step === 1 && (
-            <Form onSubmit={handleSubmit}>
+            <Form>
               <Form.Input
                 fluid
                 label="Product Title"
@@ -225,72 +216,25 @@ const AddProductPage = () => {
           )}
 
           {step === 2 && (
-            <Form onSubmit={handleSubmit}>
-              <Form.Group widths="equal">
-                <Form.Select
-                  fluid
-                  label="Category"
-                  options={categoryList.map((category) => ({
-                    key: category.name,
-                    text: category.name,
-                    value: category.name,
-                  }))}
-                  placeholder="Select Category"
-                  value={product.category}
-                  onChange={(e, { value }) => {
-                    console.log('Selected category value:', value);
-                    setProduct({
-                      ...product,
-                      category: value,
-                      category2: "",
-                      subcategory: "",
-                    });
-                  }}
-                />
-                <Form.Select
-                  fluid
-                  label="Subcategory"
-                  options={
-                    product.category
-                      ? (category2List[product.category] || []).map((subcategory) => ({
-                          key: subcategory,
-                          text: subcategory,
-                          value: subcategory,
-                        }))
-                      : []
-                  }
-                  placeholder="Select Subcategory"
-                  value={product.category2}
-                  onChange={(e, { value }) => {
-                    console.log('Selected subcategory value:', value);
-                    setProduct({
-                      ...product,
-                      category2: value,
-                      subcategory: "",
-                    });
-                  }}
-                  disabled={!product.category}
-                />
-              </Form.Group>
+            <Form>
               <Form.Select
                 fluid
-                label="Sub-subcategory"
-                options={
-                  product.category2
-                    ? (subcategoryList[product.category2] || []).map((subsub) => ({
-                        key: subsub,
-                        text: subsub,
-                        value: subsub,
-                      }))
-                    : []
-                }
-                placeholder="Select Sub-subcategory"
-                value={product.subcategory}
+                label="Category"
+                options={Object.keys(categoryImages).map((category) => ({
+                  key: category,
+                  text: category,
+                  value: category,
+                }))}
+                placeholder="Select Category"
+                value={product.category}
                 onChange={(e, { value }) => {
-                  console.log('Selected sub-subcategory value:', value);
-                  setProduct({ ...product, subcategory: value });
+                  setProduct({
+                    ...product,
+                    category: value,
+                    category2: "",
+                    subcategory: "",
+                  });
                 }}
-                disabled={!product.category2}
               />
               <Button.Group fluid>
                 <Button type="button" onClick={prevStep} secondary>
@@ -304,7 +248,7 @@ const AddProductPage = () => {
           )}
 
           {step === 3 && (
-            <Form onSubmit={handleSubmit}>
+            <Form>
               <Form.TextArea
                 label="Product Description"
                 placeholder="Product Description"
@@ -330,25 +274,6 @@ const AddProductPage = () => {
                   />
                 </Segment>
               )}
-              <Form.Group inline>
-                <label>Product Type:</label>
-                <Form.Radio
-                  label="New Product"
-                  value="New Product"
-                  checked={product.productType === "New Product"}
-                  onChange={(e, { value }) =>
-                    setProduct({ ...product, productType: value })
-                  }
-                />
-                <Form.Radio
-                  label="Sales"
-                  value="Sales"
-                  checked={product.productType === "Sales"}
-                  onChange={(e, { value }) =>
-                    setProduct({ ...product, productType: value })
-                  }
-                />
-              </Form.Group>
               <Button.Group fluid>
                 <Button type="button" onClick={prevStep} secondary>
                   Back
@@ -362,21 +287,25 @@ const AddProductPage = () => {
 
           {step === 4 && (
             <Segment>
-              <Header as="h3">Review Your Product</Header>
+              <Header as="h3">Review Details</Header>
               <p><strong>Title:</strong> {product.title}</p>
               <p><strong>Code:</strong> {product.code}</p>
-              <p><strong>Price:</strong> {product.price}€</p>
-              <p><strong>Category:</strong> {product.category}</p>
-              <p><strong>Subcategory:</strong> {product.category2}</p>
-              <p><strong>Sub-subcategory:</strong> {product.subcategory}</p>
-              <p><strong>Description:</strong> {product.description}</p>
-              {product.productImageUrl && <Image src={product.productImageUrl} size="small" rounded centered />}
+              <p><strong>Price:</strong> {product.price}</p>
               <p><strong>Stock:</strong> {product.stock}</p>
+              <p><strong>Category:</strong> {product.category}</p>
+              <p><strong>Description:</strong> {product.description}</p>
+              {product.productImageUrl && (
+                <Image src={product.productImageUrl} size="medium" rounded />
+              )}
               <Button.Group fluid>
                 <Button type="button" onClick={prevStep} secondary>
                   Back
                 </Button>
-                <Button type="button" onClick={addProductFunction} positive>
+                <Button
+                  type="button"
+                  onClick={addProductFunction}
+                  primary
+                >
                   Submit
                 </Button>
               </Button.Group>
