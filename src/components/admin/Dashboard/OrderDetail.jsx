@@ -7,6 +7,39 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Grid, MenuItem, Select } from '@mui/material';
 import myContext from "../../../context/myContext";
 import Loader from "../../loader/Loader";
+import { styled } from '@mui/material/styles';
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    borderRadius: '10px',
+    padding: theme.spacing(2),
+    backgroundColor: '#ffffff',
+  },
+}));
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  '& .MuiDataGrid-root': {
+    backgroundColor: '#f0f4f8',
+    border: '1px solid #1976d2',
+  },
+  '& .MuiDataGrid-columnHeaders': {
+    backgroundColor: '#1976d2',
+    textAlign: 'center',
+    fontSize: '1.1rem',
+  },
+  '& .MuiDataGrid-columnHeaderTitle': {
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  '& .MuiDataGrid-row': {
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#e3f2fd',
+    },
+    '&:hover': {
+      backgroundColor: '#d1e7fd',
+    },
+  },
+}));
 
 const OrderDetail = () => {
   const context = useContext(myContext);
@@ -22,7 +55,6 @@ const OrderDetail = () => {
     "Confirmed",
     "Waiting",
     "Bank Payment OK",
-    "Bank Payment NOT",
     "Shipped",
     "Delivered",
     "Cancelled"
@@ -94,54 +126,33 @@ const OrderDetail = () => {
 
   // DataGrid columns
   const columns = [
-    { field: 'id', headerName: 'Order ID', flex: 1.5, headerAlign: 'center', align: 'center' },
+    { field: 'id', headerName: 'Order ID', flex: 2, headerAlign: 'center', align: 'center' },
+    { field: 'name', headerName: 'Customer Name', flex: 3, headerAlign: 'center', align: 'center' },
+    { field: 'email', headerName: 'Email Address', flex: 3, headerAlign: 'center', align: 'center' },
+    { field: 'date', headerName: 'Order Date', flex: 3, headerAlign: 'center', align: 'center' },
+    { field: 'totalPrice', headerName: 'Total Price (EUR)', flex: 3, headerAlign: 'center', align: 'center' },
     {
       field: 'status',
-      headerName: 'Status',
+      headerName: 'Order Status',
       flex: 3,
       headerAlign: 'center',
       align: 'center',
-      renderCell: (params) => {
-        const isEditing = params.row.id === editStatusId;
-        return (
-          <Box>
-            {isEditing ? (
-              // Show dropdown when status is being edited
-              <Select
-                value={tempStatus || params.row.status}
-                onChange={(e) => setTempStatus(e.target.value)} // Temporary save to state
-                onBlur={() => handleStatusChange(tempStatus, params.row.id)} // Save to Firebase on blur
-                sx={{ width: '100%' }}
-                autoFocus // Autofocus when dropdown opens
-              >
-                {orderStatuses.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            ) : (
-              // Show status as text and allow click-to-edit
-              <Typography
-                onClick={() => {
-                  setEditStatusId(params.row.id); // Set the row being edited
-                  setTempStatus(params.row.status); // Pre-fill the current status
-                }}
-                sx={{ cursor: 'pointer', color: 'inherit' }} // Remove the underline and color change
-              >
-                {params.row.status}
-              </Typography>
-            )}
-          </Box>
-        );
-      }
+      renderCell: (params) => (
+        <Select
+          value={params.row.status}
+          onChange={(event) => handleStatusChange(event.target.value, params.row.id)}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          sx={{ width: '100%', bgcolor: 'white', border: '1px solid #1976d2', borderRadius: '5px', '&:hover': { borderColor: '#1976d2' } }}
+        >
+          {orderStatuses.map((status) => (
+            <MenuItem key={status} value={status} sx={{ '&:hover': { backgroundColor: '#e3f2fd' } }}>
+              {status}
+            </MenuItem>
+          ))}
+        </Select>
+      )
     },
-    { field: 'name', headerName: 'Name', flex: 2.5, headerAlign: 'center', align: 'center' },
-    { field: 'mobileNumber', headerName: 'Phone Number', flex: 2, headerAlign: 'center', align: 'center' },
-    { field: 'email', headerName: 'Email', flex: 2.5, headerAlign: 'center', align: 'center' },
-    { field: 'date', headerName: 'Date', flex: 2, headerAlign: 'center', align: 'center' },
-    { field: 'totalItems', headerName: 'Total Items', flex: 1.5, headerAlign: 'center', align: 'center' },
-    { field: 'totalPrice', headerName: 'Total Price', flex: 1.5, headerAlign: 'center', align: 'center' },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -172,47 +183,22 @@ const OrderDetail = () => {
       </div>
 
       <div className="w-full mb-5" style={{ height: 400, width: '100%' }}>
-        <DataGrid
+        <StyledDataGrid
           rows={rows}
           columns={columns}
           pageSize={15}
           rowsPerPageOptions={[15]}
           disableSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-root': {
-              backgroundColor: '#005689', // Light blue background
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#2196f3', // Blue header background
-              textAlign: 'center',
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontWeight: 'bold',
-              color: '#ffffff', // White text in headers
-              textAlign: 'center',
-            },
-            '& .MuiDataGrid-row': {
-              '&:nth-of-type(odd)': {
-                backgroundColor: '#d5eeff', // Alternate row color
-              },
-            },
-          }}
         />
       </div>
 
-      <Dialog
+      <StyledDialog
         open={openDetailDialog}
         onClose={handleCloseDetailDialog}
         fullWidth
         maxWidth="md"
-        PaperProps={{
-          sx: {
-            padding: 2,
-            backgroundColor: '#f9f9f9',
-          }
-        }}
       >
-        <DialogTitle sx={{ backgroundColor: '#f1f1f1' }}>Order Details</DialogTitle>
+        <DialogTitle sx={{ backgroundColor: '#e3f2fd' }}>Order Details</DialogTitle>
         <DialogContent id="printable-content">
           {selectedOrder && (
             <Box sx={{ padding: 2 }}>
@@ -274,7 +260,7 @@ const OrderDetail = () => {
             <CloseIcon />
           </IconButton>
         </DialogActions>
-      </Dialog>
+      </StyledDialog>
     </div>
   );
 };

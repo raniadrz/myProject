@@ -50,77 +50,38 @@ const TestimonialDetail = () => {
     testimonial, // Pass full testimonial object for dialog
   }));
 
-  const columns = [
-    { field: 'id', headerName: 'Testimonial ID', flex: 1.5, headerAlign: 'center', align: 'center' },
-    { field: 'name', headerName: 'Name', flex: 2.5, headerAlign: 'center', align: 'center' },
-    { field: 'comment', headerName: 'Comment', flex: 3, headerAlign: 'center', align: 'center' },
-    { field: 'time', headerName: 'Date', flex: 2, headerAlign: 'center', align: 'center' },
-    {
-      field: 'photoURL',
-      headerName: 'Photo',
-      flex: 1.5,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => (
-        <Avatar src={params.value} alt={params.row.name} />
-      ),
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1.5,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params) => (
-        <div>
-          <IconButton onClick={() => handleClickOpenDetailDialog(params.row.testimonial)}>
-            <PrintIcon style={{ color: 'blue' }} />
-          </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon style={{ color: 'red' }} />
-          </IconButton>
-        </div>
-      )
-    }
-  ];
-
   return (
-    <div style={{ height: '80vh' }}>
-      <div className="py-5 flex justify-between items-center">
-        <h1 className="text-xl text-blue-600 font-bold">All Testimonials</h1>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold mb-1">All Testimonials</h1>
+        <p className="text-gray-500">Manage your testimonials here.</p>
       </div>
 
       <div className="flex justify-center relative top-20">
         {loading && <Loader />}
       </div>
 
-      <div className="w-full mb-5" style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
-          disableSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-root': {
-              backgroundColor: '#005689', // Light blue background
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#2196f3', // Blue header background
-              textAlign: 'center',
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontWeight: 'bold',
-              color: '#ffffff', // White text in headers
-              textAlign: 'center',
-            },
-            '& .MuiDataGrid-row': {
-              '&:nth-of-type(odd)': {
-                backgroundColor: '#d5eeff', // Alternate row color
-              },
-            },
-          }}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {rows.map((testimonial) => (
+          <div key={testimonial.id} className="bg-white rounded-lg shadow p-4">
+            <div className="flex items-center mb-2">
+              <Avatar src={testimonial.photoURL} alt={testimonial.name} />
+              <div className="ml-3">
+                <h3 className="text-lg font-semibold">{testimonial.name}</h3>
+                <p className="text-gray-500">{testimonial.time}</p>
+              </div>
+            </div>
+            <p className="text-gray-700">{testimonial.comment}</p>
+            <div className="flex justify-end mt-4">
+              <IconButton onClick={() => handleClickOpenDetailDialog(testimonial)}>
+                <PrintIcon style={{ color: 'blue' }} />
+              </IconButton>
+              <IconButton onClick={() => handleDelete(testimonial.id)}>
+                <DeleteIcon style={{ color: 'red' }} />
+              </IconButton>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
