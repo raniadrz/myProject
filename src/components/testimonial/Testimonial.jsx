@@ -110,9 +110,16 @@ const Testimonial = ({ limit = 3 }) => {
                 gap: 3
             }}>
                 <Box>
-                    <Typography variant="h5" fontWeight="bold">
-                        {calculateAverageRating(testimonials)}★★★★★
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="h5" fontWeight="bold">
+                            {calculateAverageRating(testimonials)}
+                        </Typography>
+                        <Rating 
+                            value={Number(calculateAverageRating(testimonials))} 
+                            readOnly 
+                            precision={0.1}
+                        />
+                    </Box>
                     <Typography color="text.secondary">stars out of 5</Typography>
                 </Box>
                 <Box>

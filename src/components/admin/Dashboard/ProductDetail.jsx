@@ -121,13 +121,14 @@ const ProductDetail = () => {
     title: item.title,
     code: item.code,
     price: item.price,
-    category: item.category,
-    category2: item.category2,
-    subcategory: item.subcategory,
-    date: item.date,
-    productType: item.productType || 'N/A', // Add productType to rows
-    status: item.status ?? true, // Use existing status or default to true
-    stock: item.stock || 0, // Use actual stock instead of random number
+    category: item.category || 'N/A',
+    category2: item.category2 || 'N/A',
+    subcategory: item.subcategory || 'N/A',
+    date: item.time?.toDate() || new Date(),
+    productType: item.productType || 'N/A',
+    status: item.status ?? true,
+    stock: item.stock || 0,
+    description: item.description || '',
   }));
 
   const columns = [
@@ -155,6 +156,44 @@ const ProductDetail = () => {
       align: 'left',
       renderCell: (params) => (
         <div>{params.value}€</div>
+      )
+    },
+    {
+      field: 'category',
+      headerName: 'Category',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left'
+    },
+    {
+      field: 'category2',
+      headerName: 'Category 2',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left'
+    },
+    {
+      field: 'subcategory',
+      headerName: 'Subcategory',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left'
+    },
+    {
+      field: 'productType',
+      headerName: 'Type',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left'
+    },
+    {
+      field: 'date',
+      headerName: 'Date Added',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+      renderCell: (params) => (
+        <div>{new Date(params.value).toLocaleDateString()}</div>
       )
     },
     {

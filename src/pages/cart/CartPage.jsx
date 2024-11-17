@@ -18,18 +18,37 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import emailjs from 'emailjs-com';
 import { useNavigate } from 'react-router-dom';
 import { initializeCart } from '../../redux/cartSlice';
+import { useContext } from "react";
+import MyContext from "../../context/myContext";
 
 const CartPage = () => {
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const auth = getAuth();
+    const { saveUserCart, loadUserCart } = useContext(MyContext);
 
+    // Load cart when user logs in
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                const savedCart = await loadUserCart(user.uid);
+                if (savedCart && savedCart.length > 0) {
+                    dispatch(initializeCart(savedCart));
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, [auth, dispatch]);
+
+    // Save cart whenever it changes
     useEffect(() => {
         if (auth.currentUser) {
-            dispatch(initializeCart());
+            saveUserCart(auth.currentUser.uid, cartItems);
         }
-    }, [dispatch, auth.currentUser]);
+    }, [cartItems, auth.currentUser]);
 
     const deleteCart = (item) => {
         dispatch(deleteFromCart(item));
@@ -62,12 +81,6 @@ const CartPage = () => {
     console.log(`Shipping Cost: ${shippingCost}€`);
     console.log(`Total Amount: ${totalAmount}€`);
     
-
-    useEffect(() => {
-        if (auth.currentUser) {
-            localStorage.setItem(`cart_${auth.currentUser.uid}`, JSON.stringify(cartItems));
-        }
-    }, [cartItems, auth.currentUser]);
 
     // Buy Now Function
     const [addressInfo, setAddressInfo] = useState({
@@ -179,39 +192,37 @@ const CartPage = () => {
                                         {cartItems.map((item, index) => {
                                             const { id, title, price, productImageUrl, quantity, category } = item;
                                             return (
-                                                <div key={index} className="">
-                                                    <li className="flex py-6 sm:py-6 ">
+                                                <div key={index} className="flex flex-col lg:flex-row py-6">
+                                                    <li className="flex flex-1">
                                                         <div className="flex-shrink-0">
                                                             <img
                                                                 src={productImageUrl}
                                                                 alt="img"
-                                                                className="sm:h-38 sm:w-38 h-24 w-24 rounded-md object-contain object-center"
+                                                                className="h-24 w-24 rounded-md object-contain object-center"
                                                             />
                                                         </div>
 
-                                                        <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
-                                                            <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-                                                                <div>
-                                                                    <div className="flex justify-between">
-                                                                        <h3 className="text-sm">
-                                                                            <div className="font-semibold text-black">
-                                                                                {title}
-                                                                            </div>
-                                                                        </h3>
-                                                                    </div>
-                                                                    <div className="mt-1 flex text-sm">
-                                                                        <p className="text-sm text-gray-500">{category}</p>
-                                                                    </div>
-                                                                    <div className="mt-1 flex items-end">
-                                                                        <p className="text-sm font-medium text-gray-900">
-                                                                            {parseFloat(price).toFixed(2)}€
-                                                                        </p>
-                                                                    </div>
+                                                        <div className="ml-4 flex flex-1 flex-col justify-between">
+                                                            <div className="relative pr-9">
+                                                                <div className="flex justify-between">
+                                                                    <h3 className="text-sm">
+                                                                        <div className="font-semibold text-black">
+                                                                            {title}
+                                                                        </div>
+                                                                    </h3>
+                                                                </div>
+                                                                <div className="mt-1 flex text-sm">
+                                                                    <p className="text-sm text-gray-500">{category}</p>
+                                                                </div>
+                                                                <div className="mt-1 flex items-end">
+                                                                    <p className="text-sm font-medium text-gray-900">
+                                                                        {parseFloat(price).toFixed(2)}€
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                    <div className="mb-2 flex">
+                                                    <div className="mb-2 flex items-center">
                                                         <div className="min-w-24 flex">
                                                             <button onClick={() => handleDecrement(id)} type="button" className="h-7 w-7">
                                                                 -
@@ -248,12 +259,12 @@ const CartPage = () => {
                         >
                             <h2
                                 id="summary-heading"
-                                className=" border-b border-gray-200 px-4 py-3 text-lg font-medium text-gray-900 sm:p-4"
+                                className="border-b border-gray-200 px-4 py-3 text-lg font-medium text-gray-900 sm:p-4"
                             >
                                 Price Details
                             </h2>
                             <div>
-                                <dl className=" space-y-1 px-2 py-4">
+                                <dl className="space-y-1 px-2 py-4">
                                     <div className="flex items-center justify-between">
                                         <dt className="text-sm text-gray-800">Price ({cartItemTotal} item{cartItemTotal > 1 ? 's' : ''})</dt>
                                         <dd className="text-sm font-medium text-gray-900">{cartTotal}€</dd>

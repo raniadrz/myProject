@@ -139,7 +139,7 @@ const AllTestimonialsDialog = ({ open, onClose }) => {
                                     </Box>
                                 </Box>
                                 <Rating 
-                                    value={5} 
+                                    value={testimonial.rating}
                                     readOnly 
                                     size="small"
                                 />

@@ -29,7 +29,7 @@ import ReturnPolicy from './pages/footer/returnPolicy/ReturnPolicy';
 import Mission from './pages/footer/mission/Mission';
 import Team from './pages/footer/team/Team';
 import Newsletter from './pages/footer/newsletter/Newsletter';
-
+import FAQ from './pages/footer/faq/faq';
 
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -58,10 +58,11 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/*" element={<NoPage />} />
           <Route path="/mission" element={<Mission />} />
-<Route path="/team" element={<Team />} />
-<Route path="/newsletter" element={<Newsletter />} />
+          <Route path="/faqs" element={<FAQ />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/newsletter" element={<Newsletter />} />
           <Route path="/privacypolicy" element={<PPolicy />} />
-          <Route path="/returnpolicy" element={<ReturnPolicy />} />
+          <Route path="/refund-policy" element={<ReturnPolicy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/about" element={<About />} />
@@ -98,6 +99,12 @@ function App() {
           <Route path="/addproduct" element={
             <ProtectedRouteForAdmin>
               <AddProduct />
+            </ProtectedRouteForAdmin>
+          } />
+
+          <Route path="/faq" element={
+            <ProtectedRouteForAdmin>
+              <FAQ />
             </ProtectedRouteForAdmin>
           } />
         </Routes>

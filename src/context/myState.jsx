@@ -3,6 +3,9 @@ import {
   deleteUser as fbDeleteUser,
   getAuth,
   updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "firebase/auth";
 import {
   addDoc,
@@ -35,6 +38,8 @@ function MyState({ children }) {
   const [getAllOrder, setGetAllOrder] = useState([]);
   const [getAllUser, setGetAllUser] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+  const [questions, setQuestions] = useState([]);
   
 // Add Testimonial
 const addTestimonial = async (testimonialData) => {
@@ -127,49 +132,49 @@ const fetchTestimonials = async () => {
   };
 
   // Create or Update User Details
-  const updateUserDetails = async (uid, newName, newEmail, photoURL) => {
+  const updateUserDetails = async (userId, name, email, photoURL, profession, country) => {
     setLoading(true);
-    const auth = getAuth();
-    const user = auth.currentUser;
-
     try {
-      if (user) {
-        // Update displayName and photoURL in Firebase Authentication
-        await updateProfile(user, { 
-          displayName: newName, 
-          photoURL: photoURL 
-        });
-
-        // Update in Firestore - Note: collection is "user" not "users"
-        const userDocRef = doc(fireDB, "user", uid);
-        const docSnapshot = await getDoc(userDocRef);
-
-        if (docSnapshot.exists()) {
-          await updateDoc(userDocRef, {
-            name: newName,
-            email: newEmail,
-            photoURL: photoURL,
-          });
-        } else {
-          await setDoc(userDocRef, {
-            name: newName,
-            email: newEmail,
-            photoURL: photoURL,
-            role: "user",
+        const userDocRef = doc(fireDB, "user", userId);
+        
+        // Check if document exists
+        const docSnap = await getDoc(userDocRef);
+        
+        const userData = {
+            name,
+            email,
+            photoURL,
+            profession,
+            country,
             time: Timestamp.now(),
-          });
+            role: 'user' // default role
+        };
+
+        if (!docSnap.exists()) {
+            // Create new document if it doesn't exist
+            await setDoc(userDocRef, userData);
+        } else {
+            // Update existing document
+            await updateDoc(userDocRef, userData);
         }
 
-        toast.success("User details updated successfully");
-        getAllUserFunction();
-      }
+        // Update Auth profile
+        const auth = getAuth();
+        if (auth.currentUser) {
+            await updateProfile(auth.currentUser, {
+                photoURL: photoURL,
+                displayName: name
+            });
+        }
+
+        toast.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Error updating user details: ", error);
-      toast.error("Failed to update user details");
+        console.error("Error updating user details:", error);
+        toast.error("Error updating profile");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // Get All Products
   const getAllProductFunction = async () => {
@@ -246,31 +251,25 @@ const fetchTestimonials = async () => {
   };
 
   // Update User Role
-  const updateUserRole = async (uid, currentRole) => {
+  const updateUserRole = async (uid, newRole) => {
     setLoading(true);
-    const newRole = currentRole === "admin" ? "user" : "admin";
     try {
-      const userDocRef = doc(fireDB, "user", uid);
-      const userDoc = await getDoc(userDocRef);
-      const userData = userDoc.data();
+        const userDocRef = doc(fireDB, "user", uid);
+        
+        // Update only the role field
+        await updateDoc(userDocRef, {
+            role: newRole
+        });
 
-      await updateDoc(userDocRef, {
-        role: newRole,
-        // Preserve existing data
-        name: userData?.name,
-        email: userData?.email,
-        photoURL: userData?.photoURL,
-      });
-
-      toast.success(`Role updated to ${newRole}`);
-      getAllUserFunction();
+        toast.success(`Role updated to ${newRole}`);
+        getAllUserFunction(); // Refresh the users list
     } catch (error) {
-      console.error("Error updating role: ", error);
-      toast.error("Failed to update role");
+        console.error("Error updating role: ", error);
+        toast.error("Failed to update role");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   // Update Order Status
   const updateOrderStatus = async (orderId, status) => {
@@ -368,11 +367,173 @@ const fetchTestimonials = async () => {
     }
   };
 
+  // Add this function in MyState
+  const updateUserPassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    try {
+      // First, re-authenticate the user
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+
+      // Then update the password
+      await updatePassword(user, newPassword);
+      
+      toast.success("Password updated successfully");
+    } catch (error) {
+      console.error("Error updating password: ", error);
+      if (error.code === 'auth/wrong-password') {
+        toast.error("Current password is incorrect");
+      } else {
+        toast.error("Failed to update password");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add these new functions in MyState component
+  const saveUserCart = async (userId, cartItems) => {
+    try {
+      const cartRef = doc(fireDB, "userCarts", userId);
+      await setDoc(cartRef, {
+        items: cartItems,
+        updatedAt: Timestamp.now()
+      });
+    } catch (error) {
+      console.error("Error saving cart:", error);
+    }
+  };
+
+  const loadUserCart = async (userId) => {
+    try {
+      const cartRef = doc(fireDB, "userCarts", userId);
+      const cartDoc = await getDoc(cartRef);
+      if (cartDoc.exists()) {
+        return cartDoc.data().items;
+      }
+      return [];
+    } catch (error) {
+      console.error("Error loading cart:", error);
+      return [];
+    }
+  };
+
+  const fetchFaqs = async () => {
+    setLoading(true);
+    try {
+      const q = query(collection(fireDB, "faqs"), orderBy("time", "desc"));
+      const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+        let faqArray = [];
+        QuerySnapshot.forEach((doc) => {
+          faqArray.push({
+            ...doc.data(),
+            id: doc.id,
+            type: doc.data().type || 'faq',
+            status: doc.data().status || 'published'
+          });
+        });
+        console.log("Fetched FAQs:", faqArray);
+        setFaqs(faqArray);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error fetching FAQs:", error);
+      setLoading(false);
+    }
+  };
+
+  const addFAQ = async (faqData) => {
+    try {
+      await addDoc(collection(fireDB, "faqs"), {
+        ...faqData,
+        type: 'faq', // Indicates this is an admin-created FAQ
+        status: 'published',
+        time: Timestamp.now()
+      });
+      toast.success("FAQ added successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add FAQ");
+    }
+  };
+
+  const addQuestion = async (questionData) => {
+    try {
+      const docRef = await addDoc(collection(fireDB, "faqs"), {
+        ...questionData,
+        type: 'question',
+        status: 'pending',
+        time: Timestamp.now(),
+        email: questionData.email,
+        subject: questionData.subject,
+        message: questionData.message
+      });
+      console.log("Question added with ID:", docRef.id);
+      toast.success("Question submitted successfully");
+    } catch (error) {
+      console.error("Error adding question:", error);
+      toast.error("Failed to submit question");
+    }
+  };
+
+  const fetchQuestions = async () => {
+    setLoading(true);
+    try {
+      const q = query(collection(fireDB, "questions"), orderBy("time", "desc"));
+      const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+        let questionsArray = [];
+        QuerySnapshot.forEach((doc) => {
+          questionsArray.push({ 
+            ...doc.data(), 
+            id: doc.id,
+            type: 'question',
+            status: doc.data().status || 'pending'
+          });
+        });
+        console.log("Fetched Questions:", questionsArray);
+        setQuestions(questionsArray);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      setLoading(false);
+    }
+  };
+
+  // Add this function inside MyState component
+  const updateFAQ = async (faqId, updatedData) => {
+    setLoading(true);
+    try {
+      const faqRef = doc(fireDB, "faqs", faqId);
+      await updateDoc(faqRef, {
+        ...updatedData,
+        time: Timestamp.now()
+      });
+      toast.success("FAQ updated successfully");
+      fetchFaqs(); // Refresh the FAQs list
+    } catch (error) {
+      console.error("Error updating FAQ:", error);
+      toast.error("Failed to update FAQ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getAllProductFunction();
     getAllOrderFunction();
     getAllUserFunction();
     fetchTestimonials();
+    fetchFaqs();
+    fetchQuestions();
   }, []);
 
   return (
@@ -396,6 +557,18 @@ const fetchTestimonials = async () => {
         deleteTestimonial,
         updateProductStock,
         calculateAverageRating,
+        updateUserPassword,
+        saveUserCart,
+        loadUserCart,
+        faqs,
+        setFaqs,
+        addFAQ,
+        addQuestion,
+        fetchFaqs,
+        questions,
+        setQuestions,
+        fetchQuestions,
+        updateFAQ,
       }}
     >
       {children}
@@ -404,3 +577,4 @@ const fetchTestimonials = async () => {
 }
 
 export default MyState;
+

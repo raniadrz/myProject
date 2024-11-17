@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Form, Grid, Header, Image, Segment, Step } from "semantic-ui-react";
+import { Button, Form, Grid, Header, Image, Segment } from "semantic-ui-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Loader from "../../components/loader/Loader";
@@ -34,8 +34,6 @@ const AddProductPage = () => {
     productImageUrl: "",
     productType: "New Product",
   });
-
-  const [step, setStep] = useState(1); // Track current step
 
   useEffect(() => {
     if (product.category) {
@@ -104,9 +102,6 @@ const AddProductPage = () => {
     }
   };
 
-  const nextStep = () => setStep((prev) => prev + 1);
-  const prevStep = () => setStep((prev) => prev - 1);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     return false;
@@ -134,49 +129,35 @@ const AddProductPage = () => {
   }, [product.category2]);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(https://t3.ftcdn.net/jpg/04/81/85/46/360_F_481854656_gHGTnBscKXpFEgVTwAT4DL4NXXNhDKU9.jpg)`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px",
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
+      <Header as="h1" textAlign="center" color="black">
+              Add Products
+      </Header>
       {loading && <Loader />}
       {!loading && (
-        <Segment style={{ maxWidth: "600px", width: "100%" }}>
-          <Header as="h2" textAlign="center" color="blue">
-            Add Product
-          </Header>
-          <Step.Group fluid>
-            <Step active={step === 1}>
-              <Step.Content>
-                <Step.Title>Basic Info</Step.Title>
-              </Step.Content>
-            </Step>
-            <Step active={step === 2}>
-              <Step.Content>
-                <Step.Title>Category</Step.Title>
-              </Step.Content>
-            </Step>
-            <Step active={step === 3}>
-              <Step.Content>
-                <Step.Title>Details</Step.Title>
-              </Step.Content>
-            </Step>
-            <Step active={step === 4}>
-              <Step.Content>
-                <Step.Title>Review</Step.Title>
-              </Step.Content>
-            </Step>
-          </Step.Group>
-
-          {step === 1 && (
+        <>
+        <div style={{ flex: 1, marginTop: "40px", marginLeft: "-80px"}}>
+            {product.category ? (
+              product.productImageUrl && (
+                <Image 
+                  src={product.productImageUrl} 
+                  size="large" 
+                  rounded 
+                  centered 
+                  style={{ maxWidth: "100%", marginLeft: "-50px" }}
+                />
+              )
+            ) : (
+              <Image 
+                src="https://collar.com/wp-content/uploads/2022/07/banner_products_1024x538px_ukr11.png" //   dummy image URL
+                size="xlarge" 
+                rounded 
+                centered 
+                style={{ maxWidth: "100%", marginLeft: "-50px" }}
+              />
+            )}
+          </div>
+          <Segment style={{ flex: 2, width: "100%", boxShadow: "none", border: "none" }}>
             <Form onSubmit={handleSubmit}>
               <Form.Input
                 fluid
@@ -215,16 +196,6 @@ const AddProductPage = () => {
                   setProduct({ ...product, stock: parseInt(e.target.value) || 0 })
                 }
               />
-              <Button.Group fluid>
-                <Button type="button" onClick={nextStep} primary>
-                  Next
-                </Button>
-              </Button.Group>
-            </Form>
-          )}
-
-          {step === 2 && (
-            <Form onSubmit={handleSubmit}>
               <Form.Group widths="equal">
                 <Form.Select
                   fluid
@@ -291,19 +262,6 @@ const AddProductPage = () => {
                 }}
                 disabled={!product.category2}
               />
-              <Button.Group fluid>
-                <Button type="button" onClick={prevStep} secondary>
-                  Back
-                </Button>
-                <Button type="button" onClick={nextStep} primary>
-                  Next
-                </Button>
-              </Button.Group>
-            </Form>
-          )}
-
-          {step === 3 && (
-            <Form onSubmit={handleSubmit}>
               <Form.TextArea
                 label="Product Description"
                 placeholder="Product Description"
@@ -319,16 +277,6 @@ const AddProductPage = () => {
                 value={product.productImageUrl}
                 onChange={handleImageUrlChange}
               />
-              {product.productImageUrl && (
-                <Segment>
-                  <Image 
-                    src={product.productImageUrl} 
-                    size="small" 
-                    rounded 
-                    centered 
-                  />
-                </Segment>
-              )}
               <Form.Group inline>
                 <label>Product Type:</label>
                 <Form.Radio
@@ -349,39 +297,13 @@ const AddProductPage = () => {
                 />
               </Form.Group>
               <Button.Group fluid>
-                <Button type="button" onClick={prevStep} secondary>
-                  Back
-                </Button>
-                <Button type="button" onClick={nextStep} primary>
-                  Next
-                </Button>
-              </Button.Group>
-            </Form>
-          )}
-
-          {step === 4 && (
-            <Segment>
-              <Header as="h3">Review Your Product</Header>
-              <p><strong>Title:</strong> {product.title}</p>
-              <p><strong>Code:</strong> {product.code}</p>
-              <p><strong>Price:</strong> {product.price}€</p>
-              <p><strong>Category:</strong> {product.category}</p>
-              <p><strong>Subcategory:</strong> {product.category2}</p>
-              <p><strong>Sub-subcategory:</strong> {product.subcategory}</p>
-              <p><strong>Description:</strong> {product.description}</p>
-              {product.productImageUrl && <Image src={product.productImageUrl} size="small" rounded centered />}
-              <p><strong>Stock:</strong> {product.stock}</p>
-              <Button.Group fluid>
-                <Button type="button" onClick={prevStep} secondary>
-                  Back
-                </Button>
                 <Button type="button" onClick={addProductFunction} positive>
                   Submit
                 </Button>
               </Button.Group>
-            </Segment>
-          )}
-        </Segment>
+            </Form>
+          </Segment>
+        </>
       )}
     </div>
   );
