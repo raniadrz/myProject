@@ -221,11 +221,7 @@ const Newsletter = () => {
         </div>
 
         <div className="bottom-section">
-          <img 
-            src="https://cdn-ilefn.nitrocdn.com/GznEWgmOZdXrpQWjZBLaPHGeFRrtkXsP/assets/images/source/rev-18a26f5/www.knose.com.au/wp-content/uploads/2024/02/icon-paw-house.svg" 
-            alt="Small Icon" 
-            className="small-icon"
-          />
+          
           <p>Join our community of happy pet parents!</p>
         </div>
       </div>

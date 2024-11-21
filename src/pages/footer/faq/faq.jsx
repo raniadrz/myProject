@@ -6,7 +6,7 @@ import { FiSearch } from 'react-icons/fi';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { fireDB } from '../../../firebase/FirebaseConfig';
 import toast from 'react-hot-toast';
-
+import './faq.css';
 function FAQ() {
   const context = useContext(myContext);
   const { faqs } = context;
@@ -83,29 +83,31 @@ function FAQ() {
       <div className="container mx-auto px-4 py-12">
         {/* Category Filter */}
         <div className="mb-8 flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-full ${
-              selectedCategory === 'all'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            All
-          </button>
-          {['general', 'pricing', 'technical', 'account'].map(category => (
+          <div className="flex space-x-2">
             <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full capitalize ${
-                selectedCategory === category
-                  ? 'bg-purple-600 text-white'
+              onClick={() => setSelectedCategory('all')}
+              className={`button px-4 rounded-full ${
+                selectedCategory === 'all'
+                  ? 'bg-[rgb(231,80,206)] text-white active:bg-blue-500'
                   : 'bg-gray-200 text-gray-700'
               }`}
             >
-              {category}
+              All
             </button>
-          ))}
+            {['general', 'pricing', 'technical', 'account'].map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`button px-4 rounded-full capitalize ${
+                  selectedCategory === category
+                    ? 'bg-[rgb(231,80,206)] text-white active:bg-blue-500'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* FAQs */}
