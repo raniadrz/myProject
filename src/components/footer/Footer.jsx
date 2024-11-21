@@ -1,19 +1,26 @@
 import { Link } from "react-router-dom";
 import logo from "../../photos/logo.png";
-import './Footer.css';  // Import the CSS file
+import './Footer.css';
 
 const Footer = () => {
+  // Δυναμικό Έτος
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-content">
-          {/* Logo Section */}
+          {/* Λογότυπο */}
           <div className="footer-logo">
-            <img src={logo} alt="Pet Paradise Logo" />
+            <img 
+              src={logo} 
+              alt="Pet Paradise Logo" 
+              loading="lazy" // Lazy loading για καλύτερη απόδοση
+            />
             <h1>Pet Paradise</h1>
           </div>
 
-          {/* Navigation Sections */}
+          {/* Πλοήγηση */}
           <div className="footer-nav">
             {/* About Us Section */}
             <div className="footer-section">
@@ -39,20 +46,24 @@ const Footer = () => {
             <div className="footer-section">
               <h2>Social</h2>
               <ul>
-                <li><a href="https://instagram.com">Instagram</a></li>
-                <li><a href="https://linkedin.com">LinkedIn</a></li>
-                <li><a href="https://youtube.com">YouTube</a></li>
+                <li><a href="https://instagram.com" aria-label="Instagram">Instagram</a></li>
+                <li><a href="https://linkedin.com" aria-label="LinkedIn">LinkedIn</a></li>
+                <li><a href="https://youtube.com" aria-label="YouTube">YouTube</a></li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
+        {/* Κάτω Μέρος */}
         <div className="footer-bottom">
-          <p>Copyright © Pet Paradise</p>
+          <p>Copyright © {currentYear} Pet Paradise</p>
           <div className="footer-bottom-links">
             <Link to="/terms">Terms of Service</Link>
-            <button onClick={() => window.scrollTo(0, 0)} className="back-to-top">
+            <button 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} // Smooth Scroll
+              className="back-to-top" 
+              aria-label="Back to Top" // Accessibility
+            >
               Back to top
               <span>↑</span>
             </button>

@@ -1,0 +1,10 @@
+/* Add this to your CSS file */
+button:hover {
+    background-color: rgb(224, 164, 236) ; /* Prevent any background color change on hover */
+    color: inherit; /* Prevent any text color change on hover */
+  }
+/* Add this to your CSS file */
+.button {
+    height: 40px; /* Set consistent height */
+    line-height: 40px; /* Center text vertically */
+  }
