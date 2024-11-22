@@ -9,8 +9,10 @@ import myContext from "../../context/myContext";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import './Login.css'; // Import the CSS file
 import { useDispatch } from 'react-redux';
-import { clearCartOnLogout, addToCart } from '../../redux/cartSlice';
+import {  addToCart } from '../../redux/cartSlice';
+// clearCartOnLogout,
 
+//Login Page
 const Login = () => {
     const context = useContext(myContext);
     const { loading, setLoading } = context;
@@ -32,10 +34,10 @@ const Login = () => {
 
     const dispatch = useDispatch();
 
-    const handleLogout = () => {
-        dispatch(clearCartOnLogout());
-        // ... rest of your logout logic
-    };
+    // const handleLogout = () => {
+    //     dispatch(clearCartOnLogout());
+    //     // ... rest of your logout logic
+    // };
 
     /**========================================================================
      *                          User Login Function 
@@ -106,9 +108,7 @@ const Login = () => {
     };
 
     const handleLogin = async () => {
-        try {
-            // ... your existing login logic ...
-            
+        try {            
             // After successful login, load the user's cart
             const userId = auth.currentUser.uid;
             const storedCart = localStorage.getItem(`cart_${userId}`);
@@ -118,10 +118,9 @@ const Login = () => {
                     dispatch(addToCart(item));
                 });
             }
-            
-            // ... rest of your login success handling
+        
         } catch (error) {
-            // ... error handling
+          
         }
     };
 

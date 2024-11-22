@@ -13,6 +13,7 @@ import {
     deleteFromCart,
     incrementQuantity,
     orderSuccessful,
+    addToCart,
 } from "../../redux/cartSlice";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import emailjs from 'emailjs-com';
@@ -27,12 +28,13 @@ const CartPage = () => {
     const navigate = useNavigate();
     const auth = getAuth();
     const { saveUserCart, loadUserCart } = useContext(MyContext);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     // Load cart when user logs in
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            setIsLoggedIn(!!user);
             if (user) {
-                // User is signed in
                 const savedCart = await loadUserCart(user.uid);
                 if (savedCart && savedCart.length > 0) {
                     dispatch(initializeCart(savedCart));
@@ -121,7 +123,15 @@ const CartPage = () => {
             });
     };
 
+    const handleAddToCart = (item) => {
+        dispatch(addToCart(item)); // Allow adding to cart without login
+    };
+
     const buyNowFunction = async () => {
+        if (!isLoggedIn) {
+            return toast.error("Please log in to place an order.");
+        }
+    
         if (addressInfo.name === "" || addressInfo.address === "" || addressInfo.pincode === "" || addressInfo.mobileNumber === "") {
             return toast.error("All Fields are required");
         }
@@ -284,7 +294,7 @@ const CartPage = () => {
                                 </dl>
                                 <div className="px-2 pb-4 font-medium text-green-700">
                                     <div className="flex gap-4 mb-6">
-                                        {getAuth().currentUser ? (
+                                        {isLoggedIn ? (
                                             <BuyNowModal
                                                 addressInfo={addressInfo}
                                                 setAddressInfo={setAddressInfo}
