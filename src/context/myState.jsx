@@ -1,25 +1,6 @@
-import {
-  createUserWithEmailAndPassword,
-  deleteUser as fbDeleteUser,
-  getAuth,
-  updateProfile,
-  updatePassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential
-} from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  onSnapshot,
-  orderBy,
-  query,
-  setDoc,
-  Timestamp,
-  updateDoc
-} from "firebase/firestore";
+import {createUserWithEmailAndPassword,deleteUser as fbDeleteUser,getAuth,updateProfile,updatePassword,
+  EmailAuthProvider,reauthenticateWithCredential} from "firebase/auth";
+import {addDoc,collection,deleteDoc,doc,getDoc,onSnapshot,orderBy,query,setDoc,Timestamp,updateDoc} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { fireDB } from "../firebase/FirebaseConfig";
@@ -528,47 +509,18 @@ const fetchTestimonials = async () => {
   };
 
   useEffect(() => {
-    getAllProductFunction();
-    getAllOrderFunction();
-    getAllUserFunction();
-    fetchTestimonials();
-    fetchFaqs();
+    getAllProductFunction();getAllOrderFunction();getAllUserFunction();fetchTestimonials();fetchFaqs();
     fetchQuestions();
   }, []);
 
   return (
     <MyContext.Provider
       value={{
-        loading,
-        setLoading,
-        getAllProduct,
-        getAllProductFunction,
-        getAllOrder,
-        orderDelete,
-        getAllUser,
-        updateUserRole,
-        updateUserDetails,
-        updateOrderStatus,
-        deleteUser,
-        createUser,
-        testimonials,
-        addTestimonial,
-        getAllTestimonials: testimonials,
-        deleteTestimonial,
-        updateProductStock,
-        calculateAverageRating,
-        updateUserPassword,
-        saveUserCart,
-        loadUserCart,
-        faqs,
-        setFaqs,
-        addFAQ,
-        addQuestion,
-        fetchFaqs,
-        questions,
-        setQuestions,
-        fetchQuestions,
-        updateFAQ,
+        loading,setLoading,getAllProduct,getAllProductFunction,getAllOrder,orderDelete,getAllUser,
+        updateUserRole,updateUserDetails,updateOrderStatus,deleteUser,createUser,testimonials,
+        addTestimonial,getAllTestimonials: testimonials,deleteTestimonial,updateProductStock,
+        calculateAverageRating,updateUserPassword,saveUserCart,loadUserCart,faqs,setFaqs,addFAQ,
+        addQuestion,fetchFaqs,questions,setQuestions,fetchQuestions,updateFAQ,
       }}
     >
       {children}

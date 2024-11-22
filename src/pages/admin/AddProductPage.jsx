@@ -114,19 +114,19 @@ const AddProductPage = () => {
     }));
   };
 
-  // Add debugging logs to check the category values
-  useEffect(() => {
-    console.log('Category2 List:', category2List);
-    console.log('Selected category:', product.category);
-    console.log('Available subcategories:', category2List[product.category]);
-  }, [product.category]);
+  // // Add debugging logs to check the category values
+  // useEffect(() => {
+  //   console.log('Category2 List:', category2List);
+  //   console.log('Selected category:', product.category);
+  //   console.log('Available subcategories:', category2List[product.category]);
+  // }, [product.category]);
 
-  // Add debugging logs for subcategories
-  useEffect(() => {
-    console.log('Subcategory List:', subcategoryList);
-    console.log('Selected category2:', product.category2);
-    console.log('Available sub-subcategories:', subcategoryList[product.category2]);
-  }, [product.category2]);
+  // // Add debugging logs for subcategories
+  // useEffect(() => {
+  //   console.log('Subcategory List:', subcategoryList);
+  //   console.log('Selected category2:', product.category2);
+  //   console.log('Available sub-subcategories:', subcategoryList[product.category2]);
+  // }, [product.category2]);
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
