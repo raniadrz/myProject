@@ -161,19 +161,20 @@ const fetchTestimonials = async () => {
   const getAllProductFunction = async () => {
     setLoading(true);
     try {
-      const q = query(collection(fireDB, "products"), orderBy("time"));
-      const data = onSnapshot(q, (QuerySnapshot) => {
-        let productArray = [];
-        QuerySnapshot.forEach((doc) => {
-          productArray.push({ ...doc.data(), id: doc.id });
+        const q = query(collection(fireDB, "products"), orderBy("time"));
+        const data = onSnapshot(q, (QuerySnapshot) => {
+            let productArray = [];
+            QuerySnapshot.forEach((doc) => {
+                const productData = { ...doc.data(), id: doc.id };
+                productArray.push(productData); // Include all products
+            });
+            setGetAllProduct(productArray);
+            setLoading(false);
         });
-        setGetAllProduct(productArray);
-        setLoading(false);
-      });
-      return () => data;
+        return () => data;
     } catch (error) {
-      console.log(error);
-      setLoading(false);
+        console.log(error);
+        setLoading(false);
     }
   };
 
