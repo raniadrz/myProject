@@ -5,6 +5,10 @@ import { fireDB } from "../../firebase/FirebaseConfig";
 import myContext from "../../context/myContext";
 import toast from "react-hot-toast";
 import { getAuth } from "firebase/auth";
+import { Button } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CommentIcon from '@mui/icons-material/Comment';
 import './Comments.css';
 
 const Comments = ({ productId }) => {
@@ -14,6 +18,8 @@ const Comments = ({ productId }) => {
 
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         if (!productId) {
@@ -75,30 +81,56 @@ const Comments = ({ productId }) => {
         }
     };
 
+    const nextComment = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % comments.length);
+    };
+
+    const prevComment = () => {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + comments.length) % comments.length);
+    };
+
     return (
-        <div className="comments-container">
-            <h3>Comments</h3>
-            {user ? (
-                <div className="comment-input-container">
-                    <textarea
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Write a comment..."
-                    />
-                    <button onClick={handleCommentSubmit} disabled={loading}>
-                        Submit Comment
-                    </button>
+        <div>
+            <Button onClick={() => setIsModalOpen(true)} startIcon={<CommentIcon />}>
+                {/* Removed text, using icon only */}
+            </Button>
+            {isModalOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+                        <h3>Comments</h3>
+                        {user ? (
+                            <div className="comment-input-container">
+                                <textarea
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    placeholder="Write a comment..."
+                                />
+                                <button onClick={handleCommentSubmit} disabled={loading}>
+                                    Submit Comment
+                                </button>
+                            </div>
+                        ) : (
+                            <p>You must be logged in to post a comment.</p>
+                        )}
+                        {comments.length > 0 && (
+                            <div className="comment-slider">
+                                <Button onClick={prevComment} disabled={comments.length <= 1}>
+                                    <ArrowBackIcon />
+                                </Button>
+                                <div className="comment">
+                                    <p>
+                                        <strong>{comments[currentIndex].userName}</strong>: {comments[currentIndex].text}
+                                    </p>
+                                </div>
+                                <Button onClick={nextComment} disabled={comments.length <= 1}>
+                                    <ArrowForwardIcon />
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            ) : (
-                <p>You must be logged in to post a comment.</p>
             )}
-            {comments.map((comment) => (
-                <div key={comment.id} className="comment">
-                    <p>
-                        <strong>{comment.userName}</strong>: {comment.text}
-                    </p>
-                </div>
-            ))}
         </div>
     );
 };

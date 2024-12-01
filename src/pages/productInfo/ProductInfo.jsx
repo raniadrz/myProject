@@ -103,6 +103,9 @@ const ProductInfo = () => {
                                     )}
                                 </div>
                                 <div className="product-details">
+                                    <div className="comments">
+                                        {product && <Comments productId={product.id} />}
+                                    </div>
                                     <h2 className="product-title">{product?.title}</h2>
                                     <spam className="product-code">Code: {product?.code}</spam>
                                     <p className="product-description">{product?.description}</p>
@@ -114,7 +117,7 @@ const ProductInfo = () => {
                                         <span className="category-orders">Subcategory: {product?.subcategory}</span>
                                     </p>
                                     <p className="product-price">Price: {product?.price}€</p>
-
+                                    
                                     <div className="cart-actions">
                                         {cartItems.some((p) => p.id === product.id) ? (
                                             <button
@@ -132,12 +135,13 @@ const ProductInfo = () => {
                                             </button>
                                         )}
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
                     )
                 )}
-                {product && <Comments productId={product.id} />}
+              
             </section>
         </Layout>
     );

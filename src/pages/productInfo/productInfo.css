@@ -97,7 +97,7 @@
     font-size: 16px;
     cursor: pointer;
     text-align: center;
-    width: 100%;
+    width: 20%;
 }
 
 .cart-button.add {
@@ -125,6 +125,9 @@
     justify-content: center;
     align-items: center;
     min-height: 300px;
+}
+.comments {
+    float: right; /* Aligns the comments to the right */
 }
 
 /* Media Queries for Responsiveness */
