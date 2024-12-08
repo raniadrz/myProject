@@ -18,53 +18,20 @@ const getCurrentUserId = () => {
     return auth.currentUser ? auth.currentUser.uid : null;
 };
 
-const loadCartFromLocalStorage = () => {
-    const userId = getCurrentUserId();
-    if (!userId) return []; // Return empty cart if no user is logged in
-    
-    try {
-        const storedCart = localStorage.getItem(`cart_${userId}`);
-        if (storedCart) {
-            const parsedCart = JSON.parse(storedCart);
-            return Array.isArray(parsedCart) ? parsedCart : [];
-        }
-    } catch (error) {
-        console.error("Failed to parse cart from localStorage:", error);
-    }
-    return [];
-};
+const initialState = [];
 
-const initialState = loadCartFromLocalStorage();
-
-// Helper function to ensure timestamp is serializable
-const serializeTimestamp = (timestamp) => {
-    if (typeof timestamp === 'number') {
-        return timestamp;
-    }
-    return Date.now();
-};
-
+// Create the cart slice
 export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        initializeCart: (state, action) => {
-            const userId = getCurrentUserId();
-            if (userId) {
-                const storedCart = localStorage.getItem(`cart_${userId}`);
-                return storedCart ? JSON.parse(storedCart) : [];
-            }
-            return [];
-        },
         addToCart(state, action) {
             const userId = getCurrentUserId();
-            if (!userId) return state; // Don't modify cart if no user is logged in
-
             const newItem = {
                 ...action.payload,
                 price: formatPrice(parsePrice(action.payload.price)),
                 quantity: action.payload.quantity || 1,
-                time: serializeTimestamp(action.payload.time),
+                time: Date.now(),
                 category: action.payload.category || '',
                 subcategory: action.payload.subcategory || '',
                 description: action.payload.description || '',
@@ -77,74 +44,66 @@ export const cartSlice = createSlice({
             } else {
                 state.push(newItem);
             }
-            localStorage.setItem(`cart_${userId}`, JSON.stringify(state));
-        },
-
-        deleteFromCart(state, action) {
-            const userId = getCurrentUserId();
-            if (!userId) return state;
-
-            const updatedState = state.filter(item => item.id !== action.payload.id);
-            localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedState));
-            return updatedState;
-        },
-
-        incrementQuantity(state, action) {
-            const userId = getCurrentUserId();
-            if (!userId) return state;
-
-            const existingItem = state.find(item => item.id === action.payload);
-            if (existingItem) {
-                existingItem.quantity += 1;
-                existingItem.price = formatPrice(parsePrice(existingItem.price));
+            if (userId) {
+                const cartData = {
+                    items: state,
+                    timestamp: Date.now(),
+                };
+                localStorage.setItem(`cart_${userId}`, JSON.stringify(cartData));
             }
-            localStorage.setItem(`cart_${userId}`, JSON.stringify(state));
         },
-
         decrementQuantity(state, action) {
-            const userId = getCurrentUserId();
-            if (!userId) return state;
-
-            const existingItem = state.find(item => item.id === action.payload);
-            if (existingItem && existingItem.quantity > 1) {
-                existingItem.quantity -= 1;
-                existingItem.price = formatPrice(parsePrice(existingItem.price));
+            const item = state.find(item => item.id === action.payload);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+            } else if (item) {
+                // Optionally remove the item if quantity is 1
+                const index = state.indexOf(item);
+                state.splice(index, 1);
             }
-            localStorage.setItem(`cart_${userId}`, JSON.stringify(state));
         },
-
-        clearCart(state) {
-            const userId = getCurrentUserId();
-            if (userId) {
-                localStorage.removeItem(`cart_${userId}`);
+        incrementQuantity(state, action) {
+            const item = state.find(item => item.id === action.payload);
+            if (item) {
+                item.quantity += 1; // Increment the quantity
             }
-            return [];
         },
-
+        deleteFromCart(state, action) {
+            const index = state.findIndex(item => item.id === action.payload);
+            if (index !== -1) {
+                state.splice(index, 1); // Remove the item from the cart
+            }
+        },
+        initializeCart(state, action) {
+            return action.payload; // Initialize the cart with the provided items
+        },
         orderSuccessful(state) {
-            const userId = getCurrentUserId();
-            if (userId) {
-                localStorage.removeItem(`cart_${userId}`);
-            }
-            return [];
+            // Clear the cart or perform any other action on successful order
+            return []; // Example: Clear the cart
         },
-
-        // Add this new reducer to handle user logout
-        clearCartOnLogout() {
-            return [];
-        },
+        // ... other reducers ...
     },
 });
 
-export const {
-    initializeCart,
-    addToCart,
-    deleteFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    clearCart,
-    orderSuccessful,
-    clearCartOnLogout,
-} = cartSlice.actions;
+export const loadCart = () => {
+    const userId = getCurrentUserId();
+    if (!userId) return [];
 
+    const cartData = JSON.parse(localStorage.getItem(`cart_${userId}`));
+    if (cartData) {
+        const { items, timestamp } = cartData;
+        const now = Date.now();
+        const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+        if (now - timestamp < sevenDays) {
+            return items; // Return items if within 7 days
+        } else {
+            localStorage.removeItem(`cart_${userId}`); // Remove expired cart
+        }
+    }
+    return [];
+};
+
+// Export actions and reducer
+export const { addToCart, decrementQuantity, incrementQuantity, deleteFromCart, initializeCart, orderSuccessful } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -116,7 +116,6 @@ const UserCreationForm = () => {
 
       showCustomToast('success', 'Your account has been saved');
     } catch (error) {
-      console.error("Error creating user:", error);
       
       let errorMessage;
       

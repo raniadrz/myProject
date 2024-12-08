@@ -7,15 +7,6 @@ import { ThemeProvider } from "@material-tailwind/react";
 import { Provider } from "react-redux";
 import { store } from './redux/store';
 
-// Analytics Vercel
-import { inject } from '@vercel/analytics';
-import { injectSpeedInsights } from '@vercel/speed-insights';
-
-// Call inject() outside the render method
-inject();
-
-// Speed Insights
-injectSpeedInsights();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

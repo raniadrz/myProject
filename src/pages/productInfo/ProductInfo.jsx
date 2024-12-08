@@ -37,13 +37,11 @@ const ProductInfo = () => {
                         description: productData.description,
                         title: productData.title,
                     };
-                    console.log('Fetched product data:', serializedProduct);
                     setProduct(serializedProduct);
                 } else {
                     toast.error("Product not found");
                 }
             } catch (error) {
-                console.error("Error fetching product:", error);
                 toast.error("Failed to load product");
             } finally {
                 setLoading(false);
@@ -103,6 +101,9 @@ const ProductInfo = () => {
                                     )}
                                 </div>
                                 <div className="product-details">
+                                    <div className="comments">
+                                        {product && <Comments productId={product.id} />}
+                                    </div>
                                     <h2 className="product-title">{product?.title}</h2>
                                     <spam className="product-code">Code: {product?.code}</spam>
                                     <p className="product-description">{product?.description}</p>
@@ -114,6 +115,12 @@ const ProductInfo = () => {
                                         <span className="category-orders">Subcategory: {product?.subcategory}</span>
                                     </p>
                                     <p className="product-price">Price: {product?.price}€</p>
+                                    
+                                    {product?.stock < 10 && (
+                                        <p className="product-stock-warning">
+                                            Only {product.stock} left in stock!
+                                        </p>
+                                    )}
 
                                     <div className="cart-actions">
                                         {cartItems.some((p) => p.id === product.id) ? (
@@ -132,12 +139,13 @@ const ProductInfo = () => {
                                             </button>
                                         )}
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
                     )
                 )}
-                {product && <Comments productId={product.id} />}
+              
             </section>
         </Layout>
     );

@@ -19,7 +19,7 @@ import Category from "../../components/category/Category";
 import CloseIcon from '@mui/icons-material/Close';
 import { category2List, subcategoryList } from '../../pages/admin/categoryLists';
 import noProductsFound from './404.png';
-
+import stockOutImage from './stockOut.png';
 // Create Hero Section Component
 const CategoryPage = () => {
     const { categoryname } = useParams();
@@ -74,6 +74,10 @@ const CategoryPage = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
 
     const addCart = (item) => {
+        if (item.stock === 0) {
+            toast.error("Cannot add to cart. Item is out of stock.");
+            return;
+        }
         const itemWithTime = { ...item, time: new Date().toISOString() };
         dispatch(addToCart(itemWithTime));
         toast.success("Added to cart");
@@ -236,15 +240,18 @@ const CategoryPage = () => {
                 {/* Categories Section */}
                 <Category />
 
-                {/* Updated Typography with orange, bold font and margin-bottom for gap */}
+                {/* Updated Typography with new style for the title */}
                 <Typography 
                     variant="h4" 
                     gutterBottom 
                     sx={{ 
-                        color: '#ff9800',  // Orange color
-                        fontWeight: 'bold',  // Bold font weight
-                        fontFamily: 'Arial, sans-serif',  // Custom font (you can change it to your preferred font)
-                        mb: 4  // Adds margin-bottom for a gap between the title and the grid
+                        color: '#2b58a6',  
+                        fontWeight: '600',  // Semi-bold font weight
+                        fontFamily: 'Verdana, sans-serif',  // Changed font to Verdana
+                        mb: 3,  // Adjusted margin-bottom for a smaller gap
+                        textTransform: 'uppercase',  // Uppercase text
+                        textAlign: 'left',  // Align text to the left
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',  // Shadow effect
                     }}
                 >
                     {categoryname} Products
@@ -439,7 +446,7 @@ const CategoryPage = () => {
                             }}
                         >
                             {currentProducts.map((item, index) => {
-                                const { id, title, price, productImageUrl, productType, category, category2, subcategory } = item;
+                                const { id, title, price, productImageUrl, productType, category, category2, subcategory, stock } = item;
                                 const cartItem = findCartItem(id);
 
                                 return (
@@ -450,9 +457,25 @@ const CategoryPage = () => {
                                                 display: "flex",
                                                 flexDirection: "column",
                                                 justifyContent: "space-between",
+                                                position: 'relative',
                                             }}
                                             onClick={() => navigate(`/productinfo/${id}`)}
                                         >
+                                            {/* Stock Out Image */}
+                                            {stock === 0 && (
+                                                <img
+                                                    src={stockOutImage}
+                                                    alt="Out of Stock"
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top:-20,
+                                                        left: '50%',
+                                                        transform: 'translateX(-50%)',
+                                                        width: '100px',
+                                                        height: 'auto',
+                                                    }}
+                                                />
+                                            )}
                                             <Box
                                                 sx={{
                                                     display: "flex",

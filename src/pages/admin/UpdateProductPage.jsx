@@ -76,12 +76,10 @@ const UpdateProductPage = () => {
     const getSingleProductFunction = async () => {
         setLoading(true);
         try {
-            console.log("Fetching product with ID:", id);
             const productRef = doc(fireDB, "products", id);
             const productDoc = await getDoc(productRef);
             
             if (productDoc.exists()) {
-                console.log("Product data:", productDoc.data());
                 const productData = productDoc.data();
                 setProduct({
                     title: productData.title || "",
@@ -102,12 +100,10 @@ const UpdateProductPage = () => {
                     productType: productData.productType || "New Product",
                 });
             } else {
-                console.error("Product not found with ID:", id);
                 toast.error("Product not found");
                 navigate('/admin-dashboard');
             }
         } catch (error) {
-            console.error("Error fetching product:", error);
             toast.error("Failed to fetch product data");
             navigate('/admin-dashboard');
         } finally {
@@ -131,7 +127,6 @@ const UpdateProductPage = () => {
             getAllProductFunction();
             navigate('/admin-dashboard');
         } catch (error) {
-            console.error("Error updating product:", error);
             toast.error("Failed to update product.");
         } finally {
             setLoading(false);

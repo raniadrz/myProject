@@ -92,7 +92,6 @@ const ProductDetail = () => {
       getAllProductFunction();
       showCustomToast('success', 'Product deleted successfully');
     } catch (error) {
-      console.error(error);
       showCustomToast('error', 'Error deleting product');
     } finally {
       setLoading(false);
@@ -105,7 +104,7 @@ const ProductDetail = () => {
       await updateDoc(doc(fireDB, 'products', id), {
         status: !currentStatus
       });
-      showCustomToast('success', 'Product status updated successfully');
+      showCustomToast('success', `Product status updated to ${!currentStatus ? 'active' : 'inactive'}`);
       getAllProductFunction();
     } catch (error) {
       showCustomToast('error', 'Failed to update product status');
