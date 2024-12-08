@@ -77,11 +77,9 @@ const Login = () => {
                 });
                 return () => data;
             } catch (error) {
-                console.log(error);
                 setLoading(false);
             }
         } catch (error) {
-            console.log(error);
             setLoading(false);
             toast.error("Login Failed");
         }
@@ -101,7 +99,6 @@ const Login = () => {
             setShowForgotPassword(false);
             setResetEmail("");
         } catch (error) {
-            console.log(error);
             setLoading(false);
             toast.error("Failed to send password reset email");
         }

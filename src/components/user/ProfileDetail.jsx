@@ -98,7 +98,6 @@ const ProfileDetail = () => {
             
             setOpenAvatarDialog(false);
         } catch (error) {
-            console.error('Error updating avatar:', error);
             toast.error('Failed to update avatar');
         }
     };

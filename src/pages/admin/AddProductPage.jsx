@@ -95,7 +95,6 @@ const AddProductPage = () => {
       toast.success("Product added successfully");
       navigate("/admin-dashboard");
     } catch (error) {
-      console.error("Error adding product:", error);
       toast.error("Failed to add product");
     } finally {
       setLoading(false);
@@ -113,20 +112,6 @@ const AddProductPage = () => {
       [name]: value
     }));
   };
-
-  // // Add debugging logs to check the category values
-  // useEffect(() => {
-  //   console.log('Category2 List:', category2List);
-  //   console.log('Selected category:', product.category);
-  //   console.log('Available subcategories:', category2List[product.category]);
-  // }, [product.category]);
-
-  // // Add debugging logs for subcategories
-  // useEffect(() => {
-  //   console.log('Subcategory List:', subcategoryList);
-  //   console.log('Selected category2:', product.category2);
-  //   console.log('Available sub-subcategories:', subcategoryList[product.category2]);
-  // }, [product.category2]);
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
@@ -208,7 +193,6 @@ const AddProductPage = () => {
                   placeholder="Select Category"
                   value={product.category}
                   onChange={(e, { value }) => {
-                    console.log('Selected category value:', value);
                     setProduct({
                       ...product,
                       category: value,
@@ -232,7 +216,6 @@ const AddProductPage = () => {
                   placeholder="Select Subcategory"
                   value={product.category2}
                   onChange={(e, { value }) => {
-                    console.log('Selected subcategory value:', value);
                     setProduct({
                       ...product,
                       category2: value,
@@ -257,7 +240,6 @@ const AddProductPage = () => {
                 placeholder="Select Sub-subcategory"
                 value={product.subcategory}
                 onChange={(e, { value }) => {
-                  console.log('Selected sub-subcategory value:', value);
                   setProduct({ ...product, subcategory: value });
                 }}
                 disabled={!product.category2}

@@ -30,7 +30,6 @@ const TestimonialDetail = () => {
       await deleteTestimonial(testimonialId);
       handleCloseDetailDialog();
     } catch (error) {
-      console.error(error);
     }
   };
 

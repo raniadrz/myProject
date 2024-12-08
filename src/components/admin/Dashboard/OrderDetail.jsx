@@ -79,7 +79,6 @@ const OrderDetail = () => {
       await orderDelete(orderId);
       handleCloseDetailDialog();
     } catch (error) {
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -96,7 +95,6 @@ const OrderDetail = () => {
       await updateOrderStatus(orderId, newStatus); // Save the new status to Firebase
       setEditStatusId(null); // Close the dropdown (back to text)
     } catch (error) {
-      console.error("Error updating status: ", error);
     } finally {
       setLoading(false);
     }

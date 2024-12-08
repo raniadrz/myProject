@@ -221,6 +221,9 @@
 .separator {
     color: #666;
 }
+.product-stock-warning{
+    color:#dc3545;
+}
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {

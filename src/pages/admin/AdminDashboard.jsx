@@ -105,7 +105,6 @@ const AdminDashboard = () => {
             setDailyStats(statsArray);
             setIsLoading(false);
         } catch (error) {
-            console.error('Error processing stats:', error);
             setIsLoading(false);
         }
     }, [getAllOrder, getAllProduct]);

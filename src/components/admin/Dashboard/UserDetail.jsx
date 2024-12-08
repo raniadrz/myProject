@@ -125,7 +125,6 @@ const UserDetail = () => {
             handleCloseRoleDialog();
             toast.success(`Role updated successfully to ${selectedRole}`);
         } catch (error) {
-            console.error('Error updating role:', error);
             toast.error('Failed to update role');
         }
     };
@@ -165,7 +164,6 @@ const UserDetail = () => {
             toast.success('User deleted successfully');
             
         } catch (error) {
-            console.error('Error deleting user:', error);
             toast.error('Failed to delete user');
         }
     };

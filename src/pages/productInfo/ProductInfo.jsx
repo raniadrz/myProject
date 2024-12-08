@@ -37,13 +37,11 @@ const ProductInfo = () => {
                         description: productData.description,
                         title: productData.title,
                     };
-                    console.log('Fetched product data:', serializedProduct);
                     setProduct(serializedProduct);
                 } else {
                     toast.error("Product not found");
                 }
             } catch (error) {
-                console.error("Error fetching product:", error);
                 toast.error("Failed to load product");
             } finally {
                 setLoading(false);
@@ -118,6 +116,12 @@ const ProductInfo = () => {
                                     </p>
                                     <p className="product-price">Price: {product?.price}€</p>
                                     
+                                    {product?.stock < 10 && (
+                                        <p className="product-stock-warning">
+                                            Only {product.stock} left in stock!
+                                        </p>
+                                    )}
+
                                     <div className="cart-actions">
                                         {cartItems.some((p) => p.id === product.id) ? (
                                             <button

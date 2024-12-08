@@ -21,10 +21,6 @@ function FAQDetail() {
 
   // Filter FAQs and use questions directly
   const adminFaqs = faqs.filter(item => item.type === 'faq');
-  
-  console.log("All FAQs:", faqs);
-  console.log("Admin FAQs:", adminFaqs);
-  console.log("User Questions:", questions);
 
   const handleReply = async (question) => {
     setCurrentItem({
@@ -86,7 +82,6 @@ function FAQDetail() {
       setShowModal(false);
       resetForm();
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
       toast.error("Operation failed");
     }
   };
@@ -171,7 +166,6 @@ function FAQDetail() {
                                 await deleteDoc(doc(fireDB, "faqs", faq.id));
                                 toast.success("FAQ deleted successfully");
                               } catch (error) {
-                                console.error("Error deleting FAQ:", error);
                                 toast.error("Failed to delete FAQ");
                               }
                             }}

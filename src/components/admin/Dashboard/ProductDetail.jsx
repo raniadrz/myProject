@@ -92,7 +92,6 @@ const ProductDetail = () => {
       getAllProductFunction();
       showCustomToast('success', 'Product deleted successfully');
     } catch (error) {
-      console.error(error);
       showCustomToast('error', 'Error deleting product');
     } finally {
       setLoading(false);

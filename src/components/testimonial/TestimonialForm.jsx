@@ -37,7 +37,6 @@ const TestimonialForm = ({ open, onClose }) => {
                         setUserName(userDoc.data().name);
                     }
                 } catch (error) {
-                    console.error("Error fetching user name:", error);
                 }
             }
         };

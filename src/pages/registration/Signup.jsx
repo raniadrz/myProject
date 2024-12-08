@@ -197,7 +197,6 @@ const Signup = () => {
             setLoading(false);
             navigate('/login');
         } catch (error) {
-            console.error(error);
             setLoading(false);
             toast.error("Signup failed. Please try again.");
         }

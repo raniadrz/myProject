@@ -74,7 +74,6 @@ const Comments = ({ productId }) => {
             setNewComment("");
             toast.success("Comment added successfully!");
         } catch (error) {
-            console.error("Error adding comment: ", error);
             toast.error("Failed to add comment");
         } finally {
             setLoading(false);

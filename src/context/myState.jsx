@@ -58,19 +58,10 @@ const addTestimonial = async (testimonialData) => {
       country: 'GR',
       role: userData?.role || 'user' // Include user role
     };
-    
-
-    console.log("Current user data:", {
-      firestoreData: userData,
-      authData: currentUser,
-      finalName: userName
-    });
-
     await addDoc(collection(fireDB, "testimonials"), testimonialToSave);
     toast.success("Testimonial added successfully");
     fetchTestimonials();
   } catch (error) {
-    console.error("Error adding testimonial:", error);
     toast.error("Failed to add testimonial");
   } finally {
     setLoading(false);
@@ -92,7 +83,6 @@ const fetchTestimonials = async () => {
     });
     return () => data();
   } catch (error) {
-    console.log(error);
     setLoading(false);
   }
 };
@@ -105,7 +95,6 @@ const fetchTestimonials = async () => {
       toast.success("Testimonial deleted successfully");
       fetchTestimonials(); // Refresh the list after deletion
     } catch (error) {
-      console.error("Error deleting testimonial: ", error);
       toast.error("Failed to delete testimonial");
     } finally {
       setLoading(false);
@@ -150,7 +139,6 @@ const fetchTestimonials = async () => {
 
         toast.success("Profile updated successfully!");
     } catch (error) {
-        console.error("Error updating user details:", error);
         toast.error("Error updating profile");
     } finally {
         setLoading(false);
@@ -173,7 +161,6 @@ const fetchTestimonials = async () => {
         });
         return () => data;
     } catch (error) {
-        console.log(error);
         setLoading(false);
     }
   };
@@ -193,7 +180,6 @@ const fetchTestimonials = async () => {
       });
       return () => data;
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -207,7 +193,6 @@ const fetchTestimonials = async () => {
       getAllOrderFunction();
       setLoading(false);
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -227,7 +212,6 @@ const fetchTestimonials = async () => {
       });
       return () => data;
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -246,7 +230,6 @@ const fetchTestimonials = async () => {
         toast.success(`Role updated to ${newRole}`);
         getAllUserFunction(); // Refresh the users list
     } catch (error) {
-        console.error("Error updating role: ", error);
         toast.error("Failed to update role");
     } finally {
         setLoading(false);
@@ -264,7 +247,6 @@ const fetchTestimonials = async () => {
       toast.success("Order status updated successfully");
       getAllOrderFunction();
     } catch (error) {
-      console.error("Error updating order status: ", error);
       toast.error("Failed to update order status");
     } finally {
       setLoading(false);
@@ -289,7 +271,6 @@ const fetchTestimonials = async () => {
       toast.success("User deleted successfully");
       getAllUserFunction();
     } catch (error) {
-      console.error("Error deleting user: ", error);
       toast.error("Failed to delete user");
     } finally {
       setLoading(false);
@@ -319,12 +300,10 @@ const fetchTestimonials = async () => {
       };
 
       await setDoc(userDocRef, userData);
-      console.log("User created with data:", userData);
 
       toast.success("Registration Successful");
       getAllUserFunction();
     } catch (error) {
-      console.error("Error in createUser:", error);
       toast.error("Registration Failed");
     } finally {
       setLoading(false);
@@ -342,7 +321,6 @@ const fetchTestimonials = async () => {
       toast.success("Stock updated successfully");
       getAllProductFunction();
     } catch (error) {
-      console.error("Error updating stock:", error);
       toast.error("Failed to update stock");
     } finally {
       setLoading(false);
@@ -368,7 +346,6 @@ const fetchTestimonials = async () => {
       
       toast.success("Password updated successfully");
     } catch (error) {
-      console.error("Error updating password: ", error);
       if (error.code === 'auth/wrong-password') {
         toast.error("Current password is incorrect");
       } else {
@@ -388,7 +365,6 @@ const fetchTestimonials = async () => {
         updatedAt: Timestamp.now()
       });
     } catch (error) {
-      console.error("Error saving cart:", error);
     }
   };
 
@@ -401,7 +377,6 @@ const fetchTestimonials = async () => {
       }
       return [];
     } catch (error) {
-      console.error("Error loading cart:", error);
       return [];
     }
   };
@@ -420,13 +395,11 @@ const fetchTestimonials = async () => {
             status: doc.data().status || 'published'
           });
         });
-        console.log("Fetched FAQs:", faqArray);
         setFaqs(faqArray);
         setLoading(false);
       });
       return () => unsubscribe();
     } catch (error) {
-      console.error("Error fetching FAQs:", error);
       setLoading(false);
     }
   };
@@ -441,7 +414,6 @@ const fetchTestimonials = async () => {
       });
       toast.success("FAQ added successfully");
     } catch (error) {
-      console.error(error);
       toast.error("Failed to add FAQ");
     }
   };
@@ -457,10 +429,8 @@ const fetchTestimonials = async () => {
         subject: questionData.subject,
         message: questionData.message
       });
-      console.log("Question added with ID:", docRef.id);
       toast.success("Question submitted successfully");
     } catch (error) {
-      console.error("Error adding question:", error);
       toast.error("Failed to submit question");
     }
   };
@@ -479,13 +449,11 @@ const fetchTestimonials = async () => {
             status: doc.data().status || 'pending'
           });
         });
-        console.log("Fetched Questions:", questionsArray);
         setQuestions(questionsArray);
         setLoading(false);
       });
       return () => unsubscribe();
     } catch (error) {
-      console.error("Error fetching questions:", error);
       setLoading(false);
     }
   };
@@ -502,7 +470,6 @@ const fetchTestimonials = async () => {
       toast.success("FAQ updated successfully");
       fetchFaqs(); // Refresh the FAQs list
     } catch (error) {
-      console.error("Error updating FAQ:", error);
       toast.error("Failed to update FAQ");
     } finally {
       setLoading(false);

@@ -14,6 +14,7 @@ import myContext from "../../context/myContext";
 import Layout from "../layout/Layout";
 import { addToCart, incrementQuantity, decrementQuantity, deleteFromCart } from '../../redux/cartSlice';
 import "./HomePageProductCard.css";
+import OutOfStockImage from '../../pages/category/stockOut.png';
 
 const HomePageProductCard = () => {
     const navigate = useNavigate();
@@ -25,6 +26,10 @@ const HomePageProductCard = () => {
     const cartItems = useSelector((state) => state.cart);
 
     const addCart = (item) => {
+        if (item.stock === 0) {
+            toast.error("Cannot add to cart. Item is out of stock.");
+            return;
+        }
         const itemWithTime = { ...item, time: new Date().toISOString() };
         dispatch(addToCart(itemWithTime));
         toast.success("Added to cart");
@@ -81,7 +86,7 @@ const HomePageProductCard = () => {
             >
                 <Category />
                 {getAllProduct.slice(0, 12).map((item, index) => {
-                    const { id, title, price, productImageUrl, productType } = item;
+                    const { id, title, price, productImageUrl, productType, stock } = item;
                     const cartItem = findCartItem(id); // Find the item in the cart
 
                     return (
@@ -96,17 +101,31 @@ const HomePageProductCard = () => {
                                 onClick={() => navigate(`/productinfo/${id}`)}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
-                                    <CardMedia
-                                        component="img"
-                                        image={productImageUrl}
-                                        alt="product"
-                                        sx={{ 
-                                            width: 'auto',
-                                            maxHeight: '100%',
-                                            maxWidth: '100%',
-                                            objectFit: 'contain',
-                                        }}
-                                    />
+                                    {stock === 0 ? (
+                                        <CardMedia
+                                            component="img"
+                                            image={OutOfStockImage}
+                                            alt="Out of Stock"
+                                            sx={{ 
+                                                width: 'auto',
+                                                maxHeight: '100%',
+                                                maxWidth: '100%',
+                                                objectFit: 'contain',
+                                            }}
+                                        />
+                                    ) : (
+                                        <CardMedia
+                                            component="img"
+                                            image={productImageUrl}
+                                            alt="product"
+                                            sx={{ 
+                                                width: 'auto',
+                                                maxHeight: '100%',
+                                                maxWidth: '100%',
+                                                objectFit: 'contain',
+                                            }}
+                                        />
+                                    )}
                                 </Box>
                                 <CardContent sx={{ flexGrow: 1 }}>
                                     <Typography variant="h6" component="div">

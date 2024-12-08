@@ -53,7 +53,6 @@ const Newsletter = () => {
         setSubscriberDocId(null);
       }
     } catch (error) {
-      console.error("Error checking subscription status:", error);
     }
   };
 
@@ -73,7 +72,6 @@ const Newsletter = () => {
       }
       return false;
     } catch (error) {
-      console.error("Error checking email subscription:", error);
       return false;
     }
   };
@@ -139,7 +137,6 @@ const Newsletter = () => {
       setEmail('');
       setIsSubscribed(true);
     } catch (error) {
-      console.error('Error subscribing to newsletter:', error);
       toast.error('Failed to subscribe. Please try again.');
     } finally {
       setLoading(false);
@@ -163,7 +160,6 @@ const Newsletter = () => {
       setIsSubscribed(false);
       setSubscriberDocId(null);
     } catch (error) {
-      console.error('Error unsubscribing from newsletter:', error);
       toast.error('Failed to unsubscribe. Please try again.');
     } finally {
       setLoading(false);

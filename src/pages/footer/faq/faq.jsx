@@ -50,7 +50,6 @@ function FAQ() {
       setQuestion({ email: '', subject: '', message: '' });
       setShowAskForm(false);
     } catch (error) {
-      console.error("Error submitting question:", error);
       toast.error("Failed to submit question");
     }
   };

@@ -70,7 +70,6 @@ const CartPage = () => {
     const cartTotal = cartItems.reduce((total, item) => {
         const price = parseFloat(item.price);
         if (isNaN(price)) {
-            console.error(`Invalid price for item ${item.title}: ${item.price}`);
             return total;
         }
         return total + price * item.quantity;
@@ -79,9 +78,7 @@ const CartPage = () => {
     const shippingCost = cartTotal >= 50 ? 0 : 4;
     const totalAmount = (Math.round((parseFloat(cartTotal) + shippingCost) * 100) / 100).toFixed(2);
     
-    console.log(`Cart Total: ${cartTotal}€`);
-    console.log(`Shipping Cost: ${shippingCost}€`);
-    console.log(`Total Amount: ${totalAmount}€`);
+   
     
 
     // Buy Now Function
@@ -116,10 +113,8 @@ const CartPage = () => {
     
         emailjs.send('service_4pq7vdd', 'template_1unb31r', templateParams, 'MLiyOAD--CSZFqkQm')
             .then((response) => {
-                console.log('Email sent successfully:', response);
             })
             .catch((error) => {
-                console.error('Error sending email:', error);
             });
     };
 
@@ -179,7 +174,6 @@ const CartPage = () => {
             dispatch(orderSuccessful()); // Clear the cart after placing the order
             toast.success("Order Placed Successfully");
         } catch (error) {
-            console.log(error);
             toast.error("Failed to place order. Please try again.");
         }
     };
