@@ -65,10 +65,13 @@ const HomePageProductCard = () => {
                 variant="h4" 
                 gutterBottom 
                 sx={{ 
-                    color: '#ff9800',  // Orange color
-                    fontWeight: 'bold',  // Bold font weight
-                    fontFamily: 'Arial, sans-serif',  // Custom font (you can change it to your preferred font)
-                    mb: 4  // Adds margin-bottom for a gap between the title and the grid
+                    color: '#2b58a6',  
+                    fontWeight: '600',  // Semi-bold font weight
+                    fontFamily: 'Verdana, sans-serif',  // Changed font to Verdana
+                    mb: 3,  // Adjusted margin-bottom for a smaller gap
+                    textTransform: 'uppercase',  // Uppercase text
+                    textAlign: 'left',  // Align text to the left
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',  // Shadow effect
                 }}
             >
                 Bestselling Products
