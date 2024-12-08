@@ -62,7 +62,7 @@ const HomePage = () => {
       <section className="hero-section">
         <div className="hero-content">
           <h1>The best place to get your favorite pet without any doubt</h1>
-          <p>Lorem ipsum dolor sit amet consectetur. At pellen tesque neque semper odio massa.</p>
+          <p>At Pet Paradise, we offer essentials to keep your pets happy, healthy, and loved.</p>
           <button 
             className="get-started-btn"
             onClick={handleGetStarted}

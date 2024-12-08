@@ -22,7 +22,6 @@ import { ProtectedRouteForAdmin } from "./protectedRoute/ProtectedRouteForAdmin"
 import { ProtectedRouteForUser } from "./protectedRoute/ProtectedRouteForUser";
 import AddProduct from "./pages/admin/AddProductPage";
 import UserSettings from './components/user/ProfileDetail';
-import About from "./pages/footer/about/About";
 import Contact from "./pages/footer/contact/Contact";
 import PPolicy from "./pages/footer/privacyPolicy/privacyPolicy";
 import ReturnPolicy from './pages/footer/returnPolicy/ReturnPolicy';
@@ -65,7 +64,6 @@ function App() {
           <Route path="/refund-policy" element={<ReturnPolicy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/about" element={<About />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/productinfo/:id" element={<ProductInfo />} />
           <Route path="/cart" element={<CartPage isDialog={false} />} />

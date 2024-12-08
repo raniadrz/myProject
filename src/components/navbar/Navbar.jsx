@@ -20,14 +20,30 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../navbar/logo.png';
 import './Navbar.css'; // Custom CSS file
 
 const Navbar = () => {
-  const user = JSON.parse(localStorage.getItem('users'));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const data = localStorage.getItem('users'); // Fetching from local storage
+
+    if (data) {
+      try {
+        const parsedData = JSON.parse(data); // Attempt to parse the data
+        setUser(parsedData); // Set the user state if parsing is successful
+      } catch (error) {
+        console.error("Failed to parse JSON:", error); // Log parsing errors
+      }
+    } else {
+      console.error("Data is undefined, cannot parse JSON."); // Log if data is not found
+    }
+  }, []);
+
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart);
   const [drawerOpen, setDrawerOpen] = useState(true);
