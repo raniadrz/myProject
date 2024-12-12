@@ -7,11 +7,16 @@ import Layout from "../../components/layout/Layout";
 import Loader from "../../components/loader/Loader";
 import myContext from "../../context/myContext";
 import { fireDB } from "../../firebase/FirebaseConfig";
-import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+import { addToCart, deleteFromCart, incrementQuantity, decrementQuantity } from "../../redux/cartSlice";
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import Comments from "../../components/comments/Comments";
 import './productInfo.css';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Box, IconButton, Typography, Button } from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ProductInfo = () => {
     const { loading, setLoading } = useContext(myContext);
@@ -66,8 +71,16 @@ const ProductInfo = () => {
     };
 
     const handleDeleteFromCart = (item) => {
-        dispatch(deleteFromCart(item));
+        dispatch(deleteFromCart(item.id));
         toast.success("Deleted from cart");
+    };
+
+    const increaseQuantity = (id) => {
+        dispatch(incrementQuantity(id));
+    };
+
+    const decreaseQuantity = (id) => {
+        dispatch(decrementQuantity(id));
     };
 
     return (
@@ -105,7 +118,7 @@ const ProductInfo = () => {
                                         {product && <Comments productId={product.id} />}
                                     </div>
                                     <h2 className="product-title">{product?.title}</h2>
-                                    <spam className="product-code">Code: {product?.code}</spam>
+                                    <span className="product-code">Code: {product?.code}</span>
                                     <p className="product-description">{product?.description}</p>
                                     <p className="product-category">
                                         <span className="category-admin">Race: {product?.category}</span>
@@ -124,19 +137,38 @@ const ProductInfo = () => {
 
                                     <div className="cart-actions">
                                         {cartItems.some((p) => p.id === product.id) ? (
-                                            <button
-                                                onClick={() => handleDeleteFromCart(product)}
-                                                className="cart-button delete"
-                                            >
-                                                Delete from cart
-                                            </button>
+                                            <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                                                <Box display="flex" alignItems="center">
+                                                    <IconButton onClick={() => decreaseQuantity(product.id)} size="small" disabled={cartItems.find(p => p.id === product.id).quantity <= 1}>
+                                                        <RemoveIcon />
+                                                    </IconButton>
+                                                    <Typography variant="body1" sx={{ mx: 2 }}>
+                                                        {cartItems.find(p => p.id === product.id).quantity}
+                                                    </Typography>
+                                                    <IconButton onClick={() => increaseQuantity(product.id)} size="small">
+                                                        <AddIcon />
+                                                    </IconButton>
+                                                </Box>
+                                                <Button
+                                                    onClick={() => handleDeleteFromCart(product)}
+                                                    variant="outlined"
+                                                    color="error"
+                                                    startIcon={<DeleteIcon />}
+                                                    fullWidth
+                                                >
+                                                    Delete From Cart
+                                                </Button>
+                                            </Box>
                                         ) : (
-                                            <button
-                                                onClick={() => handleAddToCart(product)}
-                                                className="cart-button add"
-                                            >
-                                                Add to cart
-                                            </button>
+                                            <Button
+                                            onClick={() => handleAddToCart(product)}
+                                            variant="outlined"
+                                            className="cart-button add"
+                                            startIcon={<ShoppingCartIcon />}
+                                        >
+                                            Add to cart
+                                        </Button>
+                                        
                                         )}
                                     </div>
                                     

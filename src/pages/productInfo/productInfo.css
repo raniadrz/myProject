@@ -90,25 +90,45 @@
 .cart-actions {
     margin-top: 24px;
 }
-
+/* General button styling */
 .cart-button {
     padding: 12px 20px;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     text-align: center;
-    width: 20%;
+    width: 100%;
+    text-transform: none; /* Disable uppercase text transformation in Material-UI */
 }
 
+/* Styling for 'add to cart' button */
 .cart-button.add {
-    background-color: #007bff;
-    color: #fff;
+    color: #007bff;
     border: 1px solid #007bff;
+    background-color: transparent;
+    transition: all 0.3s ease;
 }
 
 .cart-button.add:hover {
-    background-color: #0056b3;
+    background-color: #c9ddf3;
+    color: #000000;
 }
+
+/* Material-UI button specific overrides */
+.MuiButton-root.cart-button.add {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    width: 100%;
+    border: 1px solid #007bff;
+    color: #007bff;
+}
+
+.MuiButton-root.cart-button.add:hover {
+    background-color: #c9ddf3;
+    color: #000000;
+}
+
 
 .cart-button.delete {
     background-color: #ff4757;
@@ -130,7 +150,6 @@
     float: right; /* Aligns the comments to the right */
 }
 
-/* Media Queries for Responsiveness */
 
 /* Mobile Devices */
 @media (max-width: 768px) {

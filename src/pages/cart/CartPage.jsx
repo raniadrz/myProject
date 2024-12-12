@@ -242,7 +242,7 @@ const CartPage = () => {
                                                             </button>
                                                         </div>
                                                         <div className="ml-6 flex text-sm">
-                                                            <button onClick={() => deleteCart(item)} type="button" className="flex items-center space-x-1 px-2 py-1 pl-0">
+                                                            <button onClick={() => deleteCart(item.id)} type="button" className="flex items-center space-x-1 px-2 py-1 pl-0">
                                                                 <Trash size={12} className="text-red-500" />
                                                                 <span className="text-xs font-medium text-red-500">Remove</span>
                                                             </button>
