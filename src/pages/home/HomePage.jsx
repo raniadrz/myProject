@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import Category from "../../components/category/Category";
 import HomePageProductCard from "../../components/homePageProductCard/HomePageProductCard";
 import Layout from "../../components/layout/Layout";
 import SearchByTitle from "../../components/searchBar/SearchBar";
 import Testimonial from "../../components/testimonial/Testimonial";
 import "./HomePage.css";
-import toast from "react-hot-toast";
-import { Toaster } from 'react-hot-toast';
 import pet2 from './photos/pet.png';
 import pet1 from './photos/pet2.png';
 import pet3 from './photos/pet3.png';
@@ -50,14 +47,7 @@ const HomePage = () => {
   };
 
   return (
-    <Layout>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          duration: 1500,
-        }}
-      />
-      
+    <Layout>  
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">

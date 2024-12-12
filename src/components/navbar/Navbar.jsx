@@ -37,7 +37,7 @@ const Navbar = () => {
         const parsedData = JSON.parse(data); // Attempt to parse the data
         setUser(parsedData); // Set the user state if parsing is successful
       } catch (error) {
-        console.error("Failed to parse JSON:", error); // Log parsing errors
+        // console.error("Failed to parse JSON:", error); // Log parsing errors
       }
     } else {
       console.error("Data is undefined, cannot parse JSON."); // Log if data is not found

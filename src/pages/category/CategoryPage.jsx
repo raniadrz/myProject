@@ -84,7 +84,7 @@ const CategoryPage = () => {
     };
 
     const deleteCart = (item) => {
-        dispatch(deleteFromCart(item));
+        dispatch(deleteFromCart(item.id));
         toast.success("Deleted from cart");
     };
 
@@ -170,7 +170,7 @@ const CategoryPage = () => {
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
                 {priceRange[0] !== 0 || priceRange[1] !== 1000 ? (
                     <Chip
-                        label={`Price: ${priceRange[0]}€ - ${priceRange[1]}€`}
+                        label={`Price: ${priceRange[0]}€ - ${priceRange[1]}��`}
                         onDelete={() => handleRemoveFilter('price')}
                         sx={{
                             bgcolor: '#f5f5f5',
@@ -567,7 +567,7 @@ const CategoryPage = () => {
                                                         <Button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                deleteCart(item);
+                                                                deleteCart(cartItem);
                                                             }}
                                                             variant="outlined"
                                                             color="error"
