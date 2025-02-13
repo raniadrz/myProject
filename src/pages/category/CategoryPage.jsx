@@ -56,22 +56,17 @@ const CategoryPage = () => {
     }, [getAllProduct]);
 
     // Filter products based on selected filters
-    useEffect(() => {
-        const filtered = getAllProduct.filter((product) => {
-            return (
-                product.category.includes(categoryname) &&
-                product.price >= priceRange[0] &&
-                product.price <= priceRange[1] &&
-                (!selectedCategory || product.category === selectedCategory) &&
-                (!selectedCategory2 || product.category2 === selectedCategory2) &&
-                (!selectedSubcategory || product.subcategory === selectedSubcategory)
-            );
-        });
-        setFilteredProducts(filtered);
-        setCurrentPage(1);  // Reset to first page after applying a new filter
-    }, [getAllProduct, categoryname, priceRange, selectedCategory, selectedCategory2, selectedSubcategory]);
-
-    const [filteredProducts, setFilteredProducts] = useState([]);
+    const filteredProducts = getAllProduct.filter((product) => {
+        return (
+            product.category.includes(categoryname) &&
+            product.price >= priceRange[0] &&
+            product.price <= priceRange[1] &&
+            (!selectedCategory || product.category === selectedCategory) &&
+            (!selectedCategory2 || product.category2 === selectedCategory2) &&
+            (!selectedSubcategory || product.subcategory === selectedSubcategory) &&
+            product.status
+        );
+    });
 
     const addCart = (item) => {
         if (item.stock === 0) {
@@ -170,7 +165,7 @@ const CategoryPage = () => {
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
                 {priceRange[0] !== 0 || priceRange[1] !== 1000 ? (
                     <Chip
-                        label={`Price: ${priceRange[0]}€ - ${priceRange[1]}��`}
+                        label={`Price: ${priceRange[0]}€ - ${priceRange[1]}€`}
                         onDelete={() => handleRemoveFilter('price')}
                         sx={{
                             bgcolor: '#f5f5f5',

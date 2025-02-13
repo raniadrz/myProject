@@ -60,6 +60,9 @@ function FAQDetail() {
         ));
 
         toast.success("Question answered successfully");
+
+        // Open email app to notify the user
+        openEmailApp(currentItem.email, currentItem.answer);
       } else if (editMode) {
         // Handle FAQ edit
         await context.updateFAQ(currentItem.id, {
@@ -69,6 +72,9 @@ function FAQDetail() {
           type: 'faq'
         });
         toast.success("FAQ updated successfully");
+
+        // Send second email notification after FAQ update
+        openEmailApp(currentItem.email, currentItem.answer, true);
       } else {
         // Handle new FAQ
         await context.addFAQ({
@@ -94,6 +100,14 @@ function FAQDetail() {
       type: 'faq'
     });
     setEditMode(false);
+  };
+
+  const openEmailApp = (userEmail, answer, isEdit = false) => {
+    const subject = isEdit ? encodeURIComponent('Your question has been updated 🩵') : encodeURIComponent('Your Question has been Answered 🩵');
+    const body = isEdit 
+      ? encodeURIComponent(`Dear Customer,\n\nYour question has been updated: ${answer}\n\nKind Regards,\nTeam Pet Paradise 🩵`) 
+      : encodeURIComponent(`Dear Customer,\n\nYour question has been answered: ${answer}\n\nKind Regards,\nTeam Pet Paradise 🩵`);
+    window.open(`mailto:${userEmail}?subject=${subject}&body=${body}`);
   };
 
   return (
