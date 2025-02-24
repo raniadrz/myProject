@@ -4,39 +4,36 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Grid, MenuItem, Select } from '@mui/material';
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Grid, MenuItem, Select, Button } from '@mui/material';
 import myContext from "../../../context/myContext";
 import Loader from "../../loader/Loader";
 import { styled } from '@mui/material/styles';
-
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     borderRadius: '10px',
     padding: theme.spacing(2),
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f9f9f9',
   },
 }));
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   '& .MuiDataGrid-root': {
-    backgroundColor: '#f0f4f8',
-    border: '1px solid #1976d2',
+    backgroundColor: '#f0f8ff',
+    border: '1px solid rgb(241, 208, 241)',
+    overflowX: 'auto',
   },
   '& .MuiDataGrid-columnHeaders': {
-    backgroundColor: '#1976d2',
     textAlign: 'center',
     fontSize: '1.1rem',
   },
   '& .MuiDataGrid-columnHeaderTitle': {
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#010103',
   },
   '& .MuiDataGrid-row': {
-    '&:nth-of-type(odd)': {
-      backgroundColor: '#e3f2fd',
-    },
+   
     '&:hover': {
-      backgroundColor: '#d1e7fd',
+      backgroundColor: '#f1d1fd',
     },
   },
 }));
@@ -49,6 +46,7 @@ const OrderDetail = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editStatusId, setEditStatusId] = useState(null); // Track which row's status is being edited
   const [tempStatus, setTempStatus] = useState(null); // Store temporary status during editing
+  const [page, setPage] = useState(1); // State for pagination
 
   // Possible order statuses
   const orderStatuses = [
@@ -59,6 +57,33 @@ const OrderDetail = () => {
     "Delivered",
     "Cancelled"
   ];
+
+  // Format the date
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+    if (date.toDate) return date.toDate().toLocaleDateString('en-GB');
+    return new Date(date).toLocaleDateString('en-GB');
+  };
+
+  // Render rows for DataGrid
+  const rows = getAllOrder.map((order, index) => ({
+    id: order.id,
+    status: order.status,
+    serial: index + 1,
+    name: order.addressInfo?.name || "N/A",
+    mobileNumber: order.addressInfo?.mobileNumber || "N/A",
+    email: order.email || "N/A",
+    date: formatDate(order.date),
+    totalItems: order.cartItems.length,
+    totalPrice: order.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    paymentMethod: order.paymentMethod || "N/A",
+    order, // Pass full order object for dialog
+  }));
+
+  const usersPerPage = 15; // Define how many orders to show per page
+  const totalPages = Math.ceil(rows.length / usersPerPage); // Calculate total pages
+  const startIndex = (page - 1) * usersPerPage; // Calculate start index
+  const endIndex = startIndex + usersPerPage; // Calculate end index
 
   // Open the dialog to show order details
   const handleClickOpenDetailDialog = (order) => {
@@ -99,28 +124,6 @@ const OrderDetail = () => {
       setLoading(false);
     }
   };
-
-  // Format the date
-  const formatDate = (date) => {
-    if (!date) return "N/A";
-    if (date.toDate) return date.toDate().toLocaleString('en-GB');
-    return new Date(date).toLocaleString('en-GB');
-  };
-
-  // Render rows for DataGrid
-  const rows = getAllOrder.map((order, index) => ({
-    id: order.id,
-    status: order.status,
-    serial: index + 1,
-    name: order.addressInfo?.name || "N/A",
-    mobileNumber: order.addressInfo?.mobileNumber || "N/A",
-    email: order.email || "N/A",
-    date: formatDate(order.date),
-    totalItems: order.cartItems.length,
-    totalPrice: order.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    paymentMethod: order.paymentMethod || "N/A",
-    order, // Pass full order object for dialog
-  }));
 
   // DataGrid columns
   const columns = [
@@ -171,30 +174,72 @@ const OrderDetail = () => {
   ];
 
   return (
-    <div style={{ height: '80vh' }}>
-      <div className="py-5 flex justify-between items-center">
-        <h1 className="text-xl text-blue-600 font-bold">All Orders</h1>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold mb-1">All Orders</h1>
+        <p className="text-gray-500">Manage and view all orders here.</p>
       </div>
 
       <div className="flex justify-center relative top-20">
         {loading && <Loader />}
       </div>
 
-      <div className="w-full mb-5" style={{ height: 400, width: '100%' }}>
-        <StyledDataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
-          disableSelectionOnClick
-        />
+      <div className="bg-white rounded-lg shadow">
+        <div className="w-full mb-5" style={{ height: 'auto', maxHeight: '400px', overflowY: 'auto' }}>
+          <StyledDataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={usersPerPage}
+            rowsPerPageOptions={[usersPerPage]}
+            disableSelectionOnClick
+          />
+        </div>
+
+        {rows.length > 0 && (
+          <div className="flex justify-between items-center p-4 border-t">
+            <div className="text-sm text-gray-500">
+              Showing {startIndex + 1} to {Math.min(endIndex, rows.length)} of {rows.length} orders
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                variant="outlined"
+                className={`px-3 py-1 rounded ${page === 1 ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-700'}`}
+              >
+                Previous
+              </Button>
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNumber = index + 1;
+                return (
+                  <Button
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    variant={page === pageNumber ? 'contained' : 'outlined'}
+                    className={`px-3 py-1 rounded ${page === pageNumber ? 'bg-gray-100 text-gray-700 font-medium' : 'hover:bg-gray-50 text-gray-600'}`}
+                  >
+                    {pageNumber}
+                  </Button>
+                );
+              })}
+              <Button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                variant="outlined"
+                className={`px-3 py-1 rounded ${page === totalPages ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-700'}`}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <StyledDialog
         open={openDetailDialog}
         onClose={handleCloseDetailDialog}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
         <DialogTitle sx={{ backgroundColor: '#e3f2fd' }}>Order Details</DialogTitle>
         <DialogContent id="printable-content">

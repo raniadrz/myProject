@@ -2,7 +2,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
 import Loader from "../../components/loader/Loader";
 import myContext from "../../context/myContext";
@@ -17,6 +17,7 @@ import { Box, IconButton, Typography, Button } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import the ArrowBack icon
 
 const ProductInfo = () => {
     const { loading, setLoading } = useContext(myContext);
@@ -24,6 +25,7 @@ const ProductInfo = () => {
     const { id } = useParams();
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -57,6 +59,10 @@ const ProductInfo = () => {
     }, [id, setLoading]);
 
     const handleAddToCart = (item) => {
+        if (item.stock === 0) { // Check if the item is out of stock
+            toast.error("Cannot add to cart. Item is out of stock."); // Show alert
+            return; // Exit the function
+        }
         const serializableItem = {
             ...item,
             time: Date.now(),
@@ -93,6 +99,14 @@ const ProductInfo = () => {
                 ) : (
                     product && (
                         <div className="product-info-container">
+                            <Button
+                                onClick={() => navigate(-1)}
+                                variant="outlined"
+                                className="back-button"
+                                sx={{ margin: '10px' }}
+                            >
+                                <ArrowBackIcon style={{ width: '30px', height: '30px' }} /> {/* Use the ArrowBack icon */}
+                            </Button>
                             <div className="product-info-flex">
                                 <div className="product-image-container">
                                     <img
@@ -179,6 +193,7 @@ const ProductInfo = () => {
                 )}
               
             </section>
+           
         </Layout>
     );
 };
