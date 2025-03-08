@@ -222,7 +222,7 @@ const UserDetail = () => {
         <div className="p-6 bg-gray-50 min-h-screen">
             {/* Header */}
             <div className="mb-6">
-                <h1 className="text-2xl font-semibold mb-1">User management</h1>
+                <h1 className="text-2xl font-semibold mb-1" style={{ color: 'black' }}>User management</h1>
                 <p className="text-gray-500">Manage your team members and their account permissions here.</p>
             </div>
 

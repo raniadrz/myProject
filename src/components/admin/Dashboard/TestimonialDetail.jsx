@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Grid, Avatar } from '@mui/material';
 import MyContext from "../../../context/myContext";
@@ -72,9 +71,6 @@ const TestimonialDetail = () => {
             </div>
             <p className="text-gray-700">{testimonial.comment}</p>
             <div className="flex justify-end mt-4">
-              <IconButton onClick={() => handleClickOpenDetailDialog(testimonial)}>
-                <PrintIcon style={{ color: 'blue' }} />
-              </IconButton>
               <IconButton onClick={() => handleDelete(testimonial.id)}>
                 <DeleteIcon style={{ color: 'red' }} />
               </IconButton>

@@ -12,6 +12,28 @@ import CustomToast from '../../../components/CustomToast/CustomToast';
 import myContext from "../../../context/myContext";
 import { fireDB } from "../../../firebase/FirebaseConfig";
 import Loader from "../../loader/Loader";
+import { styled } from '@mui/material/styles';
+
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    '& .MuiDataGrid-root': {
+        backgroundColor: '#f0f8ff',
+        border: '1px solid rgb(237, 182, 237)',
+    },
+    '& .MuiDataGrid-columnHeaders': {
+        textAlign: 'center',
+        fontSize: '1.1rem',
+    },
+    '& .MuiDataGrid-columnHeaderTitle': {
+        fontWeight: 'bold',
+        color: '#010103',
+    },
+    '& .MuiDataGrid-row': {
+        
+        '&:hover': {
+            backgroundColor: '#f1d1fd',
+        },
+    },
+}));
 
 const ProductDetail = () => {
   const context = useContext(myContext);
@@ -337,7 +359,7 @@ const ProductDetail = () => {
 
       {loading && <Loader />}
 
-      <DataGrid
+      <StyledDataGrid
         rows={rows}
         columns={columns}
         pageSize={10}
@@ -345,19 +367,6 @@ const ProductDetail = () => {
         checkboxSelection
         disableSelectionOnClick
         autoHeight
-        sx={{
-          border: 'none',
-          '& .MuiDataGrid-cell': {
-            borderBottom: '1px solid #f0f0f0',
-          },
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: 'transparent',
-            borderBottom: '2px solid #f0f0f0',
-          },
-          '& .MuiDataGrid-columnHeaderTitle': {
-            fontWeight: 'bold',
-          },
-        }}
       />
     </div>
   );

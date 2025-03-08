@@ -25,6 +25,9 @@ const HomePageProductCard = () => {
 
     const cartItems = useSelector((state) => state.cart);
 
+    // Filter products to only include those that are visible
+    const visibleProducts = getAllProduct.filter(product => product.status);
+
     const addCart = (item) => {
         if (item.stock === 0) {
             toast.error("Cannot add to cart. Item is out of stock.");
@@ -88,7 +91,7 @@ const HomePageProductCard = () => {
                 }}
             >
                 <Category />
-                {getAllProduct.slice(0, 12).map((item, index) => {
+                {visibleProducts.slice(0, 12).map((item, index) => {
                     const { id, title, price, productImageUrl, productType, stock } = item;
                     const cartItem = findCartItem(id); // Find the item in the cart
 
