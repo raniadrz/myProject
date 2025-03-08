@@ -30,17 +30,17 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const data = localStorage.getItem('users'); // Fetching from local storage
-
+    const data = localStorage.getItem('users');
     if (data) {
       try {
-        const parsedData = JSON.parse(data); // Attempt to parse the data
-        setUser(parsedData); // Set the user state if parsing is successful
+        const parsedData = JSON.parse(data);
+        setUser(parsedData);
       } catch (error) {
-        // console.error("Failed to parse JSON:", error); // Log parsing errors
+        // Silent fail or handle error if needed
+        setUser(null);
       }
     } else {
-      console.error("Data is undefined, cannot parse JSON."); // Log if data is not found
+      setUser(null);
     }
   }, []);
 
@@ -320,7 +320,7 @@ const Navbar = () => {
           <AppBar position="sticky" sx={{ 
             bgcolor: '#ffffff',
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            marginBottom: '80px'
+            marginBottom: '2%'
           }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
               {/* Logo Section */}

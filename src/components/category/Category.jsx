@@ -39,7 +39,7 @@ const Category = () => {
                     {/* category */}
                     {category.map((item, index) => {
                         return (
-                            <div key={index} className="category-item px-1 lg:px-11">
+                            <div key={index} className="category-item lg:px-11">
                                 {/* Image */}
                                 <div
                                     onClick={() => navigate(`/category/${item.name}`)}

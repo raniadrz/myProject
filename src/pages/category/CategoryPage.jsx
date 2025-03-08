@@ -231,12 +231,8 @@ const CategoryPage = () => {
     return (
         <Layout>
             <Container maxWidth="lg" sx={{ textAlign: "center", mt: 4 }}>
-               
-                {/* Categories Section */}
-                <Category />
-
-                {/* Updated Typography with new style for the title */}
-                <Typography 
+               {/* Updated Typography with new style for the title */}
+               <Typography 
                     variant="h4" 
                     gutterBottom 
                     sx={{ 
@@ -251,7 +247,8 @@ const CategoryPage = () => {
                 >
                     {categoryname} Products
                 </Typography>
-
+                {/* Categories Section */}
+                <Category />
                 {/* Cloud-style Filter Button */}
                 <Button
                     onClick={handleFilterOpen}
