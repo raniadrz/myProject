@@ -201,17 +201,20 @@ const fetchTestimonials = async () => {
   const getAllUserFunction = async () => {
     setLoading(true);
     try {
-      const q = query(collection(fireDB, "user"), orderBy("time"));
+      // Remove the orderBy to ensure we get all documents
+      const q = query(collection(fireDB, "user"));
       const data = onSnapshot(q, (QuerySnapshot) => {
         let userArray = [];
         QuerySnapshot.forEach((doc) => {
           userArray.push({ ...doc.data(), id: doc.id });
         });
+        console.log('Total users found:', userArray.length); // Debug log
         setGetAllUser(userArray);
         setLoading(false);
       });
       return () => data;
     } catch (error) {
+      console.error('Error fetching users:', error); // Debug log
       setLoading(false);
     }
   };

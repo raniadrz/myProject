@@ -91,8 +91,14 @@ const UserCreationForm = () => {
         country: userSignup.country,
         profession: userSignup.profession.trim(),
         role: userSignup.role,
-        time: Timestamp.now(),
-        date: new Date().toLocaleString("en-US", {
+        createdAt: Timestamp.now(),
+        lastEditedAt: Timestamp.now(),
+        createdDate: new Date().toLocaleString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        }),
+        lastEditedDate: new Date().toLocaleString("en-US", {
           month: "short",
           day: "2-digit",
           year: "numeric",

@@ -21,6 +21,9 @@ const UserDetail = () => {
     const context = useContext(MyContext);
     const { getAllUser, updateUserRole, deleteUser } = context;
 
+    // Add this debug log
+    console.log('Raw getAllUser data:', getAllUser);
+
     const [openRoleDialog, setOpenRoleDialog] = useState(false);
     const [openCreateDialog, setOpenCreateDialog] = useState(false); // State for create user dialog
     const [selectedUser, setSelectedUser] = useState(null);
@@ -39,7 +42,7 @@ const UserDetail = () => {
     const [page, setPage] = useState(1);
     const usersPerPage = 10;
 
-    const filteredUsers = getAllUser.filter((user) => {
+    const filteredUsers = Array.isArray(getAllUser) ? getAllUser.filter((user) => {
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch = 
             user.name?.toLowerCase().includes(searchLower) ||
@@ -69,16 +72,24 @@ const UserDetail = () => {
             }
         }
 
-    
-
-        return matchesSearch && matchesRole && matchesDateJoined ;
-    });
+        return matchesSearch && matchesRole && matchesDateJoined;
+    }) : [];
 
     // Calculate pagination
-    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / usersPerPage));
     const startIndex = (page - 1) * usersPerPage;
-    const endIndex = startIndex + usersPerPage;
+    const endIndex = Math.min(startIndex + usersPerPage, filteredUsers.length);
     const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+    // Add this console log to debug pagination
+    console.log({
+        totalUsers: filteredUsers.length,
+        startIndex,
+        endIndex,
+        currentUsers: currentUsers.length,
+        page,
+        totalPages
+    });
 
     // Handle page change
     const handlePageChange = (newPage) => {
