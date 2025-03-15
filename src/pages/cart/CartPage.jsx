@@ -180,12 +180,12 @@ const CartPage = () => {
 
     return (
         <Layout>
-            <div className="container mx-auto px-4 max-w-7xl lg:px-0">
-                <div className="mx-auto max-w-2xl py-4 lg:max-w-7xl">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <div className="container mx-auto px-4 max-w-7xl lg:px-0 flex justify-center">
+                <div className="w-full max-w-2xl py-4 lg:max-w-7xl">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">
                         Shopping Cart
                     </h1>
-                    <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+                    <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16 justify-center">
                         <section aria-labelledby="cart-heading" className="rounded-lg bg-white lg:col-span-8">
                             <h2 id="cart-heading" className="sr-only">
                                 Items in your shopping cart
