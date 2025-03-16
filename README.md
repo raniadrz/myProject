@@ -23,7 +23,7 @@
 
 ## 📝 License
 
-   none
+   MIT License
 
 ## 📧 Contact
 
