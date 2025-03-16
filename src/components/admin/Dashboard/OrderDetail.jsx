@@ -260,7 +260,7 @@ const OrderDetail = () => {
                     <strong>Address:</strong> {selectedOrder.addressInfo?.address}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Pincode:</strong> {selectedOrder.addressInfo?.pincode}
+                    <strong>Postal Code:</strong> {selectedOrder.addressInfo?.pincode}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
                     <strong>Mobile Number:</strong> {selectedOrder.addressInfo?.mobileNumber}
