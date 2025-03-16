@@ -102,16 +102,34 @@
 }
 
 .chart-container {
-    background: rgb(20 1 60)!important ;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin: 1rem;
-    padding: 1.5rem;
+    background: white !important;
+    border-radius: 16px;
+    margin: 1.5rem;
 }
 
-.chart-container h3 {
-    color: #fcfcfc;
-    margin-bottom: 1.5rem;
+.chart-container button {
+    transition: all 0.2s ease;
+}
+
+.chart-container button:hover {
+    transform: translateY(-1px);
+}
+
+/* Custom tooltip styles */
+.recharts-tooltip-wrapper {
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.recharts-default-tooltip {
+    background-color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+}
+
+/* Smooth line animation */
+.recharts-area-curve {
+    transition: all 0.3s ease;
 }
 
 /* Hide grid lines except the horizontal dashed ones */
@@ -122,11 +140,6 @@
 .recharts-cartesian-grid-horizontal line {
     stroke-dasharray: 3 3;
     stroke: #eee;
-}
-
-/* Style the tooltip */
-.recharts-tooltip-wrapper {
-    outline: none;
 }
 
 /* Style the legend */

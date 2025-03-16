@@ -1,5 +1,5 @@
 // AdminDashboard.jsx
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import Layout from "../../components/layout/Layout";
 import myContext from '../../context/myContext';
@@ -13,7 +13,9 @@ import {
     Tooltip,
     ResponsiveContainer,
     Legend,
-    LabelList
+    LabelList,
+    AreaChart,
+    Area
 } from 'recharts';
 import ProductDetail from '../../components/admin/Dashboard/ProductDetail';
 import OrderDetail from '../../components/admin/Dashboard/OrderDetail';
@@ -27,6 +29,7 @@ const AdminDashboard = () => {
     const { getAllProduct, getAllOrder, getAllUser, getAllTestimonials, faqs } = context;
     const [dailyStats, setDailyStats] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [timeFilter, setTimeFilter] = useState('30'); // Default to 30 days
 
     // Add this to calculate pending questions
     const pendingQuestions = faqs.filter(faq => !faq.answer || faq.answer.trim() === '').length;
@@ -41,73 +44,99 @@ const AdminDashboard = () => {
         if (!getAllOrder || !getAllProduct) return;
 
         try {
+            const allData = {};
             const today = new Date();
-            const last30Days = {};
             
-            // Initialize the last 30 days
-            for (let i = 0; i < 30; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                last30Days[dateStr] = {
-                    date: dateStr,
-                    newProducts: 0,
-                    orders: 0,
-                    dailyProfits: 0
-                };
-            }
-
-            // Process orders and calculate Profits
+            // Process all orders
             getAllOrder.forEach(order => {
                 const orderDate = parseDate(order.time);
                 if (!orderDate) return;
 
                 const dateStr = orderDate.toISOString().split('T')[0];
-                if (last30Days[dateStr]) {
-                    last30Days[dateStr].orders++;
-                    
-                    // Calculate total Profits from cart items
-                    if (order.cartItems && Array.isArray(order.cartItems)) {
-                        const orderTotal = order.cartItems.reduce((sum, item) => {
-                            return sum + (Number(item.price) * item.quantity);
-                        }, 0);
-                        last30Days[dateStr].dailyProfits += orderTotal;
-                    }
+                if (!allData[dateStr]) {
+                    allData[dateStr] = {
+                        date: dateStr,
+                        newProducts: 0,
+                        orders: 0,
+                        dailyProfits: 0
+                    };
+                }
+                
+                allData[dateStr].orders++;
+                if (order.cartItems && Array.isArray(order.cartItems)) {
+                    const orderTotal = order.cartItems.reduce((sum, item) => {
+                        return sum + (Number(item.price) * item.quantity);
+                    }, 0);
+                    allData[dateStr].dailyProfits += orderTotal;
                 }
             });
 
-            // Process products to count new products by date
+            // Process all products
             getAllProduct.forEach(product => {
-                // Check if product is "New Product" type
                 if (product.productType === "New Product" && product.date) {
                     const productDate = parseDate(product.date);
                     if (!productDate) return;
 
                     const dateStr = productDate.toISOString().split('T')[0];
-                    if (last30Days[dateStr]) {
-                        last30Days[dateStr].newProducts++;
+                    if (!allData[dateStr]) {
+                        allData[dateStr] = {
+                            date: dateStr,
+                            newProducts: 0,
+                            orders: 0,
+                            dailyProfits: 0
+                        };
                     }
+                    allData[dateStr].newProducts++;
                 }
             });
 
-            // Convert to array and format for chart
-            const statsArray = Object.values(last30Days)
-                .map(stat => ({
-                    date: new Date(stat.date).toLocaleDateString('default', {
+            // Convert to array, sort by date, and format
+            const statsArray = Object.entries(allData)
+                .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+                .map(([dateStr, stat]) => ({
+                    date: new Date(dateStr).toLocaleDateString('default', {
                         month: 'short',
                         day: 'numeric'
                     }),
+                    fullDate: dateStr, // Keep full date for filtering
                     newProducts: stat.newProducts,
                     orders: stat.orders,
                     dailyProfits: Number(stat.dailyProfits.toFixed(2))
-                }))
-                .reverse();
+                }));
+
             setDailyStats(statsArray);
             setIsLoading(false);
         } catch (error) {
+            console.error('Error processing data:', error);
             setIsLoading(false);
         }
     }, [getAllOrder, getAllProduct]);
+
+    // Memoize the filtered data
+    const filteredData = useMemo(() => {
+        if (timeFilter === 'all') return dailyStats;
+
+        const today = new Date();
+        let daysToFilter;
+
+        switch(timeFilter) {
+            case '7': daysToFilter = 7; break;
+            case '14': daysToFilter = 14; break;
+            case '30': daysToFilter = 30; break;
+            case '60': daysToFilter = 60; break;
+            case '90': daysToFilter = 90; break;
+            default: daysToFilter = 30;
+        }
+
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - daysToFilter);
+        cutoffDate.setHours(0, 0, 0, 0); // Set to start of day
+
+        return dailyStats.filter(item => {
+            const itemDate = new Date(item.fullDate);
+            return itemDate >= cutoffDate;
+        });
+    }, [timeFilter, dailyStats]);
 
     return (
         <Layout>
@@ -151,78 +180,153 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Chart */}
-                <div className="chart-container p-4 bg-white rounded-lg shadow">
-                    <h3 className="text-xl font-semibold mb-4">Daily Activity</h3>
+                <div className="chart-container p-6 bg-white rounded-xl shadow-lg">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-xl font-semibold text-gray-800">Daily Activity</h3>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setTimeFilter('7')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === '7' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                7 days
+                            </button>
+                            <button
+                                onClick={() => setTimeFilter('14')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === '14' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                14 days
+                            </button>
+                            <button
+                                onClick={() => setTimeFilter('30')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === '30' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                1 Month
+                            </button>
+                            <button
+                                onClick={() => setTimeFilter('60')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === '60' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                2 Months
+                            </button>
+                            <button
+                                onClick={() => setTimeFilter('90')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === '90' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                3 Months
+                            </button>
+                            <button
+                                onClick={() => setTimeFilter('all')}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                    timeFilter === 'all' 
+                                    ? 'bg-indigo-100 text-indigo-600' 
+                                    : 'text-gray-500 hover:bg-gray-100'
+                                }`}
+                            >
+                                All Time
+                            </button>
+                        </div>
+                    </div>
                     {isLoading ? (
                         <div>Loading...</div>
                     ) : (
                         <ResponsiveContainer width="100%" height={300}>
-                            <BarChart 
-                                data={dailyStats}
-                                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                            <AreaChart 
+                                data={filteredData}
+                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             >
+                                <defs>
+                                    <linearGradient id="colorProfits" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
+                                    </linearGradient>
+                                </defs>
                                 <CartesianGrid 
                                     strokeDasharray="3 3" 
                                     vertical={false}
+                                    stroke="#f0f0f0"
                                 />
                                 <XAxis 
                                     dataKey="date" 
-                                    tick={{ fontSize: 12 }}
                                     axisLine={false}
                                     tickLine={false}
+                                    tick={{ fill: '#666', fontSize: 12 }}
+                                    dy={10}
                                 />
                                 <YAxis 
                                     yAxisId="left"
-                                    orientation="left"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 12 }}
-                                    tickFormatter={(value) => `${value}€`}
+                                    tick={{ fill: '#666', fontSize: 12 }}
+                                    tickFormatter={(value) => `€${value}`}
                                 />
                                 <YAxis 
-                                    yAxisId="right" 
+                                    yAxisId="right"
                                     orientation="right"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 12 }}
+                                    tick={{ fill: '#666', fontSize: 12 }}
                                 />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{
                                         backgroundColor: 'white',
                                         border: 'none',
                                         borderRadius: '8px',
-                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                        padding: '10px'
                                     }}
                                     formatter={(value, name) => {
-                                        if (name === "Profits") return [`${value}€`, name];
+                                        if (name === "Profits") return [`€${value}`, name];
                                         return [value, name];
                                     }}
                                     labelStyle={{ fontWeight: 'bold' }}
                                 />
-                                <Legend 
-                                    verticalAlign="bottom" 
-                                    height={36}
-                                    iconType="circle"
-                                />
-                                <Bar 
+                                <Area
                                     yAxisId="left"
-                                    dataKey="dailyProfits" 
-                                    fill="#4a90e2" 
+                                    type="monotone"
+                                    dataKey="dailyProfits"
                                     name="Profits"
-                                    radius={[4, 4, 0, 0]}
-                                >
-                                   
-                                </Bar>
-                                <Bar 
+                                    stroke="#8884d8"
+                                    strokeWidth={2}
+                                    fill="url(#colorProfits)"
+                                    dot={{ fill: '#8884d8', r: 4 }}
+                                    activeDot={{ r: 6, fill: '#8884d8' }}
+                                />
+                                <Area
                                     yAxisId="right"
-                                    dataKey="orders" 
-                                    fill="#82ca9d" 
+                                    type="monotone"
+                                    dataKey="orders"
                                     name="Orders"
-                                    radius={[4, 4, 0, 0]}
-                                >
-                                    
-                                </Bar>
-                            </BarChart>
+                                    stroke="#82ca9d"
+                                    strokeWidth={2}
+                                    fill="url(#colorOrders)"
+                                    dot={{ fill: '#82ca9d', r: 4 }}
+                                    activeDot={{ r: 6, fill: '#82ca9d' }}
+                                />
+                            </AreaChart>
                         </ResponsiveContainer>
                     )}
                 </div>
