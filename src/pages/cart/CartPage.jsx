@@ -33,6 +33,7 @@ const CartPage = () => {
     // Load cart when user logs in
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            console.log('Auth state changed:', user); // Debug log
             setIsLoggedIn(!!user);
             if (user) {
                 const savedCart = await loadUserCart(user.uid);
@@ -41,6 +42,10 @@ const CartPage = () => {
                 }
             }
         });
+
+        // Check initial auth state
+        const currentUser = auth.currentUser;
+        setIsLoggedIn(!!currentUser);
 
         return () => unsubscribe();
     }, [auth, dispatch]);
@@ -123,29 +128,26 @@ const CartPage = () => {
     };
 
     const buyNowFunction = async () => {
-        if (!isLoggedIn) {
-            return toast.error("Please log in to place an order.");
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            toast.error("Please log in to place an order.");
+            return;
         }
-    
+
         if (addressInfo.name === "" || addressInfo.address === "" || addressInfo.pincode === "" || addressInfo.mobileNumber === "") {
             return toast.error("All Fields are required");
         }
-    
-        const user = getAuth().currentUser;
-        if (!user) {
-            return toast.error("User not authenticated");
-        }
-    
+
         const formattedCartItems = cartItems.map(item => ({
             ...item,
-            price: (Math.round(parseFloat(item.price) * 100) / 100).toFixed(2) // Ensure price is formatted
+            price: (Math.round(parseFloat(item.price) * 100) / 100).toFixed(2)
         }));
-    
+
         const orderInfo = {
             cartItems: formattedCartItems,
             addressInfo,
-            email: user.email, // Logged-in user's email
-            userid: user.uid,
+            email: currentUser.email,
+            userid: currentUser.uid,
             status: "confirmed",
             time: Timestamp.now(),
             date: new Date().toLocaleString(
@@ -157,23 +159,21 @@ const CartPage = () => {
                 }
             )
         };
-    
+
         try {
             const orderRef = collection(fireDB, 'order');
             await addDoc(orderRef, orderInfo);
-    
-            // Send the order confirmation email to the logged-in user's email
             sendOrderConfirmationEmail(orderInfo);
-    
             setAddressInfo({
                 name: "",
                 address: "",
                 pincode: "",
                 mobileNumber: "",
             });
-            dispatch(orderSuccessful()); // Clear the cart after placing the order
+            dispatch(orderSuccessful());
             toast.success("Order Placed Successfully");
         } catch (error) {
+            console.error('Order error:', error); // Debug log
             toast.error("Failed to place order. Please try again.");
         }
     };
@@ -288,7 +288,7 @@ const CartPage = () => {
                                 </dl>
                                 <div className="px-2 pb-4 font-medium text-green-700">
                                     <div className="flex gap-4 mb-6">
-                                        {isLoggedIn ? (
+                                        {auth.currentUser ? (
                                             <BuyNowModal
                                                 addressInfo={addressInfo}
                                                 setAddressInfo={setAddressInfo}

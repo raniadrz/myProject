@@ -8,33 +8,21 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    IconButton,
     TextField,
     Typography,
-    Select,
-    MenuItem
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import Layout from "../layout/Layout";
 import myContext from "../../context/myContext";
 import './ProfileDetail.css';
-import { doc, updateDoc } from 'firebase/firestore';
-import { profileImages } from './profileImages/profileImages';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-
 
 
 const ProfileDetail = () => {
     const user = JSON.parse(localStorage.getItem('users'));
     const context = useContext(myContext);
-    const { loading, getAllOrder, updateUserDetails, updateUserPassword } = context;
+    const { loading, getAllOrder, updateUserPassword } = context;
     
     const [isEditing, setIsEditing] = useState(false);
-    const [editedUser, setEditedUser] = useState({
-        name: user?.name || '',
-        profession: user?.profession || '',
-        country: user?.country || '',
-    });
+  
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [openOrderDialog, setOpenOrderDialog] = useState(false);
     const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
@@ -44,16 +32,6 @@ const ProfileDetail = () => {
         confirmPassword: ''
     });
     const [refresh, setRefresh] = useState(0);
-    const [openAvatarDialog, setOpenAvatarDialog] = useState(false);
-
-    // Handle user data updates
-    const handleSaveChanges = async () => {
-        await updateUserDetails(
-            user.photoURL || null,
-        );
-        setIsEditing(false);
-        setRefresh(prev => prev + 1); // Force re-render
-    };
 
     // Filter orders for current user
     const userOrders = getAllOrder.filter(order => order.userid === user?.uid);
@@ -78,37 +56,6 @@ const ProfileDetail = () => {
         setOpenPasswordDialog(false);
     };
 
-    const handleAvatarChange = async (newAvatarSrc) => {
-        try {
-            // Update user details in Firebase
-            await updateUserDetails(
-                user.uid,
-                user.name,
-                user.email,
-                newAvatarSrc,  // Pass the new avatar source
-                user.profession,
-                user.country
-            );
-            
-            // Update local storage with the new avatar
-            const updatedUser = {
-                ...user,
-                photoURL: newAvatarSrc
-            };
-            localStorage.setItem('users', JSON.stringify(updatedUser));
-            
-            // Force a re-render by updating the state
-            setRefresh(prev => prev + 1);
-            setOpenAvatarDialog(false);
-            
-            // Optional: Show success message
-            toast.success('Avatar updated successfully');
-        } catch (error) {
-            console.error('Error updating avatar:', error);
-            toast.error('Failed to update avatar');
-        }
-    };
-
     return (
         <Layout>
             <div className="profile-container">
@@ -117,28 +64,15 @@ const ProfileDetail = () => {
                     <Box className="user-header">
                         <Box sx={{ position: 'relative' }}>
                             <Avatar
-                                src={user?.photoURL || ''}  // Add fallback for empty photoURL
-                                alt={user?.name || 'User'}
+                               
                                 sx={{ 
                                     width: 80, 
                                     height: 80,
-                                    bgcolor: !user?.photoURL ? '#1976d2' : undefined // Show colored background if no photo
                                 }}
                             >
-                                {!user?.photoURL && user?.name ? user.name[0].toUpperCase() : null}
+                   
                             </Avatar>
-                            <IconButton
-                                sx={{
-                                    position: 'absolute',
-                                    bottom: -10,
-                                    right: -10,
-                                    backgroundColor: 'white',
-                                    '&:hover': { backgroundColor: '#f5f5f5' },
-                                }}
-                                onClick={() => setOpenAvatarDialog(true)}
-                            >
-                                <PhotoCameraIcon fontSize="small" />
-                            </IconButton>
+                            
                         </Box>
                         <Typography variant="h5">{user?.name}</Typography>
                         <Typography variant="body1">{user?.email}</Typography>
@@ -218,49 +152,6 @@ const ProfileDetail = () => {
                     </Box>
                 </Card>
 
-                {/* Add Avatar Selection Dialog */}
-                <Dialog 
-                    open={openAvatarDialog} 
-                    onClose={() => setOpenAvatarDialog(false)}
-                    maxWidth="sm"
-                    fullWidth
-                >
-                    <DialogTitle>Choose Avatar</DialogTitle>
-                    <DialogContent>
-                        <Box 
-                            sx={{ 
-                                display: 'grid', 
-                                gridTemplateColumns: 'repeat(3, 1fr)',
-                                gap: 2,
-                                p: 2 
-                            }}
-                        >
-                            {profileImages.map((avatar) => (
-                                <Avatar
-                                    key={avatar.id}
-                                    src={avatar.src}
-                                    alt={avatar.alt}
-                                    sx={{
-                                        width: 80,
-                                        height: 80,
-                                        cursor: 'pointer',
-                                        border: user?.photoURL === avatar.src ? '2px solid #1976d2' : 'none',
-                                        '&:hover': {
-                                            transform: 'scale(1.1)',
-                                            transition: 'transform 0.2s'
-                                        },
-                                        // Add highlight for currently selected avatar
-                                        boxShadow: user?.photoURL === avatar.src ? '0 0 8px rgba(25, 118, 210, 0.5)' : 'none'
-                                    }}
-                                    onClick={() => handleAvatarChange(avatar.src)}
-                                />
-                            ))}
-                        </Box>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setOpenAvatarDialog(false)}>Cancel</Button>
-                    </DialogActions>
-                </Dialog>
             </div>
 
             {/* Order Details Dialog */}
