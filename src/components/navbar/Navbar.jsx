@@ -5,6 +5,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   AppBar,
   Avatar,
@@ -149,17 +150,30 @@ const Navbar = () => {
               </ListItem>
             )}
             {user.role === 'admin' && (
-              <ListItem button component={Link} to="/admin-dashboard" sx={{ mb: 1 }}>
-                <ListItemIcon>
-                  <DashboardIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Admin Dashboard"
-                  primaryTypographyProps={{
-                    sx: { color: 'rgba(255, 255, 255, 0.9)' }
-                  }}
-                />
-              </ListItem>
+              <>
+                <ListItem button component={Link} to="/admin-dashboard" sx={{ mb: 1 }}>
+                  <ListItemIcon>
+                    <DashboardIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Admin Dashboard"
+                    primaryTypographyProps={{
+                      sx: { color: 'rgba(255, 255, 255, 0.9)' }
+                    }}
+                  />
+                </ListItem>
+                <ListItem button component={Link} to="/admin-settings" sx={{ mb: 1 }}>
+                  <ListItemIcon>
+                    <SettingsIcon sx={{ color: 'rgba(255, 255, 255, 0.9)' }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Settings"
+                    primaryTypographyProps={{
+                      sx: { color: 'rgba(255, 255, 255, 0.9)' }
+                    }}
+                  />
+                </ListItem>
+              </>
             )}
             <ListItem button onClick={logout} sx={{ mb: 1 }}>
               <ListItemIcon>
@@ -241,30 +255,44 @@ const Navbar = () => {
               </Button>
               {user && (
                 user.role === 'admin' ? (
-                  <Button 
-                    component={Link} 
-                    to="/admin-dashboard"
-                    startIcon={<DashboardIcon />}
-                    sx={{ 
-                      color: '#666666',
-                      textTransform: 'none',
-                      fontWeight: 500
-                    }}
-                  >
-                    Admin Dashboard
-                  </Button>
+                  <>
+                    <Button 
+                      component={Link} 
+                      to="/admin-dashboard"
+                      startIcon={<DashboardIcon />}
+                      sx={{ 
+                        color: '#666666',
+                        textTransform: 'none',
+                        fontWeight: 500
+                      }}
+                    >
+                      Admin Dashboard
+                    </Button>
+                    <Button 
+                      component={Link} 
+                      to="/admin-settings"
+                      startIcon={<SettingsIcon />}
+                      sx={{ 
+                        color: '#666666',
+                        textTransform: 'none',
+                        fontWeight: 500
+                      }}
+                    >
+                      Settings
+                    </Button>
+                  </>
                 ) : (
                   <Button 
                     component={Link} 
                     to="/user-dashboard"
-                    startIcon={<DashboardIcon />}
+                    startIcon={<SettingsIcon />}
                     sx={{ 
                       color: '#666666',
                       textTransform: 'none',
                       fontWeight: 500
                     }}
                   >
-                    User Dashboard
+                    Settings
                   </Button>
                 )
               )}

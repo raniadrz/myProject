@@ -80,24 +80,31 @@ const ProfileDetail = () => {
 
     const handleAvatarChange = async (newAvatarSrc) => {
         try {
+            // Update user details in Firebase
             await updateUserDetails(
                 user.uid,
                 user.name,
                 user.email,
-                newAvatarSrc,
+                newAvatarSrc,  // Pass the new avatar source
                 user.profession,
                 user.country
             );
             
-            // Update local storage
+            // Update local storage with the new avatar
             const updatedUser = {
                 ...user,
                 photoURL: newAvatarSrc
             };
             localStorage.setItem('users', JSON.stringify(updatedUser));
             
+            // Force a re-render by updating the state
+            setRefresh(prev => prev + 1);
             setOpenAvatarDialog(false);
+            
+            // Optional: Show success message
+            toast.success('Avatar updated successfully');
         } catch (error) {
+            console.error('Error updating avatar:', error);
             toast.error('Failed to update avatar');
         }
     };
@@ -110,10 +117,16 @@ const ProfileDetail = () => {
                     <Box className="user-header">
                         <Box sx={{ position: 'relative' }}>
                             <Avatar
-                                src={user?.photoURL}
-                                alt={user?.name}
-                                sx={{ width: 80, height: 80 }}
-                            />
+                                src={user?.photoURL || ''}  // Add fallback for empty photoURL
+                                alt={user?.name || 'User'}
+                                sx={{ 
+                                    width: 80, 
+                                    height: 80,
+                                    bgcolor: !user?.photoURL ? '#1976d2' : undefined // Show colored background if no photo
+                                }}
+                            >
+                                {!user?.photoURL && user?.name ? user.name[0].toUpperCase() : null}
+                            </Avatar>
                             <IconButton
                                 sx={{
                                     position: 'absolute',
@@ -235,7 +248,9 @@ const ProfileDetail = () => {
                                         '&:hover': {
                                             transform: 'scale(1.1)',
                                             transition: 'transform 0.2s'
-                                        }
+                                        },
+                                        // Add highlight for currently selected avatar
+                                        boxShadow: user?.photoURL === avatar.src ? '0 0 8px rgba(25, 118, 210, 0.5)' : 'none'
                                     }}
                                     onClick={() => handleAvatarChange(avatar.src)}
                                 />
