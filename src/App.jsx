@@ -52,7 +52,6 @@ function App() {
   return (
     <MyState>
       <Router>
-        <SpeedInsights />
         <ScrollTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -108,6 +107,8 @@ function App() {
           } />
         </Routes>
         <Toaster />
+        <SpeedInsights />
+
       </Router>
 
     </MyState>
