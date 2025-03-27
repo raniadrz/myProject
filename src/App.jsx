@@ -1,6 +1,5 @@
 import { Toaster } from "react-hot-toast";
 import 'semantic-ui-css/semantic.min.css';
-import { SpeedInsights } from '@vercel/speed-insights';
 import {
   Route,
   BrowserRouter as Router,
@@ -107,8 +106,6 @@ function App() {
           } />
         </Routes>
         <Toaster />
-        <SpeedInsights />
-
       </Router>
 
     </MyState>
