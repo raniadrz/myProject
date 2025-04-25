@@ -45,26 +45,59 @@ const CategoryPage = () => {
     const productsPerPage = 12;
 
     useEffect(() => {
+        // Debug: Log all products and their categories
+        console.log('All Products:', getAllProduct);
+        console.log('Current Category:', categoryname);
+        
+        // Debug: Log products that should match the current category
+        const matchingProducts = getAllProduct.filter(product => 
+            product.category && product.category.toLowerCase() === categoryname.toLowerCase()
+        );
+        console.log('Matching Products:', matchingProducts);
+        
         // Populate filter options based on the available products
         const categories = Array.from(new Set(getAllProduct.map(product => product.category)));
         const categories2 = Array.from(new Set(getAllProduct.map(product => product.category2)));
         const subcategories = Array.from(new Set(getAllProduct.map(product => product.subcategory)));
 
+        console.log('Available Categories:', categories);
+        console.log('Available Category2:', categories2);
+        console.log('Available Subcategories:', subcategories);
+
         setAvailableCategories(categories);
         setAvailableCategory2(categories2);
         setAvailableSubcategories(subcategories);
-    }, [getAllProduct]);
+    }, [getAllProduct, categoryname]);
+
+    // Add this effect to reset filters when category changes
+    useEffect(() => {
+        // Reset all filters when category changes
+        setPriceRange([0, 1000]);
+        setSelectedCategory2('');
+        setSelectedSubcategory('');
+        setCurrentPage(1);
+        
+        // Get category2 options based on the current category
+        const category2Options = category2List[categoryname] || [];
+        setAvailableCategory2(category2Options);
+        
+        // Reset subcategories
+        setAvailableSubcategories([]);
+    }, [categoryname]);
 
     // Filter products based on selected filters
     const filteredProducts = getAllProduct.filter((product) => {
+        // First check if the product has a category and if it matches the current category
+        const categoryMatch = product.category && product.category.toLowerCase() === categoryname.toLowerCase();
+        
+        // Then apply other filters
         return (
-            product.category.includes(categoryname) &&
+            categoryMatch &&
             product.price >= priceRange[0] &&
             product.price <= priceRange[1] &&
-            (!selectedCategory || product.category === selectedCategory) &&
             (!selectedCategory2 || product.category2 === selectedCategory2) &&
             (!selectedSubcategory || product.subcategory === selectedSubcategory) &&
-            product.status
+            product.status !== false // Only exclude products where status is explicitly false
         );
     });
 
@@ -207,26 +240,6 @@ const CategoryPage = () => {
             </Box>
         );
     };
-
-    useEffect(() => {
-        // Get category2 options based on the current category
-        const category2Options = category2List[categoryname] || [];
-        setAvailableCategory2(category2Options);
-        
-        // Reset subcategories when category2 is not selected
-        if (!selectedCategory2) {
-            setAvailableSubcategories([]);
-        }
-    }, [categoryname]);
-
-    useEffect(() => {
-        if (selectedCategory2) {
-            const subcategoryOptions = subcategoryList[selectedCategory2] || [];
-            setAvailableSubcategories(subcategoryOptions);
-        } else {
-            setAvailableSubcategories([]);
-        }
-    }, [selectedCategory2]);
 
     return (
         <Layout>
