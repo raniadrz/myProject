@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { Button, Card, CardContent, CardMedia, Grid, Typography, Container, Chip, CircularProgress, Box, IconButton } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Card, CardContent, CardMedia, Grid, Typography, Container, Chip, CircularProgress, Box, IconButton, Pagination, Stack } from "@mui/material";
 import StarIcon from '@mui/icons-material/Star';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,8 +25,25 @@ const HomePageProductCard = () => {
 
     const cartItems = useSelector((state) => state.cart);
 
-    // Filter products to only include those that are visible
-    const visibleProducts = getAllProduct.filter(product => product.status);
+    // Show all products without filtering by status
+    const visibleProducts = getAllProduct;
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 9;
+
+    // Calculate products to display for the current page
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = visibleProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
+
+    // Handle page change
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
 
     const addCart = (item) => {
         if (item.stock === 0) {
@@ -63,37 +80,41 @@ const HomePageProductCard = () => {
     return (
         <Layout>
         <Container maxWidth="lg" sx={{ textAlign: 'center', mt: 4 }}>
-            {/* Updated Typography with orange, bold font and margin-bottom for gap */}
             <Typography 
                 variant="h4" 
                 gutterBottom 
                 sx={{ 
                     color: '#2b58a6',  
-                    fontWeight: '600',  // Semi-bold font weight
-                    fontFamily: 'Verdana, sans-serif',  // Changed font to Verdana
-                    mb: 3,  // Adjusted margin-bottom for a smaller gap
-                    textTransform: 'uppercase',  // Uppercase text
-                    textAlign: 'left',  // Align text to the left
-                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',  // Shadow effect
+                    fontWeight: '600',
+                    fontFamily: 'Verdana, sans-serif',
+                    mb: 3,
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',
                 }}
             >
                 Bestselling Products
             </Typography>
-            {loading && <CircularProgress />}
+            {loading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                    <CircularProgress size={40} />
+                </Box>
+            )}
             <Grid 
                 container 
                 spacing={4} 
                 justifyContent="center"
                 sx={{ 
-                    padding: '20px', // Add padding inside the grid
-                    borderRadius: '10px', // Adds a slight border-radius to the grid background
-                    mt: 4  // Adds margin-top to separate the grid from the title
+                    padding: '20px',
+                    borderRadius: '10px',
+                    mt: 4,
+                    backgroundColor: '#f8f9fa'
                 }}
             >
                 <Category />
-                {visibleProducts.slice(0, 12).map((item, index) => {
+                {currentProducts.map((item, index) => {
                     const { id, title, price, productImageUrl, productType, stock } = item;
-                    const cartItem = findCartItem(id); // Find the item in the cart
+                    const cartItem = findCartItem(id);
 
                     return (
                         <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
@@ -102,11 +123,23 @@ const HomePageProductCard = () => {
                                     height: '100%', 
                                     display: 'flex', 
                                     flexDirection: 'column',
-                                    justifyContent: 'space-between'
+                                    justifyContent: 'space-between',
+                                    transition: 'transform 0.2s, box-shadow 0.2s',
+                                    '&:hover': {
+                                        transform: 'translateY(-5px)',
+                                        boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
+                                    }
                                 }} 
                                 onClick={() => navigate(`/productinfo/${id}`)}
                             >
-                                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+                                <Box sx={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    height: 200,
+                                    backgroundColor: '#fff',
+                                    p: 2
+                                }}>
                                     {stock === 0 ? (
                                         <CardMedia
                                             component="img"
@@ -133,8 +166,12 @@ const HomePageProductCard = () => {
                                         />
                                     )}
                                 </Box>
-                                <CardContent sx={{ flexGrow: 1 }}>
-                                    <Typography variant="h6" component="div">
+                                <CardContent sx={{ flexGrow: 1, backgroundColor: '#fff' }}>
+                                    <Typography variant="h6" component="div" sx={{ 
+                                        fontWeight: 'bold',
+                                        color: '#2b58a6',
+                                        mb: 1
+                                    }}>
                                         {title}
                                     </Typography>
                                     <Typography variant="body2" color="textSecondary">
@@ -211,6 +248,16 @@ const HomePageProductCard = () => {
                 })}
             </Grid>
             
+            {/* Add Pagination */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
+                <Pagination 
+                    count={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                />
+            </Box>
         </Container>
         </Layout>
     );

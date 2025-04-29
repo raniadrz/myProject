@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Form, Grid, Header, Image, Segment } from "semantic-ui-react";
+import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
+import { Box } from "@mui/material";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Loader from "../../components/loader/Loader";
@@ -8,7 +9,6 @@ import { fireDB } from "../../firebase/FirebaseConfig";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { categoryImages } from "./categoryImages";
 import { categoryList, category2List, subcategoryList } from './categoryLists';
-
 
 const AddProductPage = () => {
   const context = useContext(myContext);
@@ -37,9 +37,10 @@ const AddProductPage = () => {
 
   useEffect(() => {
     if (product.category) {
+      const defaultImage = "https://placehold.co/400x300?text=No+Image";
       setProduct((prevProduct) => ({
         ...prevProduct,
-        productImageUrl: categoryImages[product.category] || "default-image-url",
+        productImageUrl: categoryImages[product.category] || defaultImage,
       }));
     }
   }, [product.category]);
@@ -116,30 +117,68 @@ const AddProductPage = () => {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "15px" }}>
       <Header as="h1" textAlign="center" color="black">
-              Add Products
+        Add Products
       </Header>
       {loading && <Loader />}
       {!loading && (
         <>
-        <div style={{ flex: 1, marginTop: "40px", marginLeft: "-80px"}}>
+          <div style={{ flex: 1, marginTop: "40px", marginLeft: "-80px"}}>
             {product.category ? (
               product.productImageUrl && (
-                <Image 
-                  src={product.productImageUrl} 
-                  size="large" 
-                  rounded 
-                  centered 
-                  style={{ maxWidth: "100%", marginLeft: "-50px" }}
-                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    maxWidth: '400px',
+                    margin: '0 auto',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                    backgroundColor: '#f5f5f5',
+                  }}
+                >
+                  <img
+                    src={product.productImageUrl}
+                    alt={product.category}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      objectFit: 'cover',
+                    }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://placehold.co/400x300?text=Image+Error";
+                    }}
+                  />
+                </Box>
               )
             ) : (
-              <Image 
-                src="https://collar.com/wp-content/uploads/2022/07/banner_products_1024x538px_ukr11.png" //   dummy image URL
-                size="xlarge" 
-                rounded 
-                centered 
-                style={{ maxWidth: "100%", marginLeft: "-50px" }}
-              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  maxWidth: '400px',
+                  margin: '0 auto',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                  backgroundColor: '#f5f5f5',
+                }}
+              >
+                <img
+                  src="https://placehold.co/400x300?text=Select+Category"
+                  alt="Select Category"
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Box>
             )}
           </div>
           <Segment style={{ flex: 2, width: "100%", boxShadow: "none", border: "none" }}>

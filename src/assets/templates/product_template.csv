@@ -1,0 +1,23 @@
+title,code,price,category,category2,subcategory,description,stock,productImageUrl,productType,status
+"Royal Canin Mini Adult","DOG001",45.99,"Dog","Τροφές Σκύλου","Ξηρά τροφή","Premium dry food for small adult dogs (2-10kg). Rich in proteins and essential nutrients. 7.5kg bag.",85,"https://example.com/royal-canin-mini.jpg","New Product",true
+"Purina Pro Plan Veterinary Diets","DOG002",52.99,"Dog","Κλινικές Τροφές Σκύλου","Για αρθρώσεις","Veterinary diet for dogs with joint problems. Contains glucosamine and omega-3. 12kg bag.",45,"https://example.com/purina-joint.jpg","New Product",true
+"Furminator Dog Brush","DOG003",29.99,"Dog","Περιποίηση","Βούρτσες","Professional de-shedding tool for medium to large dogs. Reduces shedding up to 90%.",120,"https://example.com/furminator.jpg","New Product",true
+"Earthbath Shampoo","DOG004",14.99,"Dog","Υγιεινή","Σαμπουάν & Μαλακτικά","Natural oatmeal and aloe shampoo for sensitive skin. 473ml bottle.",200,"https://example.com/earthbath.jpg","New Product",true
+"Petmate Carrier","DOG005",39.99,"Dog","Μεταφορά-Διαμονή","Μεταφορείς","Airline-approved pet carrier with ventilation and safety features. Fits dogs up to 7kg.",60,"https://example.com/petmate-carrier.jpg","New Product",true
+"Royal Canin Indoor","CAT001",42.99,"Cat","Τροφές Γάτας","Ξηρά τροφή","Specialized dry food for indoor cats. Helps reduce hairballs. 4kg bag.",95,"https://example.com/royal-canin-cat.jpg","New Product",true
+"Trixie Cat Tree","CAT002",89.99,"Cat","Αξεσουάρ","Κρεβάτια & Μαξιλάρια","Multi-level cat tree with scratching posts and sleeping areas. 120cm height.",35,"https://example.com/trixie-cat-tree.jpg","New Product",true
+"Greenies Dental Treats","CAT003",12.99,"Cat","Τροφές Γάτας","Λιχουδιές","Dental care treats that reduce tartar and freshen breath. 85g pack.",250,"https://example.com/greenies.jpg","New Product",true
+"Feliway Diffuser","CAT004",24.99,"Cat","Υγιεινή","Καθαριστικά","Calming pheromone diffuser for cats. Reduces stress and unwanted behaviors.",80,"https://example.com/feliway.jpg","New Product",true
+"Ferplast Bird Cage","BIRD001",79.99,"Bird","Κλουβιά & Σπίτια","Κλουβιά","Spacious bird cage with removable tray and multiple perches. 60x40x80cm.",40,"https://example.com/ferplast-cage.jpg","New Product",true
+"Versele Laga Prestige","BIRD002",18.99,"Bird","Τροφές Πουλιών","Σπόροι","Premium seed mix for parrots and large birds. Rich in vitamins and minerals. 1kg pack.",150,"https://example.com/versele-laga.jpg","New Product",true
+"Tetra AquaSafe","FISH001",9.99,"Fish","Φιλτράρισμα & Συντήρηση","Καθαριστικά","Water conditioner that removes chlorine and heavy metals. 100ml bottle.",300,"https://example.com/tetra-aquasafe.jpg","New Product",true
+"Eheim Filter","FISH002",49.99,"Fish","Φιλτράρισμα & Συντήρηση","Φίλτρα","Professional aquarium filter with 3-stage filtration. For tanks up to 200L.",55,"https://example.com/eheim-filter.jpg","New Product",true
+"Tetra Plant Substrate","FISH003",19.99,"Fish","Ενυδρεία","Φυτά & Διακοσμητικά","Nutrient-rich substrate for aquarium plants. 5kg bag.",70,"https://example.com/tetra-substrate.jpg","New Product",true
+"Ferplast Rabbit Hutch","LITTLE001",129.99,"Little Pet","Κλουβιά & Σπίτια","Σπίτια","Large rabbit hutch with run and weather protection. 120x60x100cm.",25,"https://example.com/ferplast-hutch.jpg","New Product",true
+"Vitakraft Hamster Food","LITTLE002",8.99,"Little Pet","Τροφές Μικρών Ζώων","Ξηρά τροφή","Complete food mix for hamsters. Contains seeds, grains, and vegetables. 500g pack.",180,"https://example.com/vitakraft-hamster.jpg","New Product",true
+"Exo Terra UVB Lamp","REPT001",34.99,"Reptile","Αξεσουάρ","Λάμπες UVB","UVB 5.0 compact fluorescent lamp for reptiles. 13W.",90,"https://example.com/exo-terra-uvb.jpg","New Product",true
+"Repashy Superfood","REPT002",19.99,"Reptile","Τροφές Ερπετών","Ξηρά Τροφή","Complete powdered food for reptiles. Just add water. 85g jar.",120,"https://example.com/repashy.jpg","New Product",true
+"Zoo Med Heat Mat","REPT003",24.99,"Reptile","Αξεσουάρ","Θερμοστάτες","Under-tank heating pad for reptiles. 20x30cm.",75,"https://example.com/zoo-med-heat.jpg","New Product",true
+"Kong Dog Toy","DOG006",12.99,"Dog","Αξεσουάρ","Παιχνίδια","Durable rubber toy for dogs. Helps clean teeth and relieve boredom.",200,"https://example.com/kong-toy.jpg","New Product",true
+"Catit Water Fountain","CAT005",39.99,"Cat","Αξεσουάρ","Κρεβάτια & Μαξιλάρια","Electric water fountain with filter. Encourages water consumption.",65,"https://example.com/catit-fountain.jpg","New Product",true
+"Trixie Hamster Wheel","LITTLE003",14.99,"Little Pet","Αξεσουάρ","Τροχοί","Silent running exercise wheel for hamsters. 20cm diameter.",150,"https://example.com/trixie-wheel.jpg","New Product",true 
