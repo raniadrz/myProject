@@ -85,6 +85,21 @@ const CategoryPage = () => {
         setAvailableSubcategories([]);
     }, [categoryname]);
 
+    // Add this effect to update subcategories when category2 changes
+    useEffect(() => {
+        if (selectedCategory2) {
+            // Get subcategories for the selected category2 from the subcategoryList
+            const subcategoryOptions = subcategoryList[selectedCategory2] || [];
+            console.log('Selected Category2:', selectedCategory2);
+            console.log('Available Subcategories:', subcategoryOptions);
+            setAvailableSubcategories(subcategoryOptions);
+        } else {
+            setAvailableSubcategories([]);
+        }
+        // Reset subcategory selection when category2 changes
+        setSelectedSubcategory('');
+    }, [selectedCategory2]);
+
     // Filter products based on selected filters
     const filteredProducts = getAllProduct.filter((product) => {
         // First check if the product has a category and if it matches the current category
@@ -399,6 +414,7 @@ const CategoryPage = () => {
                                     onChange={(e) => setSelectedSubcategory(e.target.value)}
                                     variant="outlined"
                                     size="small"
+                                    disabled={!selectedCategory2}
                                 >
                                     <MenuItem value="">All Subcategories</MenuItem>
                                     {availableSubcategories.map((subcategory) => (
