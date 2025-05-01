@@ -10,6 +10,9 @@ import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import './Login.css'; // Import the CSS file
 import { useDispatch } from 'react-redux';
 import {  addToCart } from '../../redux/cartSlice';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
 // clearCartOnLogout,
 
 //Login Page
@@ -26,6 +29,9 @@ const Login = () => {
         password: ""
     });
 
+    // State for password visibility
+    const [showPassword, setShowPassword] = useState(false);
+
     // State for forgot password email
     const [resetEmail, setResetEmail] = useState("");
 
@@ -34,10 +40,61 @@ const Login = () => {
 
     const dispatch = useDispatch();
 
-    // const handleLogout = () => {
-    //     dispatch(clearCartOnLogout());
-    //     // ... rest of your logout logic
-    // };
+    // Toggle password visibility
+    const handleTogglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    // Auto login functions
+    const handleAutoLoginUser = async () => {
+        setLoading(true);
+        try {
+            const users = await signInWithEmailAndPassword(auth, "user@mail.ml", "user12345!");
+            const q = query(
+                collection(fireDB, "user"),
+                where('uid', '==', users?.user?.uid)
+            );
+            const data = onSnapshot(q, (QuerySnapshot) => {
+                let user;
+                QuerySnapshot.forEach((doc) => user = doc.data());
+                localStorage.setItem("users", JSON.stringify(user));
+                toast.success("Login Successfully");
+                setLoading(false);
+                if (user.role === "user") {
+                    navigate('/user-dashboard');
+                }
+            });
+            return () => data;
+        } catch (error) {
+            setLoading(false);
+            toast.error("Login Failed");
+        }
+    };
+
+    const handleAutoLoginAdmin = async () => {
+        setLoading(true);
+        try {
+            const users = await signInWithEmailAndPassword(auth, "admin@mail.ml", "admin12345!");
+            const q = query(
+                collection(fireDB, "user"),
+                where('uid', '==', users?.user?.uid)
+            );
+            const data = onSnapshot(q, (QuerySnapshot) => {
+                let user;
+                QuerySnapshot.forEach((doc) => user = doc.data());
+                localStorage.setItem("users", JSON.stringify(user));
+                toast.success("Login Successfully");
+                setLoading(false);
+                if (user.role === "admin") {
+                    navigate('/admin-dashboard');
+                }
+            });
+            return () => data;
+        } catch (error) {
+            setLoading(false);
+            toast.error("Login Failed");
+        }
+    };
 
     /**========================================================================
      *                          User Login Function 
@@ -175,9 +232,9 @@ const Login = () => {
                             />
                         </div>
 
-                        <div className="mb-5">
+                        <div className="mb-5 relative">
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder='Password'
                                 value={userLogin.password}
                                 onChange={(e) => {
@@ -188,6 +245,18 @@ const Login = () => {
                                 }}
                                 className='bg-blue-50 border border-blue-400 px-2 py-2 w-96 rounded-md outline-none placeholder-blue-200'
                             />
+                            <IconButton
+                                onClick={handleTogglePasswordVisibility}
+                                sx={{
+                                    position: 'absolute',
+                                    right: '10px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    padding: '4px'
+                                }}
+                            >
+                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                            </IconButton>
                         </div>
 
                         <div className="mb-5">
@@ -197,6 +266,24 @@ const Login = () => {
                                 className='bg-blue-500 hover:bg-blue-600 w-full text-white text-center py-2 font-bold rounded-md '
                             >
                                 Login
+                            </button>
+                        </div>
+
+                        {/* Auto Login Buttons */}
+                        <div className="mb-5 flex gap-2">
+                            <button
+                                type='button'
+                                onClick={handleAutoLoginUser}
+                                className='bg-green-500 hover:bg-green-600 w-1/2 text-white text-center py-2 font-bold rounded-md'
+                            >
+                                Auto Login as User
+                            </button>
+                            <button
+                                type='button'
+                                onClick={handleAutoLoginAdmin}
+                                className='bg-purple-500 hover:bg-purple-600 w-1/2 text-white text-center py-2 font-bold rounded-md'
+                            >
+                                Auto Login as Admin
                             </button>
                         </div>
 
