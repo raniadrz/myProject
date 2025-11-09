@@ -3,11 +3,33 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Timestamp, addDoc, collection } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Form, Header, Segment, Step, Divider } from "semantic-ui-react";
+import {
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Paper,
+    Stepper,
+    Step,
+    StepLabel,
+    MenuItem,
+    Divider,
+    Card,
+    CardContent,
+} from "@mui/material";
 import Loader from "../../components/loader/Loader";
 import myContext from "../../context/myContext";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
 import './Signup.css';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PublicIcon from '@mui/icons-material/Public';
+import WorkIcon from '@mui/icons-material/Work';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
   const countryList = [
     { name: "Albania" },
@@ -205,150 +227,504 @@ const Signup = () => {
     return (
         <div className='signup-bg'>
             {loading && <Loader />}
-            <Segment style={{ maxWidth: '600px', margin: 'auto', padding: '20px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-                <Header as="h2" textAlign="center" color="blue" style={{ marginBottom: '20px' }}>
-                    Signup
-                </Header>
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    py: 4,
+                    px: 2,
+                }}
+            >
+                <Paper
+                    elevation={0}
+                    sx={{
+                        maxWidth: '700px',
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '24px',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        overflow: 'hidden',
+                    }}
+                >
+                    {/* Header */}
+                    <Box
+                        sx={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            px: 4,
+                            py: 4,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography 
+                            variant="h4" 
+                            sx={{ 
+                                fontWeight: 700,
+                                fontFamily: "'Poppins', sans-serif",
+                                mb: 1
+                            }}
+                        >
+                            Create Account
+                        </Typography>
+                        <Typography 
+                            variant="body1" 
+                            sx={{ 
+                                opacity: 0.95,
+                                fontFamily: "'Poppins', sans-serif",
+                            }}
+                        >
+                            Join us today and start shopping
+                        </Typography>
+                    </Box>
 
-                <Step.Group ordered fluid style={{ marginBottom: '15px', padding: '0', fontSize: '0.8em' }}>
-                    <Step active={step === 1} style={{ padding: '5px' }}>
-                        <Step.Content>
-                            <Step.Title style={{ fontSize: '0.9em' }}>Account</Step.Title>
-                            <Step.Description style={{ fontSize: '0.75em' }}>Enter your account details</Step.Description>
-                        </Step.Content>
-                    </Step>
-                    <Step active={step === 2} style={{ padding: '5px' }}>
-                        <Step.Content>
-                            <Step.Title style={{ fontSize: '0.9em' }}>Personal</Step.Title>
-                            <Step.Description style={{ fontSize: '0.75em' }}>Enter your personal details</Step.Description>
-                        </Step.Content>
-                    </Step>
-                    <Step active={step === 3} style={{ padding: '5px' }}>
-                        <Step.Content>
-                            <Step.Title style={{ fontSize: '0.9em' }}>Review</Step.Title>
-                            <Step.Description style={{ fontSize: '0.75em' }}>Review and submit your details</Step.Description>
-                        </Step.Content>
-                    </Step>
-                </Step.Group>
+                    <Box sx={{ px: 4, py: 4 }}>
+                        {/* Stepper */}
+                        <Stepper 
+                            activeStep={step - 1} 
+                            sx={{ 
+                                mb: 4,
+                                '& .MuiStepLabel-root .Mui-completed': {
+                                    color: '#667eea',
+                                },
+                                '& .MuiStepLabel-root .Mui-active': {
+                                    color: '#667eea',
+                                },
+                            }}
+                        >
+                            <Step>
+                                <StepLabel>Account</StepLabel>
+                            </Step>
+                            <Step>
+                                <StepLabel>Personal</StepLabel>
+                            </Step>
+                            <Step>
+                                <StepLabel>Review</StepLabel>
+                            </Step>
+                        </Stepper>
 
-                {step === 1 && (
-                    <Form>
-                        <Form.Input
-                            fluid
-                            label="Full Name"
-                            placeholder="Full Name"
-                            name="name"
-                            value={userSignup.name}
-                            onChange={handleChange}
-                            error={errors.name && { content: 'Name is required', pointing: 'below' }}
-                        />
-                        <Form.Input
-                            fluid
-                            label="Email Address"
-                            placeholder="Email Address"
-                            name="email"
-                            type="email"
-                            value={userSignup.email}
-                            onChange={handleChange}
-                            error={errors.email && { content: 'Email is required', pointing: 'below' }}
-                        />
-                        <Form.Input
-                            fluid
-                            label="Password"
-                            placeholder="Password"
-                            name="password"
-                            type="password"
-                            value={userSignup.password}
-                            onChange={handleChange}
-                            error={errors.password && { content: 'Password is required', pointing: 'below' }}
-                        />
-                        {Object.values(errors).some(error => error) && (
-                            <div className="error-message">All fields are required</div>
+                        {/* Step 1: Account Details */}
+                        {step === 1 && (
+                            <Box component="form">
+                                <TextField
+                                    fullWidth
+                                    label="Full Name"
+                                    placeholder="Enter your full name"
+                                    name="name"
+                                    value={userSignup.name}
+                                    onChange={(e) => handleChange(e, { name: 'name', value: e.target.value })}
+                                    error={errors.name}
+                                    helperText={errors.name && 'Name is required'}
+                                    InputProps={{
+                                        startAdornment: <PersonIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
+
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
+                                    placeholder="Enter your email"
+                                    name="email"
+                                    type="email"
+                                    value={userSignup.email}
+                                    onChange={(e) => handleChange(e, { name: 'email', value: e.target.value })}
+                                    error={errors.email}
+                                    helperText={errors.email && 'Valid email is required'}
+                                    InputProps={{
+                                        startAdornment: <EmailIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
+
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    placeholder="Enter your password"
+                                    name="password"
+                                    type="password"
+                                    value={userSignup.password}
+                                    onChange={(e) => handleChange(e, { name: 'password', value: e.target.value })}
+                                    error={errors.password}
+                                    helperText={errors.password && 'Password must be at least 6 characters'}
+                                    InputProps={{
+                                        startAdornment: <LockIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
+
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    endIcon={<ArrowForwardIcon />}
+                                    onClick={nextStep}
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        py: 1.5,
+                                        borderRadius: '12px',
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        fontSize: '16px',
+                                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                            boxShadow: '0 6px 16px rgba(102, 126, 234, 0.5)',
+                                        }
+                                    }}
+                                >
+                                    Next
+                                </Button>
+                            </Box>
                         )}
-                        <Button.Group fluid style={{ marginTop: '15px' }}>
-                            <Button onClick={nextStep} primary>
-                                Next
-                            </Button>
-                        </Button.Group>
-                    </Form>
-                )}
 
-                {step === 2 && (
-                    <Form>
-                        <Form.Input
-                            fluid
-                            label="Date of Birth"
-                            placeholder="Date of Birth"
-                            name="dateOfBirth"
-                            type="date"
-                            value={userSignup.dateOfBirth}
-                            onChange={handleChange}
-                            error={errors.dateOfBirth && { content: 'Date of birth is required', pointing: 'below' }}
-                        />
-                        <Form.Select
-                            fluid
-                            label="Country"
-                            name="country"
-                            options={countryList.map((country) => ({
-                                key: country.name,
-                                text: country.name,
-                                value: country.name,
-                            }))}
-                            placeholder="Select Country"
-                            value={userSignup.country}
-                            onChange={(e, { value }) => handleChange(e, { name: 'country', value })}
-                            error={errors.country && { content: 'Country is required', pointing: 'below' }}
-                        />
-                        <Form.Input
-                            fluid
-                            label="Profession"
-                            placeholder="Profession"
-                            name="profession"
-                            value={userSignup.profession}
-                            onChange={handleChange}
-                            error={errors.profession && { content: 'Profession is required', pointing: 'below' }}
-                        />
-                        {Object.values(errors).some(error => error) && (
-                            <div className="error-message">All fields are required</div>
+                        {/* Step 2: Personal Details */}
+                        {step === 2 && (
+                            <Box component="form">
+                                <TextField
+                                    fullWidth
+                                    label="Date of Birth"
+                                    name="dateOfBirth"
+                                    type="date"
+                                    value={userSignup.dateOfBirth}
+                                    onChange={(e) => handleChange(e, { name: 'dateOfBirth', value: e.target.value })}
+                                    error={errors.dateOfBirth}
+                                    helperText={errors.dateOfBirth && 'Date of birth is required'}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    InputProps={{
+                                        startAdornment: <CalendarTodayIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
+
+                                <TextField
+                                    fullWidth
+                                    select
+                                    label="Country"
+                                    name="country"
+                                    value={userSignup.country}
+                                    onChange={(e) => handleChange(e, { name: 'country', value: e.target.value })}
+                                    error={errors.country}
+                                    helperText={errors.country && 'Country is required'}
+                                    InputProps={{
+                                        startAdornment: <PublicIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                >
+                                    {countryList.map((country) => (
+                                        <MenuItem key={country.name} value={country.name}>
+                                            {country.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+
+                                <TextField
+                                    fullWidth
+                                    label="Profession"
+                                    placeholder="Enter your profession"
+                                    name="profession"
+                                    value={userSignup.profession}
+                                    onChange={(e) => handleChange(e, { name: 'profession', value: e.target.value })}
+                                    error={errors.profession}
+                                    helperText={errors.profession && 'Profession is required'}
+                                    InputProps={{
+                                        startAdornment: <WorkIcon sx={{ mr: 1, color: '#667eea' }} />,
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
+
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Button
+                                        fullWidth
+                                        variant="outlined"
+                                        size="large"
+                                        startIcon={<ArrowBackIcon />}
+                                        onClick={prevStep}
+                                        sx={{
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '16px',
+                                            borderColor: 'rgba(102, 126, 234, 0.3)',
+                                            color: '#667eea',
+                                            '&:hover': {
+                                                borderColor: '#667eea',
+                                                bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                            }
+                                        }}
+                                    >
+                                        Back
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        size="large"
+                                        endIcon={<ArrowForwardIcon />}
+                                        onClick={nextStep}
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            color: 'white',
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '16px',
+                                            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                                boxShadow: '0 6px 16px rgba(102, 126, 234, 0.5)',
+                                            }
+                                        }}
+                                    >
+                                        Next
+                                    </Button>
+                                </Box>
+                            </Box>
                         )}
-                        <Button.Group fluid style={{ marginTop: '15px' }}>
-                            <Button onClick={prevStep} secondary>
-                                Back
-                            </Button>
-                            <Button onClick={nextStep} primary>
-                                Next
-                            </Button>
-                        </Button.Group>
-                    </Form>
-                )}
 
-                {step === 3 && (
-                    <Segment padded="very" style={{ backgroundColor: '#f9f9f9', borderRadius: '10px' }}>
-                        <Header as="h3" textAlign="center">Review Your Details</Header>
-                        <p><strong>Full Name:</strong> {userSignup.name}</p>
-                        <p><strong>Email Address:</strong> {userSignup.email}</p>
-                        <p><strong>Date of Birth:</strong> {userSignup.dateOfBirth}</p>
-                        <p><strong>Country:</strong> {userSignup.country}</p>
-                        <p><strong>Profession:</strong> {userSignup.profession}</p>
-                        <Button.Group fluid style={{ marginTop: '15px' }}>
-                            <Button onClick={prevStep} secondary>
-                                Back
-                            </Button>
-                            <Button onClick={userSignupFunction} positive>
-                                Submit
-                            </Button>
-                        </Button.Group>
-                    </Segment>
-                )}
+                        {/* Step 3: Review */}
+                        {step === 3 && (
+                            <Box>
+                                <Card
+                                    elevation={0}
+                                    sx={{
+                                        mb: 3,
+                                        borderRadius: '16px',
+                                        bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                        border: '1px solid rgba(102, 126, 234, 0.1)',
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography 
+                                            variant="h6" 
+                                            sx={{ 
+                                                mb: 3, 
+                                                fontWeight: 700,
+                                                color: '#667eea',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1
+                                            }}
+                                        >
+                                            <CheckCircleIcon />
+                                            Review Your Details
+                                        </Typography>
 
-                <Divider style={{ marginTop: '25px' }} />
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <PersonIcon sx={{ color: '#667eea' }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#999' }}>
+                                                        Full Name
+                                                    </Typography>
+                                                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                                        {userSignup.name}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
 
-                <div style={{ textAlign: 'center' }}>
-                    <p>
-                        Have an account? <Link className='signup-link' to={'/login'}>Login</Link>
-                    </p>
-                </div>
-            </Segment>
+                                            <Divider />
+
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <EmailIcon sx={{ color: '#667eea' }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#999' }}>
+                                                        Email Address
+                                                    </Typography>
+                                                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                                        {userSignup.email}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <CalendarTodayIcon sx={{ color: '#667eea' }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#999' }}>
+                                                        Date of Birth
+                                                    </Typography>
+                                                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                                        {userSignup.dateOfBirth}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <PublicIcon sx={{ color: '#667eea' }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#999' }}>
+                                                        Country
+                                                    </Typography>
+                                                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                                        {userSignup.country}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Divider />
+
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                <WorkIcon sx={{ color: '#667eea' }} />
+                                                <Box>
+                                                    <Typography variant="caption" sx={{ color: '#999' }}>
+                                                        Profession
+                                                    </Typography>
+                                                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                                        {userSignup.profession}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Button
+                                        fullWidth
+                                        variant="outlined"
+                                        size="large"
+                                        startIcon={<ArrowBackIcon />}
+                                        onClick={prevStep}
+                                        sx={{
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '16px',
+                                            borderColor: 'rgba(102, 126, 234, 0.3)',
+                                            color: '#667eea',
+                                            '&:hover': {
+                                                borderColor: '#667eea',
+                                                bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                            }
+                                        }}
+                                    >
+                                        Back
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        size="large"
+                                        endIcon={<CheckCircleIcon />}
+                                        onClick={userSignupFunction}
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
+                                            color: 'white',
+                                            py: 1.5,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '16px',
+                                            boxShadow: '0 4px 12px rgba(74, 222, 128, 0.4)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                                                boxShadow: '0 6px 16px rgba(74, 222, 128, 0.5)',
+                                            }
+                                        }}
+                                    >
+                                        Create Account
+                                    </Button>
+                                </Box>
+                            </Box>
+                        )}
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography variant="body2" sx={{ color: '#666' }}>
+                                Already have an account?{' '}
+                                <Link 
+                                    to="/login" 
+                                    style={{ 
+                                        color: '#667eea', 
+                                        textDecoration: 'none',
+                                        fontWeight: 600
+                                    }}
+                                >
+                                    Login here
+                                </Link>
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Paper>
+            </Box>
         </div>
     );
 }

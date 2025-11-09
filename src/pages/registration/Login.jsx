@@ -4,15 +4,30 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import {
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Paper,
+    Divider,
+    InputAdornment,
+    IconButton,
+} from "@mui/material";
 import Loader from "../../components/loader/Loader";
 import myContext from "../../context/myContext";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
-import './Login.css'; // Import the CSS file
+import './Login.css';
 import { useDispatch } from 'react-redux';
-import {  addToCart } from '../../redux/cartSlice';
+import { addToCart } from '../../redux/cartSlice';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import IconButton from '@mui/material/IconButton';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonIcon from '@mui/icons-material/Person';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import LockResetIcon from '@mui/icons-material/LockReset';
 // clearCartOnLogout,
 
 //Login Page
@@ -179,124 +194,325 @@ const Login = () => {
     };
 
     return (
-        <div className='flex justify-center items-center h-screen bg-image'>
+        <div className='bg-image'>
             {loading && <Loader />}
-            <div className="login_Form px-8 py-6 border border-blue-100 rounded-xl shadow-md">
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    py: 4,
+                    px: 2,
+                }}
+            >
+                <Paper
+                    elevation={0}
+                    sx={{
+                        maxWidth: '500px',
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '24px',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        overflow: 'hidden',
+                    }}
+                >
+                    {/* Header */}
+                    <Box
+                        sx={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            px: 4,
+                            py: 4,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography 
+                            variant="h4" 
+                            sx={{ 
+                                fontWeight: 700,
+                                fontFamily: "'Poppins', sans-serif",
+                                mb: 1
+                            }}
+                        >
+                            {showForgotPassword ? "Reset Password" : "Welcome Back"}
+                        </Typography>
+                        <Typography 
+                            variant="body1" 
+                            sx={{ 
+                                opacity: 0.95,
+                                fontFamily: "'Poppins', sans-serif",
+                            }}
+                        >
+                            {showForgotPassword ? "Enter your email to reset password" : "Login to your account"}
+                        </Typography>
+                    </Box>
 
-                <div className="mb-5">
-                    <h2 className='text-center text-2xl font-bold text-blue-500 '>
-                        {showForgotPassword ? "Reset Password" : "Login"}
-                    </h2>
-                </div>
+                    <Box sx={{ px: 4, py: 4 }}>
+                        {showForgotPassword ? (
+                            <Box component="form">
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
+                                    placeholder="Enter your email"
+                                    type="email"
+                                    value={resetEmail}
+                                    onChange={(e) => setResetEmail(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <EmailIcon sx={{ color: '#667eea' }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
 
-                {showForgotPassword ? (
-                    <div>
-                        <div className="mb-3">
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder='Email Address'
-                                value={resetEmail}
-                                onChange={(e) => setResetEmail(e.target.value)}
-                                className='bg-blue-50 border border-blue-400 px-2 py-2 w-96 rounded-md outline-none placeholder-blue-200'
-                            />
-                        </div>
-                        <div className="mb-5">
-                            <button
-                                type='button'
-                                onClick={handlePasswordReset}
-                                className='bg-blue-500 hover:bg-blue-600 w-full text-white text-center py-2 font-bold rounded-md '
-                            >
-                                Send Reset Link
-                            </button>
-                        </div>
-                        <div>
-                            <h2 className='text-black'>Remember your password? <span className='text-blue-500 font-bold cursor-pointer' onClick={() => setShowForgotPassword(false)}>Login</span></h2>
-                        </div>
-                    </div>
-                ) : (
-                    <div>
-                        <div className="mb-3">
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder='Email Address'
-                                value={userLogin.email}
-                                onChange={(e) => {
-                                    setUserLogin({
-                                        ...userLogin,
-                                        email: e.target.value
-                                    });
-                                }}
-                                className='bg-blue-50 border border-blue-400 px-2 py-2 w-96 rounded-md outline-none placeholder-blue-200'
-                            />
-                        </div>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    endIcon={<LockResetIcon />}
+                                    onClick={handlePasswordReset}
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        py: 1.5,
+                                        borderRadius: '12px',
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        fontSize: '16px',
+                                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                        mb: 2,
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                            boxShadow: '0 6px 16px rgba(102, 126, 234, 0.5)',
+                                        }
+                                    }}
+                                >
+                                    Send Reset Link
+                                </Button>
 
-                        <div className="mb-5 relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                placeholder='Password'
-                                value={userLogin.password}
-                                onChange={(e) => {
-                                    setUserLogin({
-                                        ...userLogin,
-                                        password: e.target.value
-                                    });
-                                }}
-                                className='bg-blue-50 border border-blue-400 px-2 py-2 w-96 rounded-md outline-none placeholder-blue-200'
-                            />
-                            <IconButton
-                                onClick={handleTogglePasswordVisibility}
-                                sx={{
-                                    position: 'absolute',
-                                    right: '10px',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    padding: '4px'
-                                }}
-                            >
-                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                            </IconButton>
-                        </div>
+                                <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" sx={{ color: '#666' }}>
+                                        Remember your password?{' '}
+                                        <span 
+                                            onClick={() => setShowForgotPassword(false)}
+                                            style={{ 
+                                                color: '#667eea', 
+                                                cursor: 'pointer',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Login
+                                        </span>
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        ) : (
+                            <Box component="form">
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
+                                    placeholder="Enter your email"
+                                    type="email"
+                                    value={userLogin.email}
+                                    onChange={(e) => {
+                                        setUserLogin({
+                                            ...userLogin,
+                                            email: e.target.value
+                                        });
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <EmailIcon sx={{ color: '#667eea' }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
 
-                        <div className="mb-5">
-                            <button
-                                type='button'
-                                onClick={userLoginFunction}
-                                className='bg-blue-500 hover:bg-blue-600 w-full text-white text-center py-2 font-bold rounded-md '
-                            >
-                                Login
-                            </button>
-                        </div>
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    placeholder="Enter your password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={userLogin.password}
+                                    onChange={(e) => {
+                                        setUserLogin({
+                                            ...userLogin,
+                                            password: e.target.value
+                                        });
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <LockIcon sx={{ color: '#667eea' }} />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handleTogglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        mb: 3,
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '12px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: '#667eea',
+                                        }
+                                    }}
+                                />
 
-                        {/* Auto Login Buttons */}
-                        <div className="mb-5 flex gap-2">
-                            <button
-                                type='button'
-                                onClick={handleAutoLoginUser}
-                                className='bg-green-500 hover:bg-green-600 w-1/2 text-white text-center py-2 font-bold rounded-md'
-                            >
-                                Auto Login as User
-                            </button>
-                            <button
-                                type='button'
-                                onClick={handleAutoLoginAdmin}
-                                className='bg-purple-500 hover:bg-purple-600 w-1/2 text-white text-center py-2 font-bold rounded-md'
-                            >
-                                Auto Login as Admin
-                            </button>
-                        </div>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    endIcon={<LoginIcon />}
+                                    onClick={userLoginFunction}
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        py: 1.5,
+                                        borderRadius: '12px',
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        fontSize: '16px',
+                                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                        mb: 3,
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                            boxShadow: '0 6px 16px rgba(102, 126, 234, 0.5)',
+                                        }
+                                    }}
+                                >
+                                    Login
+                                </Button>
 
-                        <div className="mb-3">
-                            <h2 className='text-black'>Forgot your password? <span className='text-blue-500 font-bold cursor-pointer' onClick={() => setShowForgotPassword(true)}>Reset Password</span></h2>
-                        </div>
+                                {/* Auto Login Buttons */}
+                                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        size="medium"
+                                        startIcon={<PersonIcon />}
+                                        onClick={handleAutoLoginUser}
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
+                                            color: 'white',
+                                            py: 1.2,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            fontSize: '14px',
+                                            boxShadow: '0 4px 12px rgba(74, 222, 128, 0.3)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                                                boxShadow: '0 6px 16px rgba(74, 222, 128, 0.4)',
+                                            }
+                                        }}
+                                    >
+                                        User
+                                    </Button>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        size="medium"
+                                        startIcon={<AdminPanelSettingsIcon />}
+                                        onClick={handleAutoLoginAdmin}
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                                            color: 'white',
+                                            py: 1.2,
+                                            borderRadius: '12px',
+                                            textTransform: 'none',
+                                            fontWeight: 600,
+                                            fontSize: '14px',
+                                            boxShadow: '0 4px 12px rgba(240, 147, 251, 0.3)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(135deg, #e47fe9 0%, #e04055 100%)',
+                                                boxShadow: '0 6px 16px rgba(240, 147, 251, 0.4)',
+                                            }
+                                        }}
+                                    >
+                                        Admin
+                                    </Button>
+                                </Box>
 
-                        <div>
-                            <h2 className='text-black'>Don't Have an account <Link className=' text-blue-500 font-bold' to={'/signup'}>Signup</Link></h2>
-                        </div>
-                    </div>
-                )}
-            </div>
+                                <Box sx={{ textAlign: 'center', mb: 2 }}>
+                                    <Typography variant="body2" sx={{ color: '#666' }}>
+                                        Forgot your password?{' '}
+                                        <span 
+                                            onClick={() => setShowForgotPassword(true)}
+                                            style={{ 
+                                                color: '#667eea', 
+                                                cursor: 'pointer',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Reset Password
+                                        </span>
+                                    </Typography>
+                                </Box>
+
+                                <Divider sx={{ my: 3 }} />
+
+                                <Box sx={{ textAlign: 'center' }}>
+                                    <Typography variant="body2" sx={{ color: '#666' }}>
+                                        Don't have an account?{' '}
+                                        <Link 
+                                            to="/signup" 
+                                            style={{ 
+                                                color: '#667eea', 
+                                                textDecoration: 'none',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            Signup
+                                        </Link>
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        )}
+                    </Box>
+                </Paper>
+            </Box>
         </div>
     );
 };
