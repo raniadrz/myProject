@@ -3,7 +3,25 @@ import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import Layout from "../../components/layout/Layout";
 import myContext from '../../context/myContext';
-import { Inventory2, ShoppingCart, People, Comment, QuestionAnswer } from '@mui/icons-material';
+import { 
+    Inventory2, 
+    ShoppingCart, 
+    People, 
+    Comment, 
+    QuestionAnswer,
+    TrendingUp,
+    LocalAtm
+} from '@mui/icons-material';
+import {
+    Box,
+    Paper,
+    Typography,
+    Card,
+    CardContent,
+    ButtonGroup,
+    Button,
+    Chip
+} from '@mui/material';
 import {
     BarChart,
     Bar,
@@ -90,11 +108,11 @@ const AdminDashboard = () => {
                 }
             });
 
-            // Convert to array, sort by date, and format
+            // Convert to array, sort by date (oldest first for chart), and format
             const statsArray = Object.entries(allData)
-                .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+                .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
                 .map(([dateStr, stat]) => ({
-                    date: new Date(dateStr).toLocaleDateString('default', {
+                    date: new Date(dateStr).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric'
                     }),
@@ -104,6 +122,7 @@ const AdminDashboard = () => {
                     dailyProfits: Number(stat.dailyProfits.toFixed(2))
                 }));
 
+            console.log('Daily Stats:', statsArray); // Debug log
             setDailyStats(statsArray);
             setIsLoading(false);
         } catch (error) {
@@ -114,6 +133,9 @@ const AdminDashboard = () => {
 
     // Memoize the filtered data
     const filteredData = useMemo(() => {
+        console.log('Filtering data, timeFilter:', timeFilter, 'dailyStats length:', dailyStats.length);
+        
+        if (!dailyStats || dailyStats.length === 0) return [];
         if (timeFilter === 'all') return dailyStats;
 
         const today = new Date();
@@ -132,155 +154,398 @@ const AdminDashboard = () => {
         cutoffDate.setDate(cutoffDate.getDate() - daysToFilter);
         cutoffDate.setHours(0, 0, 0, 0); // Set to start of day
 
-        return dailyStats.filter(item => {
+        const filtered = dailyStats.filter(item => {
             const itemDate = new Date(item.fullDate);
             return itemDate >= cutoffDate;
         });
+        
+        console.log('Filtered data length:', filtered.length);
+        return filtered;
     }, [timeFilter, dailyStats]);
 
     return (
         <Layout>
-            <div className="min-h-screen bg-gray-50">
-                {/* Dashboard Title */}
-                <div className="px-6 py-4 bg-white shadow-lg border-b">
-                    <h1 className="text-4xl font-bold text-pink-300">Dashboard</h1>
-                    <p className="text-blue-600">Welcome to your admin control panel</p>
-                </div>
+            <Box sx={{ minHeight: '100vh', bgcolor: '#f5f7fa' }}>
+                {/* Hero Header with Gradient */}
+                <Box
+                    sx={{
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        px: 4,
+                        py: 6,
+                        mb: 4,
+                        boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
+                    }}
+                >
+                    <Typography 
+                        variant="h3" 
+                        sx={{ 
+                            fontWeight: 800, 
+                            mb: 1,
+                            fontFamily: "'Poppins', sans-serif",
+                            textShadow: '0 2px 10px rgba(0,0,0,0.2)'
+                        }}
+                    >
+                        Admin Dashboard
+                    </Typography>
+                    <Typography 
+                        variant="h6" 
+                        sx={{ 
+                            opacity: 0.95,
+                            fontFamily: "'Poppins', sans-serif",
+                            fontWeight: 300
+                        }}
+                    >
+                        Manage your e-commerce platform efficiently
+                    </Typography>
+                </Box>
                 
-                
-                
-                
-                {/* Stats Cards */}
-                <div className="dashboard-stats">
-                    <div className="stat-card bg-blue-50">
-                        <Inventory2 className="text-3xl mb-2 text-blue-500" />
-                        <div className="stat-value text-blue-900">{getAllProduct?.length || 0}</div>
-                        <div className="stat-label text-blue-700">Total Products</div>
-                    </div>
-                    <div className="stat-card bg-green-50">
-                        <ShoppingCart className="text-3xl mb-2 text-green-500" />
-                        <div className="stat-value text-green-900">{getAllOrder.length}</div>
-                        <div className="stat-label text-green-700">Total Orders</div>
-                    </div>
-                    <div className="stat-card bg-purple-50">
-                        <People className="text-3xl mb-2 text-purple-500" />
-                        <div className="stat-value text-purple-900">{getAllUser.length}</div>
-                        <div className="stat-label text-purple-700">Total Users</div>
-                    </div>
-                    <div className="stat-card bg-orange-50">
-                        <Comment className="text-3xl mb-2 text-orange-500" />
-                        <div className="stat-value text-orange-900">{getAllTestimonials.length}</div>
-                        <div className="stat-label text-orange-700">Total Testimonials</div>
-                    </div>
-                    <div className="stat-card bg-yellow-50">
-                        <QuestionAnswer className="text-3xl mb-2 text-yellow-500" />
-                        <div className="stat-value text-yellow-900">{faqs.length}</div>
-                        <div className="stat-label text-yellow-700">Total FAQs</div>
-                    </div>
-                </div>
+                {/* Stats Cards with Modern Design */}
+                <Box sx={{ px: 4, mb: 4 }}>
+                    <Box 
+                        sx={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: { 
+                                xs: '1fr', 
+                                sm: 'repeat(2, 1fr)', 
+                                md: 'repeat(3, 1fr)',
+                                lg: 'repeat(5, 1fr)' 
+                            }, 
+                            gap: 3 
+                        }}
+                    >
+                        {/* Products Card */}
+                        <Card 
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(102, 126, 234, 0.4)',
+                                }
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <Box>
+                                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                                            Total Products
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                            {getAllProduct?.length || 0}
+                                        </Typography>
+                                        <Chip 
+                                            icon={<TrendingUp sx={{ fontSize: 16, color: 'white !important' }} />}
+                                            label="Active" 
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: 'rgba(255,255,255,0.2)',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                fontSize: '0.7rem'
+                                            }}
+                                        />
+                                    </Box>
+                                    <Inventory2 sx={{ fontSize: 48, opacity: 0.3 }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
 
-                {/* Chart */}
-                <div className="chart-container p-6 bg-white rounded-xl shadow-lg">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-xl font-semibold text-gray-800">Daily Activity</h3>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setTimeFilter('7')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === '7' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
+                        {/* Orders Card */}
+                        <Card 
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                                color: 'white',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(240, 147, 251, 0.4)',
+                                }
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <Box>
+                                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                                            Total Orders
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                            {getAllOrder.length}
+                                        </Typography>
+                                        <Chip 
+                                            icon={<LocalAtm sx={{ fontSize: 16, color: 'white !important' }} />}
+                                            label="Revenue" 
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: 'rgba(255,255,255,0.2)',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                fontSize: '0.7rem'
+                                            }}
+                                        />
+                                    </Box>
+                                    <ShoppingCart sx={{ fontSize: 48, opacity: 0.3 }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+
+                        {/* Users Card */}
+                        <Card 
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                color: 'white',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(79, 172, 254, 0.4)',
+                                }
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <Box>
+                                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                                            Total Users
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                            {getAllUser.length}
+                                        </Typography>
+                                        <Chip 
+                                            label="Registered" 
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: 'rgba(255,255,255,0.2)',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                fontSize: '0.7rem'
+                                            }}
+                                        />
+                                    </Box>
+                                    <People sx={{ fontSize: 48, opacity: 0.3 }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+
+                        {/* Testimonials Card */}
+                        <Card 
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                                color: 'white',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(250, 112, 154, 0.4)',
+                                }
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <Box>
+                                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                                            Testimonials
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                            {getAllTestimonials.length}
+                                        </Typography>
+                                        <Chip 
+                                            label="Reviews" 
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: 'rgba(255,255,255,0.2)',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                fontSize: '0.7rem'
+                                            }}
+                                        />
+                                    </Box>
+                                    <Comment sx={{ fontSize: 48, opacity: 0.3 }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+
+                        {/* FAQs Card */}
+                        <Card 
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                                color: '#333',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(168, 237, 234, 0.4)',
+                                }
+                            }}
+                        >
+                            <CardContent>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <Box>
+                                        <Typography variant="body2" sx={{ opacity: 0.8, mb: 1, fontWeight: 500 }}>
+                                            Total FAQs
+                                        </Typography>
+                                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                                            {faqs.length}
+                                        </Typography>
+                                        {pendingQuestions > 0 && (
+                                            <Chip 
+                                                label={`${pendingQuestions} pending`}
+                                                size="small"
+                                                sx={{ 
+                                                    bgcolor: '#ff5252',
+                                                    color: 'white',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.7rem'
+                                                }}
+                                            />
+                                        )}
+                                    </Box>
+                                    <QuestionAnswer sx={{ fontSize: 48, opacity: 0.3 }} />
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Box>
+                </Box>
+
+                {/* Chart Section */}
+                <Box sx={{ px: 4, mb: 4 }}>
+                    <Paper 
+                        elevation={0}
+                        sx={{ 
+                            p: 3, 
+                            borderRadius: '16px',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                            border: '1px solid rgba(0,0,0,0.05)'
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+                            <Box>
+                                <Typography 
+                                    variant="h5" 
+                                    sx={{ 
+                                        fontWeight: 700,
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        backgroundClip: 'text',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        mb: 0.5
+                                    }}
+                                >
+                                    Daily Activity Overview
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Track your sales and order trends
+                                </Typography>
+                            </Box>
+                            <ButtonGroup 
+                                variant="outlined" 
+                                sx={{
+                                    '& .MuiButton-root': {
+                                        borderColor: 'rgba(102, 126, 234, 0.3)',
+                                        color: '#667eea',
+                                        fontWeight: 600,
+                                        '&:hover': {
+                                            borderColor: '#667eea',
+                                            bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                        }
+                                    },
+                                    '& .MuiButton-root.active': {
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        borderColor: '#667eea',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        }
+                                    }
+                                }}
                             >
-                                7 days
-                            </button>
-                            <button
-                                onClick={() => setTimeFilter('14')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === '14' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
-                            >
-                                14 days
-                            </button>
-                            <button
-                                onClick={() => setTimeFilter('30')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === '30' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
-                            >
-                                1 Month
-                            </button>
-                            <button
-                                onClick={() => setTimeFilter('60')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === '60' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
-                            >
-                                2 Months
-                            </button>
-                            <button
-                                onClick={() => setTimeFilter('90')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === '90' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
-                            >
-                                3 Months
-                            </button>
-                            <button
-                                onClick={() => setTimeFilter('all')}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                                    timeFilter === 'all' 
-                                    ? 'bg-indigo-100 text-indigo-600' 
-                                    : 'text-gray-500 hover:bg-gray-100'
-                                }`}
-                            >
-                                All Time
-                            </button>
-                        </div>
-                    </div>
+                                <Button 
+                                    className={timeFilter === '7' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('7')}
+                                >
+                                    7D
+                                </Button>
+                                <Button 
+                                    className={timeFilter === '14' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('14')}
+                                >
+                                    14D
+                                </Button>
+                                <Button 
+                                    className={timeFilter === '30' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('30')}
+                                >
+                                    1M
+                                </Button>
+                                <Button 
+                                    className={timeFilter === '60' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('60')}
+                                >
+                                    2M
+                                </Button>
+                                <Button 
+                                    className={timeFilter === '90' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('90')}
+                                >
+                                    3M
+                                </Button>
+                                <Button 
+                                    className={timeFilter === 'all' ? 'active' : ''}
+                                    onClick={() => setTimeFilter('all')}
+                                >
+                                    All
+                                </Button>
+                            </ButtonGroup>
+                        </Box>
                     {isLoading ? (
-                        <div>Loading...</div>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                            <Typography color="text.secondary">Loading chart data...</Typography>
+                        </Box>
+                    ) : filteredData.length === 0 ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                            <Typography variant="h6" color="text.secondary" gutterBottom>
+                                No data available
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Orders and profits will appear here once you have sales
+                            </Typography>
+                        </Box>
                     ) : (
-                        <ResponsiveContainer width="100%" height={300}>
+                        <ResponsiveContainer width="100%" height={350}>
                             <AreaChart 
                                 data={filteredData}
                                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             >
                                 <defs>
                                     <linearGradient id="colorProfits" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
+                                        <stop offset="5%" stopColor="#667eea" stopOpacity={0.4}/>
+                                        <stop offset="95%" stopColor="#764ba2" stopOpacity={0.1}/>
                                     </linearGradient>
                                     <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
+                                        <stop offset="5%" stopColor="#f093fb" stopOpacity={0.4}/>
+                                        <stop offset="95%" stopColor="#f5576c" stopOpacity={0.1}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid 
                                     strokeDasharray="3 3" 
                                     vertical={false}
-                                    stroke="#f0f0f0"
+                                    stroke="#e0e0e0"
                                 />
                                 <XAxis 
                                     dataKey="date" 
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#666', fontSize: 12 }}
+                                    tick={{ fill: '#666', fontSize: 12, fontWeight: 500 }}
                                     dy={10}
                                 />
                                 <YAxis 
                                     yAxisId="left"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#666', fontSize: 12 }}
+                                    tick={{ fill: '#666', fontSize: 12, fontWeight: 500 }}
                                     tickFormatter={(value) => `€${value}`}
                                 />
                                 <YAxis 
@@ -288,117 +553,232 @@ const AdminDashboard = () => {
                                     orientation="right"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fill: '#666', fontSize: 12 }}
+                                    tick={{ fill: '#666', fontSize: 12, fontWeight: 500 }}
                                 />
                                 <Tooltip
                                     contentStyle={{
                                         backgroundColor: 'white',
                                         border: 'none',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                                        padding: '10px'
+                                        borderRadius: '12px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                        padding: '12px 16px'
                                     }}
                                     formatter={(value, name) => {
                                         if (name === "Profits") return [`€${value}`, name];
                                         return [value, name];
                                     }}
-                                    labelStyle={{ fontWeight: 'bold' }}
+                                    labelStyle={{ fontWeight: 'bold', marginBottom: '8px' }}
                                 />
                                 <Area
                                     yAxisId="left"
                                     type="monotone"
                                     dataKey="dailyProfits"
                                     name="Profits"
-                                    stroke="#8884d8"
-                                    strokeWidth={2}
+                                    stroke="#667eea"
+                                    strokeWidth={3}
                                     fill="url(#colorProfits)"
-                                    dot={{ fill: '#8884d8', r: 4 }}
-                                    activeDot={{ r: 6, fill: '#8884d8' }}
+                                    dot={{ fill: '#667eea', r: 5, strokeWidth: 2, stroke: 'white' }}
+                                    activeDot={{ r: 7, fill: '#667eea', strokeWidth: 3, stroke: 'white' }}
                                 />
                                 <Area
                                     yAxisId="right"
                                     type="monotone"
                                     dataKey="orders"
                                     name="Orders"
-                                    stroke="#82ca9d"
-                                    strokeWidth={2}
+                                    stroke="#f093fb"
+                                    strokeWidth={3}
                                     fill="url(#colorOrders)"
-                                    dot={{ fill: '#82ca9d', r: 4 }}
-                                    activeDot={{ r: 6, fill: '#82ca9d' }}
+                                    dot={{ fill: '#f093fb', r: 5, strokeWidth: 2, stroke: 'white' }}
+                                    activeDot={{ r: 7, fill: '#f093fb', strokeWidth: 3, stroke: 'white' }}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
                     )}
-                </div>
+                    </Paper>
+                </Box>
 
-                {/* Tabs */}
-                <div className="px-6">
-                    <Tabs>
-                        <TabList>
-                            <Tab>
-                                <div className="flex items-center space-x-2">
-                                    <Inventory2 className="text-black" />
+                {/* Tabs Section */}
+                <Box sx={{ px: 4, pb: 4 }}>
+                    <Paper 
+                        elevation={0}
+                        sx={{ 
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                            border: '1px solid rgba(0,0,0,0.05)'
+                        }}
+                    >
+                        <Tabs
+                            selectedTabClassName="selected-tab"
+                        >
+                            <TabList 
+                                style={{
+                                    display: 'flex',
+                                    background: 'white',
+                                    margin: 0,
+                                    padding: '16px 24px 0',
+                                    borderBottom: '2px solid #f0f0f0',
+                                    listStyle: 'none',
+                                    gap: '8px'
+                                }}
+                            >
+                                <Tab
+                                    style={{
+                                        padding: '12px 24px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        borderRadius: '8px 8px 0 0',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: '#666',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        outline: 'none',
+                                        marginBottom: '-2px'
+                                    }}
+                                    selectedClassName="selected-tab"
+                                >
+                                    <Inventory2 sx={{ fontSize: 20 }} />
                                     <span>Products ({getAllProduct.length})</span>
-                                </div>
-                            </Tab>
+                                </Tab>
 
-                            <Tab>
-                                <div className="flex items-center space-x-2">
-                                    <ShoppingCart className="text-black" />
+                                <Tab
+                                    style={{
+                                        padding: '12px 24px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        borderRadius: '8px 8px 0 0',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: '#666',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        outline: 'none',
+                                        marginBottom: '-2px'
+                                    }}
+                                >
+                                    <ShoppingCart sx={{ fontSize: 20 }} />
                                     <span>Orders ({getAllOrder.length})</span>
-                                </div>
-                            </Tab>
+                                </Tab>
 
-                            <Tab>
-                                <div className="flex items-center space-x-2">
-                                    <People className="text-black" />
+                                <Tab
+                                    style={{
+                                        padding: '12px 24px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        borderRadius: '8px 8px 0 0',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: '#666',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        outline: 'none',
+                                        marginBottom: '-2px'
+                                    }}
+                                >
+                                    <People sx={{ fontSize: 20 }} />
                                     <span>Users ({getAllUser.length})</span>
-                                </div>
-                            </Tab>
+                                </Tab>
 
-                            <Tab>
-                                <div className="flex items-center space-x-2">
-                                    <Comment className="text-black" />
+                                <Tab
+                                    style={{
+                                        padding: '12px 24px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        borderRadius: '8px 8px 0 0',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: '#666',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        outline: 'none',
+                                        marginBottom: '-2px'
+                                    }}
+                                >
+                                    <Comment sx={{ fontSize: 20 }} />
                                     <span>Testimonials ({getAllTestimonials.length})</span>
-                                </div>
-                            </Tab>
+                                </Tab>
 
-                            <Tab>
-                                <div className="flex items-center space-x-2">
-                                    <QuestionAnswer className="text-black" />
+                                <Tab
+                                    style={{
+                                        padding: '12px 24px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        borderRadius: '8px 8px 0 0',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        color: '#666',
+                                        transition: 'all 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        outline: 'none',
+                                        marginBottom: '-2px',
+                                        position: 'relative'
+                                    }}
+                                >
+                                    <QuestionAnswer sx={{ fontSize: 20 }} />
                                     <span>FAQs ({faqs.length})</span>
                                     {pendingQuestions > 0 && (
-                                        <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: '8px',
+                                                right: '8px',
+                                                width: '20px',
+                                                height: '20px',
+                                                borderRadius: '50%',
+                                                bgcolor: '#ff5252',
+                                                color: 'white',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '11px',
+                                                fontWeight: 700
+                                            }}
+                                        >
                                             {pendingQuestions}
-                                        </span>
+                                        </Box>
                                     )}
-                                </div>
-                            </Tab>
+                                </Tab>
+                            </TabList>
 
-                        </TabList>
+                            <TabPanel style={{ padding: '24px' }}>
+                                <ProductDetail />
+                            </TabPanel>
 
-                        <TabPanel>
-                            <ProductDetail />
-                        </TabPanel>
+                            <TabPanel style={{ padding: '24px' }}>
+                                <OrderDetail />
+                            </TabPanel>
 
-                        <TabPanel>
-                            <OrderDetail />
-                        </TabPanel>
+                            <TabPanel style={{ padding: '24px' }}>
+                                <UserDetail />
+                            </TabPanel>
 
-                        <TabPanel>
-                            <UserDetail />
-                        </TabPanel>
+                            <TabPanel style={{ padding: '24px' }}>
+                                <TestimonialDetail />
+                            </TabPanel>
 
-                        <TabPanel>
-                            <TestimonialDetail />
-                        </TabPanel>
-
-                        <TabPanel>
-                            <FAQDetail />
-                        </TabPanel>
-                    </Tabs>
-                </div>
-            </div>
+                            <TabPanel style={{ padding: '24px' }}>
+                                <FAQDetail />
+                            </TabPanel>
+                        </Tabs>
+                    </Paper>
+                </Box>
+            </Box>
         </Layout>
     );
 };

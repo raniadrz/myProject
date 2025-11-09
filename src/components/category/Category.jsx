@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { Box, Typography, Container } from '@mui/material';
 import './Category.css'; // Import the CSS file
 
 // category

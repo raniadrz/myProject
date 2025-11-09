@@ -1,3 +1,23 @@
+/* Modern Tab Styling */
+.selected-tab {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-bottom: 3px solid #667eea !important;
+    position: relative;
+}
+
+.selected-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Legacy styles for backward compatibility */
 .react-tabs__tab-list {
     display: flex;
     justify-content: center;
@@ -40,11 +60,11 @@
 }
 
 .react-tabs__tab--selected {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border-color: transparent;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .react-tabs__tab:hover {

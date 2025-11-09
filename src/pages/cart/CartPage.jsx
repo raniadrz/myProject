@@ -127,7 +127,7 @@ const CartPage = () => {
         dispatch(addToCart(item)); // Allow adding to cart without login
     };
 
-    const buyNowFunction = async () => {
+    const buyNowFunction = async (paymentData = {}) => {
         const currentUser = auth.currentUser;
         if (!currentUser) {
             toast.error("Please log in to place an order.");
@@ -148,7 +148,10 @@ const CartPage = () => {
             addressInfo,
             email: currentUser.email,
             userid: currentUser.uid,
-            status: "confirmed",
+            status: paymentData.status || "confirmed",
+            paymentMethod: paymentData.paymentMethod || "bank_transfer",
+            paymentStatus: paymentData.paymentStatus || "pending",
+            transactionId: paymentData.transactionId || null,
             time: Timestamp.now(),
             date: new Date().toLocaleString(
                 "en-US",
@@ -163,7 +166,10 @@ const CartPage = () => {
         try {
             const orderRef = collection(fireDB, 'order');
             await addDoc(orderRef, orderInfo);
+            
+            // Send email confirmation for all payment methods
             sendOrderConfirmationEmail(orderInfo);
+            
             setAddressInfo({
                 name: "",
                 address: "",
@@ -171,9 +177,19 @@ const CartPage = () => {
                 mobileNumber: "",
             });
             dispatch(orderSuccessful());
-            toast.success("Order Placed Successfully");
+            
+            // Custom success messages based on payment method
+            if (paymentData.paymentMethod === 'cash') {
+                toast.success("Order Placed Successfully! Pay when you receive your order.");
+            } else if (paymentData.paymentMethod === 'bank_transfer') {
+                toast.success("Order Placed Successfully! Check your email for bank transfer details.");
+            } else if (paymentData.paymentMethod === 'stripe' || paymentData.paymentMethod === 'paypal') {
+                toast.success("Payment Successful! Order Placed Successfully.");
+            } else {
+                toast.success("Order Placed Successfully");
+            }
         } catch (error) {
-            console.error('Order error:', error); // Debug log
+            console.error('Order error:', error);
             toast.error("Failed to place order. Please try again.");
         }
     };

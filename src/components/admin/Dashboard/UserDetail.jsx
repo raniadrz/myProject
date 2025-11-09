@@ -1,7 +1,24 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Avatar, TextField, InputAdornment, Chip } from '@mui/material';
+import { 
+    Button, 
+    Dialog, 
+    DialogActions, 
+    DialogContent, 
+    DialogContentText, 
+    DialogTitle, 
+    IconButton, 
+    Avatar, 
+    TextField, 
+    InputAdornment, 
+    Chip,
+    Box,
+    Paper,
+    Typography,
+    Card,
+    CardContent
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useContext, useState } from 'react';
 import MyContext from "../../../context/myContext";
@@ -230,60 +247,191 @@ const UserDetail = () => {
     };
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            {/* Header */}
-            <div className="mb-6">
-                <h1 className="text-2xl font-semibold mb-1" style={{ color: 'black' }}>User management</h1>
-                <p className="text-gray-500">Manage your team members and their account permissions here.</p>
-            </div>
+        <Box sx={{ minHeight: '100vh', bgcolor: '#fafafa' }}>
+            {/* Modern Header with Gradient */}
+            <Box
+                sx={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    px: 4,
+                    py: 4,
+                    mb: 4,
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+                }}
+            >
+                <Typography 
+                    variant="h4" 
+                    sx={{ 
+                        fontWeight: 700, 
+                        mb: 0.5,
+                        fontFamily: "'Poppins', sans-serif",
+                    }}
+                >
+                    User Management
+                </Typography>
+                <Typography 
+                    variant="body1" 
+                    sx={{ 
+                        opacity: 0.95,
+                        fontFamily: "'Poppins', sans-serif",
+                    }}
+                >
+                    Manage your team members and their account permissions here.
+                </Typography>
+            </Box>
+
+            {/* Stats Cards */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 3, mb: 4 }}>
+                <Card 
+                    sx={{ 
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        borderRadius: '16px',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                            transform: 'translateY(-4px)',
+                        }
+                    }}
+                >
+                    <CardContent>
+                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                            Total Users
+                        </Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                            {filteredUsers.length}
+                        </Typography>
+                    </CardContent>
+                </Card>
+
+                <Card 
+                    sx={{ 
+                        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                        color: 'white',
+                        borderRadius: '16px',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                            transform: 'translateY(-4px)',
+                        }
+                    }}
+                >
+                    <CardContent>
+                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                            Admin Users
+                        </Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                            {filteredUsers.filter(u => u.role === 'admin').length}
+                        </Typography>
+                    </CardContent>
+                </Card>
+
+                <Card 
+                    sx={{ 
+                        background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                        color: 'white',
+                        borderRadius: '16px',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                            transform: 'translateY(-4px)',
+                        }
+                    }}
+                >
+                    <CardContent>
+                        <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                            Regular Users
+                        </Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                            {filteredUsers.filter(u => u.role === 'user').length}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* Search and Actions Bar */}
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-medium">All users</h2>
-                    <span className="text-gray-500">{filteredUsers.length}</span>
-                </div>
+            <Paper 
+                elevation={0}
+                sx={{ 
+                    p: 3, 
+                    mb: 3,
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.05)'
+                }}
+            >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                            All users
+                        </Typography>
+                        <Chip 
+                            label={filteredUsers.length}
+                            sx={{ 
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white',
+                                fontWeight: 600
+                            }}
+                        />
+                    </Box>
 
-                <div className="flex items-center gap-3">
-                    <TextField
-                        placeholder="Search users..."
-                        size="small"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon className="text-gray-400" />
-                                </InputAdornment>
-                            ),
-                        }}
-                        sx={{
-                            width: '240px',
-                            '& .MuiOutlinedInput-root': {
-                                backgroundColor: 'white',
-                                borderRadius: '8px',
-                            }
-                        }}
-                    />
-                    
-                    <Button
-                        variant="outlined"
-                        startIcon={<FilterListIcon />}
-                        onClick={handleFilterClick}
-                        sx={{
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            borderColor: '#e0e0e0',
-                            color: '#666',
-                        }}
-                    >
-                        Filters
-                        {Object.values(filters).some(value => value !== 'all') && (
-                            <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                Active
-                            </span>
-                        )}
-                    </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <TextField
+                            placeholder="Search users..."
+                            size="small"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: '#667eea' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                width: '240px',
+                                '& .MuiOutlinedInput-root': {
+                                    backgroundColor: 'white',
+                                    borderRadius: '12px',
+                                    '&:hover fieldset': {
+                                        borderColor: '#667eea',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#667eea',
+                                    }
+                                }
+                            }}
+                        />
+                        
+                        <Button
+                            variant="outlined"
+                            startIcon={<FilterListIcon />}
+                            onClick={handleFilterClick}
+                            sx={{
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                borderColor: 'rgba(102, 126, 234, 0.3)',
+                                color: '#667eea',
+                                fontWeight: 600,
+                                '&:hover': {
+                                    borderColor: '#667eea',
+                                    bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                }
+                            }}
+                        >
+                            Filters
+                            {Object.values(filters).some(value => value !== 'all') && (
+                                <Chip
+                                    label="Active"
+                                    size="small"
+                                    sx={{ 
+                                        ml: 1,
+                                        height: '20px',
+                                        bgcolor: '#667eea',
+                                        color: 'white',
+                                        fontSize: '0.7rem'
+                                    }}
+                                />
+                            )}
+                        </Button>
 
                     <Popover
                         open={Boolean(filterAnchorEl)}
@@ -371,59 +519,104 @@ const UserDetail = () => {
                         </div>
                     </Popover>
 
-                    <Button
-                        variant="contained"
-                        startIcon={<PersonAddIcon />}
-                        onClick={handleOpenCreateDialog}
-                        sx={{
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            backgroundColor: '#1a1a1a',
-                            '&:hover': {
-                                backgroundColor: '#000',
-                            }
-                        }}
-                    >
-                        Add user
-                    </Button>
-                </div>
-            </div>
+                        <Button
+                            variant="contained"
+                            startIcon={<PersonAddIcon />}
+                            onClick={handleOpenCreateDialog}
+                            sx={{
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                fontWeight: 600,
+                                px: 3,
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                }
+                            }}
+                        >
+                            Add user
+                        </Button>
+                    </Box>
+                </Box>
+            </Paper>
 
             {/* Table */}
-            <div className="bg-white rounded-lg shadow">
-                <table className="min-w-full">
-                    <thead>
-                        <tr className="border-b">
-                            <th className="w-8 p-4">
-                                <input type="checkbox" className="rounded" />
-                            </th>
-                            <th className="text-left p-4 text-gray-500 font-medium">User name</th>
-                            <th className="text-left p-4 text-gray-500 font-medium">Access</th>
-                            <th className="text-left p-4 text-gray-500 font-medium">Last active</th>
-                            <th className="text-left p-4 text-gray-500 font-medium">Date joined</th>
-                            <th className="w-8 p-4"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <Paper 
+                elevation={0}
+                sx={{ 
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.05)'
+                }}
+            >
+                <Box sx={{ overflowX: 'auto' }}>
+                    <table style={{ minWidth: '100%', width: '100%' }}>
+                        <thead>
+                            <tr style={{ 
+                                background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+                                borderBottom: '2px solid rgba(102, 126, 234, 0.1)'
+                            }}>
+                                <th style={{ width: '40px', padding: '16px' }}>
+                                    <input type="checkbox" style={{ cursor: 'pointer' }} />
+                                </th>
+                                <th style={{ textAlign: 'left', padding: '16px', color: '#667eea', fontWeight: 600, fontSize: '14px' }}>
+                                    User name
+                                </th>
+                                <th style={{ textAlign: 'left', padding: '16px', color: '#667eea', fontWeight: 600, fontSize: '14px' }}>
+                                    Access
+                                </th>
+                                <th style={{ textAlign: 'left', padding: '16px', color: '#667eea', fontWeight: 600, fontSize: '14px' }}>
+                                    Last active
+                                </th>
+                                <th style={{ textAlign: 'left', padding: '16px', color: '#667eea', fontWeight: 600, fontSize: '14px' }}>
+                                    Date joined
+                                </th>
+                                <th style={{ width: '100px', padding: '16px' }}></th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         {rows.length > 0 ? (
                             rows.map((user) => (
-                                <tr key={user.id} className="border-b hover:bg-gray-50">
-                                    <td className="p-4">
-                                        <input type="checkbox" className="rounded" />
+                                <tr 
+                                    key={user.id} 
+                                    style={{ 
+                                        borderBottom: '1px solid #f0f0f0',
+                                        transition: 'background 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(102, 126, 234, 0.02)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                >
+                                    <td style={{ padding: '16px' }}>
+                                        <input type="checkbox" style={{ cursor: 'pointer' }} />
                                     </td>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar src={user.photoURL} alt={user.name}>
+                                    <td style={{ padding: '16px' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <Avatar 
+                                                src={user.photoURL} 
+                                                alt={user.name}
+                                                sx={{
+                                                    width: 44,
+                                                    height: 44,
+                                                    border: '2px solid',
+                                                    borderColor: 'rgba(102, 126, 234, 0.2)'
+                                                }}
+                                            >
                                                 {user.name?.[0]}
                                             </Avatar>
-                                            <div>
-                                                <div className="font-medium">{user.name}</div>
-                                                <div className="text-gray-500 text-sm">{user.email}</div>
-                                            </div>
-                                        </div>
+                                            <Box>
+                                                <Typography sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+                                                    {user.name}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#666' }}>
+                                                    {user.email}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
                                     </td>
-                                    <td className="p-4">
-                                        <div className="flex gap-2">
+                                    <td style={{ padding: '16px' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                                             {user.role === 'admin' ? (
                                                 // Admin chips
                                                 <>
@@ -431,40 +624,44 @@ const UserDetail = () => {
                                                         label="Admin" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#e8f5e9',
-                                                            color: '#2e7d32',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                     <Chip 
-                                                        label="Management Products" 
+                                                        label="Manage Products" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#e3f2fd',
-                                                            color: '#1976d2',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                     <Chip 
-                                                        label="Management Orders" 
+                                                        label="Manage Orders" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#f3e5f5',
-                                                            color: '#7b1fa2',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #c084fc 0%, #a855f7 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                     <Chip 
-                                                        label="Management Users" 
+                                                        label="Manage Users" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#c1dba7',
-                                                            color: '#53a303',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                 </>
@@ -475,117 +672,188 @@ const UserDetail = () => {
                                                         label="User" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#edb7df',
-                                                            color: '#e000a5',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                     <Chip 
                                                         label="Make Orders" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#e3f2fd',
-                                                            color: '#1976d2',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                     <Chip 
-                                                        label="View His History" 
+                                                        label="View History" 
                                                         size="small"
                                                         sx={{
-                                                            backgroundColor: '#ffb3b6',
-                                                            color: '#f20713',
-                                                            borderRadius: '4px',
-                                                            height: '24px',
+                                                            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                                                            color: 'white',
+                                                            borderRadius: '8px',
+                                                            height: '26px',
+                                                            fontWeight: 600,
                                                         }}
                                                     />
                                                 </>
                                             )}
-                                        </div>
+                                        </Box>
                                     </td>
-                                    <td className="p-4 text-gray-500">{user.lastActive || 'Never'}</td>
-                                    <td className="p-4 text-gray-500">{user.date}</td>
-                                    <td className="p-4">
-                                        <div className="flex">
+                                    <td style={{ padding: '16px' }}>
+                                        <Typography sx={{ color: '#666' }}>
+                                            {user.lastActive || 'Never'}
+                                        </Typography>
+                                    </td>
+                                    <td style={{ padding: '16px' }}>
+                                        <Typography sx={{ color: '#666' }}>
+                                            {user.date}
+                                        </Typography>
+                                    </td>
+                                    <td style={{ padding: '16px' }}>
+                                        <Box sx={{ display: 'flex', gap: 0.5 }}>
                                             <IconButton
                                                 onClick={() => handleClickOpenRoleDialog(user)}
-                                                color="primary"
+                                                sx={{
+                                                    color: '#667eea',
+                                                    '&:hover': {
+                                                        bgcolor: 'rgba(102, 126, 234, 0.1)',
+                                                    }
+                                                }}
                                                 size="small"
                                             >
                                                 <AccountCircleIcon />
                                             </IconButton>
                                             <IconButton
                                                 onClick={() => handleOpenDeleteDialog(user)}
-                                                color="secondary"
+                                                sx={{
+                                                    color: '#ef4444',
+                                                    '&:hover': {
+                                                        bgcolor: 'rgba(239, 68, 68, 0.1)',
+                                                    }
+                                                }}
                                                 size="small"
                                             >
-                                                <DeleteIcon style={{ color: 'red' }} />
+                                                <DeleteIcon />
                                             </IconButton>
-                                        </div>
+                                        </Box>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="p-4 text-center text-gray-500">
-                                    No users found matching your search.
+                                <td colSpan="6" style={{ padding: '40px', textAlign: 'center' }}>
+                                    <Typography variant="body1" sx={{ color: '#999' }}>
+                                        No users found matching your search.
+                                    </Typography>
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
+            </Box>
 
                 {/* Pagination */}
                 {filteredUsers.length > 0 && (
-                    <div className="flex justify-between items-center p-4 border-t">
-                        <div className="text-sm text-gray-500">
+                    <Box 
+                        sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            p: 3, 
+                            borderTop: '1px solid #f0f0f0',
+                            background: 'rgba(102, 126, 234, 0.02)'
+                        }}
+                    >
+                        <Typography variant="body2" sx={{ color: '#666' }}>
                             Showing {startIndex + 1} to {Math.min(endIndex, filteredUsers.length)} of {filteredUsers.length} users
-                        </div>
-                        <div className="flex gap-2">
-                            <button
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button
                                 onClick={() => handlePageChange(page - 1)}
                                 disabled={page === 1}
-                                className={`px-3 py-1 rounded ${
-                                    page === 1 
-                                        ? 'text-gray-400 cursor-not-allowed' 
-                                        : 'hover:bg-gray-50 text-gray-700'
-                                }`}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    borderRadius: '8px',
+                                    textTransform: 'none',
+                                    borderColor: 'rgba(102, 126, 234, 0.3)',
+                                    color: page === 1 ? '#ccc' : '#667eea',
+                                    '&:hover': {
+                                        borderColor: '#667eea',
+                                        bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                    },
+                                    '&:disabled': {
+                                        borderColor: '#e0e0e0',
+                                        color: '#ccc',
+                                    }
+                                }}
                             >
                                 Previous
-                            </button>
+                            </Button>
                             {[...Array(totalPages)].map((_, index) => {
                                 const pageNumber = index + 1;
                                 return (
-                                    <button
+                                    <Button
                                         key={pageNumber}
                                         onClick={() => handlePageChange(pageNumber)}
-                                        className={`px-3 py-1 rounded ${
-                                            page === pageNumber 
-                                                ? 'bg-gray-100 text-gray-700 font-medium' 
-                                                : 'hover:bg-gray-50 text-gray-600'
-                                        }`}
+                                        variant={page === pageNumber ? 'contained' : 'outlined'}
+                                        size="small"
+                                        sx={{
+                                            minWidth: '40px',
+                                            borderRadius: '8px',
+                                            textTransform: 'none',
+                                            ...(page === pageNumber ? {
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                color: 'white',
+                                                '&:hover': {
+                                                    background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                                }
+                                            } : {
+                                                borderColor: 'rgba(102, 126, 234, 0.3)',
+                                                color: '#667eea',
+                                                '&:hover': {
+                                                    borderColor: '#667eea',
+                                                    bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                                }
+                                            })
+                                        }}
                                     >
                                         {pageNumber}
-                                    </button>
+                                    </Button>
                                 );
                             })}
-                            <button
+                            <Button
                                 onClick={() => handlePageChange(page + 1)}
                                 disabled={page === totalPages}
-                                className={`px-3 py-1 rounded ${
-                                    page === totalPages 
-                                        ? 'text-gray-400 cursor-not-allowed' 
-                                        : 'hover:bg-gray-50 text-gray-700'
-                                }`}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    borderRadius: '8px',
+                                    textTransform: 'none',
+                                    borderColor: 'rgba(102, 126, 234, 0.3)',
+                                    color: page === totalPages ? '#ccc' : '#667eea',
+                                    '&:hover': {
+                                        borderColor: '#667eea',
+                                        bgcolor: 'rgba(102, 126, 234, 0.05)',
+                                    },
+                                    '&:disabled': {
+                                        borderColor: '#e0e0e0',
+                                        color: '#ccc',
+                                    }
+                                }}
                             >
                                 Next
-                            </button>
-                        </div>
-                    </div>
+                            </Button>
+                        </Box>
+                    </Box>
                 )}
-            </div>
+            </Paper>
 
             {/* Keep existing dialogs */}
             
@@ -718,7 +986,14 @@ const UserDetail = () => {
                 </DialogContent>
 
                 <DialogActions sx={{ backgroundColor: '#f1f1f1' }}>
-                    <Button onClick={handleCloseCreateDialog} color="primary">
+                    <Button 
+                        onClick={handleCloseCreateDialog} 
+                        sx={{
+                            textTransform: 'none',
+                            color: '#667eea',
+                            fontWeight: 600,
+                        }}
+                    >
                         Close
                     </Button>
                 </DialogActions>
@@ -799,7 +1074,7 @@ const UserDetail = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 }
 

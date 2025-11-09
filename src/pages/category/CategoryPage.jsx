@@ -210,16 +210,19 @@ const CategoryPage = () => {
 
     const FilterChipsSection = () => {
         return (
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 3 }}>
                 {priceRange[0] !== 0 || priceRange[1] !== 1000 ? (
                     <Chip
-                        label={`Price: ${priceRange[0]}€ - ${priceRange[1]}€`}
+                        label={`Price: €${priceRange[0]} - €${priceRange[1]}`}
                         onDelete={() => handleRemoveFilter('price')}
                         sx={{
-                            bgcolor: '#f5f5f5',
+                            bgcolor: '#e7eaf6',
+                            color: '#667eea',
+                            fontWeight: 600,
+                            borderRadius: '8px',
                             '& .MuiChip-deleteIcon': {
-                                color: '#666',
-                                '&:hover': { color: '#000' }
+                                color: '#667eea',
+                                '&:hover': { color: '#764ba2' }
                             }
                         }}
                     />
@@ -230,10 +233,13 @@ const CategoryPage = () => {
                         label={`Category: ${selectedCategory2}`}
                         onDelete={() => handleRemoveFilter('category2')}
                         sx={{
-                            bgcolor: '#f5f5f5',
+                            bgcolor: '#e7eaf6',
+                            color: '#667eea',
+                            fontWeight: 600,
+                            borderRadius: '8px',
                             '& .MuiChip-deleteIcon': {
-                                color: '#666',
-                                '&:hover': { color: '#000' }
+                                color: '#667eea',
+                                '&:hover': { color: '#764ba2' }
                             }
                         }}
                     />
@@ -244,10 +250,13 @@ const CategoryPage = () => {
                         label={`Subcategory: ${selectedSubcategory}`}
                         onDelete={() => handleRemoveFilter('subcategory')}
                         sx={{
-                            bgcolor: '#f5f5f5',
+                            bgcolor: '#e7eaf6',
+                            color: '#667eea',
+                            fontWeight: 600,
+                            borderRadius: '8px',
                             '& .MuiChip-deleteIcon': {
-                                color: '#666',
-                                '&:hover': { color: '#000' }
+                                color: '#667eea',
+                                '&:hover': { color: '#764ba2' }
                             }
                         }}
                     />
@@ -258,126 +267,239 @@ const CategoryPage = () => {
 
     return (
         <Layout>
-            <Container maxWidth="lg" sx={{ textAlign: "center", mt: 4 }}>
-               {/* Updated Typography with new style for the title */}
-               <Typography 
-                    variant="h4" 
-                    gutterBottom 
-                    sx={{ 
-                        color: '#2b58a6',  
-                        fontWeight: '600',  // Semi-bold font weight
-                        fontFamily: 'Verdana, sans-serif',  // Changed font to Verdana
-                        mb: 3,  // Adjusted margin-bottom for a smaller gap
-                        textTransform: 'uppercase',  // Uppercase text
-                        textAlign: 'left',  // Align text to the left
-                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.6)',  // Shadow effect
-                    }}
-                >
-                    {categoryname} Products
-                </Typography>
-                {/* Categories Section */}
-                <Category />
-                {/* Cloud-style Filter Button */}
-                <Button
-                    onClick={handleFilterOpen}
-                    sx={{
-                        backgroundColor: '#f0f8ff',
-                        borderRadius: '30px',
-                        padding: '6px 12px',
-                        boxShadow: '0 10px 9px rgba(0, 0, 0, 0.4)',
-                        '&:hover': {
-                            backgroundColor: '#e6f0ff',
-                        },
-                        display: 'flex',
-                        alignItems: 'center',
-                        mb: 4
-                    }}
-                >
-                    <FilterListIcon sx={{ mr: 1 }} />
-                    <Typography variant="button" sx={{ fontWeight: 'bold' }}>
-                        Filter
+            {/* Hero Section with Gradient Background */}
+            <Box 
+                sx={{ 
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    py: 6,
+                    mb: 4,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+                    }
+                }}
+            >
+                <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+                    <Typography 
+                        variant="h3" 
+                        sx={{ 
+                            color: '#ffffff',  
+                            fontWeight: '700',
+                            fontFamily: "'Poppins', sans-serif",
+                            mb: 1,
+                            textTransform: 'capitalize',
+                            textAlign: 'center',
+                            letterSpacing: '1px',
+                            textShadow: '2px 4px 8px rgba(0, 0, 0, 0.3)',
+                        }}
+                    >
+                        {categoryname}
                     </Typography>
-                </Button>
+                    <Typography 
+                        variant="h6" 
+                        sx={{ 
+                            color: 'rgba(255,255,255,0.9)',
+                            fontWeight: '400',
+                            textAlign: 'center',
+                            fontFamily: "'Poppins', sans-serif",
+                        }}
+                    >
+                        Explore our collection of {categoryname.toLowerCase()} products
+                    </Typography>
+                </Container>
+            </Box>
 
-                {/* Filter Dialog (Popup) */}
+            <Container maxWidth="lg" sx={{ mt: 4 }}>
+                {/* Categories Section */}
+                <Box sx={{ mb: 4 }}>
+                    <Category />
+                </Box>
+
+                {/* Modern Filter Button with Stats */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                    <Button
+                        onClick={handleFilterOpen}
+                        variant="contained"
+                        startIcon={<FilterListIcon />}
+                        sx={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            borderRadius: '25px',
+                            padding: '10px 24px',
+                            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                            textTransform: 'none',
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                                transform: 'translateY(-2px)',
+                            },
+                            transition: 'all 0.3s ease',
+                        }}
+                    >
+                        Filters
+                    </Button>
+                    
+                    <Typography 
+                        variant="body1" 
+                        sx={{ 
+                            color: '#666',
+                            fontWeight: '500',
+                            fontSize: '14px'
+                        }}
+                    >
+                        {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} Found
+                    </Typography>
+                </Box>
+
+                {/* Modern Filter Dialog */}
                 <Dialog 
                     open={isFilterOpen} 
                     onClose={handleFilterClose}
                     PaperProps={{
                         sx: {
-                            borderRadius: '12px',
-                            maxWidth: '400px',
-                            width: '100%'
+                            borderRadius: '20px',
+                            maxWidth: '450px',
+                            width: '100%',
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.15)'
                         }
                     }}
                 >
-                    {/* Use div instead of DialogTitle to avoid heading nesting */}
-                    <div
-                        style={{ 
+                    {/* Modern Dialog Header */}
+                    <Box
+                        sx={{ 
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             display: 'flex', 
                             justifyContent: 'space-between', 
                             alignItems: 'center',
-                            borderBottom: '1px solid #eee',
-                            padding: '16px 24px'
+                            padding: '20px 24px',
+                            color: 'white'
                         }}
                     >
-                        <Typography 
-                            component="div" 
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <FilterListIcon />
+                            <Typography 
+                                component="div" 
+                                sx={{ 
+                                    fontSize: '1.35rem', 
+                                    fontWeight: '600',
+                                    fontFamily: "'Poppins', sans-serif"
+                                }}
+                            >
+                                Filter Products
+                            </Typography>
+                        </Box>
+                        <IconButton 
+                            onClick={handleFilterClose} 
+                            size="small"
                             sx={{ 
-                                fontSize: '1.25rem', 
-                                fontWeight: 'bold' 
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(255,255,255,0.2)'
+                                }
                             }}
                         >
-                            Add Filter
-                        </Typography>
-                        <IconButton onClick={handleFilterClose} size="small">
                             <CloseIcon />
                         </IconButton>
-                    </div>
+                    </Box>
 
-                    <DialogContent sx={{ mt: 2 }}>
-                        <Box display="flex" flexDirection="column" gap={3}>
-                            {/* Price Range */}
-                            <Box>
+                    <DialogContent sx={{ mt: 3, px: 3, pb: 3 }}>
+                        <Box display="flex" flexDirection="column" gap={3.5}>
+                            {/* Modern Price Range */}
+                            <Box 
+                                sx={{ 
+                                    p: 2.5, 
+                                    borderRadius: '12px',
+                                    backgroundColor: '#f8f9fa',
+                                    border: '1px solid #e9ecef'
+                                }}
+                            >
                                 <Typography 
                                     component="div" 
                                     sx={{ 
-                                        fontWeight: 500,
-                                        mb: 1 
+                                        fontWeight: 600,
+                                        mb: 2,
+                                        fontSize: '15px',
+                                        color: '#495057'
                                     }}
                                 >
-                                    Price Range
+                                    💰 Price Range
                                 </Typography>
-                                <Box sx={{ px: 2 }}>
+                                <Box sx={{ px: 1 }}>
                                     <Slider
                                         value={priceRange}
                                         onChange={handlePriceChange}
                                         valueLabelDisplay="auto"
                                         min={0}
                                         max={1000}
-                                        valueLabelFormat={(value) => `${value}€`}
+                                        valueLabelFormat={(value) => `€${value}`}
+                                        sx={{
+                                            color: '#667eea',
+                                            '& .MuiSlider-thumb': {
+                                                width: 20,
+                                                height: 20,
+                                                '&:hover': {
+                                                    boxShadow: '0 0 0 8px rgba(102, 126, 234, 0.16)'
+                                                }
+                                            },
+                                            '& .MuiSlider-track': {
+                                                height: 4
+                                            },
+                                            '& .MuiSlider-rail': {
+                                                height: 4,
+                                                opacity: 0.3
+                                            }
+                                        }}
                                     />
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                                        <Typography component="div" color="text.secondary">
-                                            {priceRange[0]}€
-                                        </Typography>
-                                        <Typography component="div" color="text.secondary">
-                                            {priceRange[1]}€
-                                        </Typography>
+                                        <Chip 
+                                            label={`€${priceRange[0]}`} 
+                                            size="small"
+                                            sx={{ 
+                                                fontWeight: 600,
+                                                backgroundColor: '#e7eaf6',
+                                                color: '#667eea'
+                                            }}
+                                        />
+                                        <Chip 
+                                            label={`€${priceRange[1]}`} 
+                                            size="small"
+                                            sx={{ 
+                                                fontWeight: 600,
+                                                backgroundColor: '#e7eaf6',
+                                                color: '#667eea'
+                                            }}
+                                        />
                                     </Box>
                                 </Box>
                             </Box>
 
-                            {/* Category */}
-                            <Box>
+                            {/* Modern Category Selector */}
+                            <Box 
+                                sx={{ 
+                                    p: 2.5, 
+                                    borderRadius: '12px',
+                                    backgroundColor: '#f8f9fa',
+                                    border: '1px solid #e9ecef'
+                                }}
+                            >
                                 <Typography 
                                     component="div" 
                                     sx={{ 
-                                        fontWeight: 500,
-                                        mb: 1 
+                                        fontWeight: 600,
+                                        mb: 2,
+                                        fontSize: '15px',
+                                        color: '#495057'
                                     }}
                                 >
-                                    Category
+                                    🏷️ Category
                                 </Typography>
                                 <TextField
                                     select
@@ -385,7 +507,20 @@ const CategoryPage = () => {
                                     value={selectedCategory2}
                                     onChange={(e) => setSelectedCategory2(e.target.value)}
                                     variant="outlined"
-                                    size="small"
+                                    size="medium"
+                                    sx={{
+                                        backgroundColor: 'white',
+                                        borderRadius: '8px',
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                            '&:hover fieldset': {
+                                                borderColor: '#667eea',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        }
+                                    }}
                                 >
                                     <MenuItem value="">All Categories</MenuItem>
                                     {availableCategory2.map((category2) => (
@@ -396,16 +531,26 @@ const CategoryPage = () => {
                                 </TextField>
                             </Box>
 
-                            {/* Subcategory */}
-                            <Box>
+                            {/* Modern Subcategory Selector */}
+                            <Box 
+                                sx={{ 
+                                    p: 2.5, 
+                                    borderRadius: '12px',
+                                    backgroundColor: '#f8f9fa',
+                                    border: '1px solid #e9ecef',
+                                    opacity: selectedCategory2 ? 1 : 0.6
+                                }}
+                            >
                                 <Typography 
                                     component="div" 
                                     sx={{ 
-                                        fontWeight: 500,
-                                        mb: 1 
+                                        fontWeight: 600,
+                                        mb: 2,
+                                        fontSize: '15px',
+                                        color: '#495057'
                                     }}
                                 >
-                                    Subcategory
+                                    📂 Subcategory
                                 </Typography>
                                 <TextField
                                     select
@@ -413,8 +558,21 @@ const CategoryPage = () => {
                                     value={selectedSubcategory}
                                     onChange={(e) => setSelectedSubcategory(e.target.value)}
                                     variant="outlined"
-                                    size="small"
+                                    size="medium"
                                     disabled={!selectedCategory2}
+                                    sx={{
+                                        backgroundColor: 'white',
+                                        borderRadius: '8px',
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '8px',
+                                            '&:hover fieldset': {
+                                                borderColor: '#667eea',
+                                            },
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#667eea',
+                                            }
+                                        }
+                                    }}
                                 >
                                     <MenuItem value="">All Subcategories</MenuItem>
                                     {availableSubcategories.map((subcategory) => (
@@ -426,26 +584,51 @@ const CategoryPage = () => {
                             </Box>
                         </Box>
 
+                        {/* Modern Action Buttons */}
                         <Box sx={{ 
                             display: 'flex', 
-                            justifyContent: 'flex-end', 
-                            gap: 1, 
+                            gap: 2, 
                             mt: 4,
-                            borderTop: '1px solid #eee',
-                            pt: 2
                         }}>
-                            <Button onClick={handleFilterClose} variant="outlined">
+                            <Button 
+                                onClick={handleFilterClose} 
+                                variant="outlined"
+                                fullWidth
+                                sx={{
+                                    borderRadius: '10px',
+                                    padding: '10px',
+                                    textTransform: 'none',
+                                    fontSize: '15px',
+                                    fontWeight: '600',
+                                    borderColor: '#dee2e6',
+                                    color: '#495057',
+                                    '&:hover': {
+                                        borderColor: '#adb5bd',
+                                        backgroundColor: '#f8f9fa'
+                                    }
+                                }}
+                            >
                                 Cancel
                             </Button>
                             <Button 
                                 onClick={handleFilterClose} 
                                 variant="contained" 
+                                fullWidth
                                 sx={{ 
-                                    bgcolor: '#6366f1',
-                                    '&:hover': { bgcolor: '#4f46e5' }
+                                    borderRadius: '10px',
+                                    padding: '10px',
+                                    textTransform: 'none',
+                                    fontSize: '15px',
+                                    fontWeight: '600',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                                    '&:hover': { 
+                                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                                    }
                                 }}
                             >
-                                Apply Filter
+                                Apply Filters
                             </Button>
                         </Box>
                     </DialogContent>
@@ -453,243 +636,431 @@ const CategoryPage = () => {
 
                 {loading && <CircularProgress />}
 
-                <Container maxWidth="lg">
-                    <FilterChipsSection />
-                    {currentProducts.length > 0 ? (
-                        <Grid 
-                            container 
-                            spacing={4} 
-                            justifyContent="center"
-                            sx={{ 
-                                padding: '20px',
-                                borderRadius: '10px',
-                                mt: 4
-                            }}
-                        >
-                            {currentProducts.map((item, index) => {
-                                const { id, title, price, productImageUrl, productType, category, category2, subcategory, stock } = item;
-                                const cartItem = findCartItem(id);
+                {/* Active Filter Chips */}
+                <FilterChipsSection />
 
-                                return (
-                                    <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                                        <Card
+                {currentProducts.length > 0 ? (
+                    <Grid 
+                        container 
+                        spacing={3} 
+                        justifyContent="flex-start"
+                        sx={{ mt: 1 }}
+                    >
+                        {currentProducts.map((item, index) => {
+                            const { id, title, price, productImageUrl, productType, category, category2, subcategory, stock } = item;
+                            const cartItem = findCartItem(id);
+
+                            return (
+                                <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                                    <Card
+                                        sx={{
+                                            height: "100%",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "space-between",
+                                            position: 'relative',
+                                            borderRadius: '16px',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            cursor: 'pointer',
+                                            overflow: 'hidden',
+                                            '&:hover': {
+                                                transform: 'translateY(-8px)',
+                                                boxShadow: '0 12px 24px rgba(102, 126, 234, 0.15)',
+                                            },
+                                            '&::before': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                height: '4px',
+                                                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                                                opacity: 0,
+                                                transition: 'opacity 0.3s ease',
+                                            },
+                                            '&:hover::before': {
+                                                opacity: 1,
+                                            }
+                                        }}
+                                        onClick={() => navigate(`/productinfo/${id}`)}
+                                    >
+                                            {/* Stock Out Image */}
+                                        {stock === 0 && (
+                                            <img
+                                                src={stockOutImage}
+                                                alt="Out of Stock"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: -20,
+                                                    left: '50%',
+                                                    transform: 'translateX(-50%)',
+                                                    width: '100px',
+                                                    height: 'auto',
+                                                    zIndex: 10,
+                                                }}
+                                            />
+                                        )}
+
+                                        {/* Product Image Section */}
+                                        <Box
                                             sx={{
-                                                height: "100%",
                                                 display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "space-between",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                height: 220,
+                                                p: 2,
+                                                backgroundColor: '#fafafa',
                                                 position: 'relative',
                                             }}
-                                            onClick={() => navigate(`/productinfo/${id}`)}
                                         >
-                                            {/* Stock Out Image */}
-                                            {stock === 0 && (
-                                                <img
-                                                    src={stockOutImage}
-                                                    alt="Out of Stock"
-                                                    style={{
+                                            <CardMedia
+                                                component="img"
+                                                image={productImageUrl}
+                                                alt="product"
+                                                sx={{
+                                                    width: "auto",
+                                                    maxHeight: "100%",
+                                                    maxWidth: "100%",
+                                                    objectFit: "contain",
+                                                    transition: 'transform 0.3s ease',
+                                                    '&:hover': {
+                                                        transform: 'scale(1.05)',
+                                                    }
+                                                }}
+                                            />
+                                            
+                                            {/* Product Type Badge */}
+                                            {productType === "New Product" && (
+                                                <Chip
+                                                    label="New"
+                                                    icon={<StarIcon sx={{ fontSize: 16 }} />}
+                                                    sx={{ 
                                                         position: 'absolute',
-                                                        top:-20,
-                                                        left: '50%',
-                                                        transform: 'translateX(-50%)',
-                                                        width: '100px',
-                                                        height: 'auto',
+                                                        top: 12,
+                                                        right: 12,
+                                                        background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                                                        color: 'white',
+                                                        fontWeight: 600,
+                                                        fontSize: '12px',
+                                                        height: '28px',
+                                                        boxShadow: '0 2px 8px rgba(56, 239, 125, 0.3)',
                                                     }}
                                                 />
                                             )}
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    height: 200,
-                                                }}
-                                            >
-                                                <CardMedia
-                                                    component="img"
-                                                    image={productImageUrl}
-                                                    alt="product"
-                                                    sx={{
-                                                        width: "auto",
-                                                        maxHeight: "100%",
-                                                        maxWidth: "100%",
-                                                        objectFit: "contain",
+                                            {productType === "Sales" && (
+                                                <Chip
+                                                    label="Sale"
+                                                    icon={<LocalOfferIcon sx={{ fontSize: 16 }} />}
+                                                    sx={{ 
+                                                        position: 'absolute',
+                                                        top: 12,
+                                                        right: 12,
+                                                        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                                                        color: 'white',
+                                                        fontWeight: 600,
+                                                        fontSize: '12px',
+                                                        height: '28px',
+                                                        boxShadow: '0 2px 8px rgba(245, 87, 108, 0.3)',
                                                     }}
                                                 />
-                                            </Box>
-                                            <CardContent sx={{ flexGrow: 1 }}>
-                                                <Typography variant="h6" component="div">
-                                                    {title}
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    {category}, {category2}, {subcategory}
-                                                </Typography>
-                                                <Typography variant="h6" color="textPrimary">
-                                                    {price}€
-                                                </Typography>
-                                                {productType === "New Product" && (
-                                                    <Chip
-                                                        label="New"
-                                                        color="success"
-                                                        icon={<StarIcon />}
-                                                        sx={{ mt: 1 }}
-                                                    />
-                                                )}
-                                                {productType === "Sales" && (
-                                                    <Chip
-                                                        label="Sale"
-                                                        color="error"
-                                                        icon={<LocalOfferIcon />}
-                                                        sx={{ mt: 1 }}
-                                                    />
-                                                )}
-                                            </CardContent>
+                                            )}
+                                        </Box>
 
-                                            <Box sx={{ p: 2 }}>
-                                                {cartItem ? (
+                                        {/* Product Details */}
+                                        <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
+                                            <Typography 
+                                                variant="h6" 
+                                                component="div"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    fontSize: '16px',
+                                                    color: '#2c3e50',
+                                                    mb: 1,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    minHeight: '48px',
+                                                }}
+                                            >
+                                                {title}
+                                            </Typography>
+                                            <Typography 
+                                                variant="body2" 
+                                                sx={{
+                                                    color: '#7f8c8d',
+                                                    fontSize: '13px',
+                                                    mb: 1.5,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {category2} • {subcategory}
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography 
+                                                    variant="h5" 
+                                                    sx={{
+                                                        color: '#667eea',
+                                                        fontWeight: 700,
+                                                        fontSize: '22px',
+                                                    }}
+                                                >
+                                                    €{price}
+                                                </Typography>
+                                                {stock <= 5 && stock > 0 && (
+                                                    <Chip 
+                                                        label={`Only ${stock} left`}
+                                                        size="small"
+                                                        sx={{
+                                                            backgroundColor: '#fff3cd',
+                                                            color: '#856404',
+                                                            fontSize: '11px',
+                                                            height: '22px',
+                                                            fontWeight: 600,
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        </CardContent>
+
+                                        {/* Cart Actions */}
+                                        <Box sx={{ p: 2.5, pt: 0 }}>
+                                            {cartItem ? (
+                                                <Box
+                                                    display="flex"
+                                                    flexDirection="column"
+                                                    gap={1.5}
+                                                >
                                                     <Box
                                                         display="flex"
-                                                        flexDirection="column"
                                                         justifyContent="center"
                                                         alignItems="center"
-                                                        gap={1}
+                                                        sx={{
+                                                            backgroundColor: '#f8f9fa',
+                                                            borderRadius: '12px',
+                                                            padding: '8px',
+                                                        }}
                                                     >
-                                                        <Box
-                                                            display="flex"
-                                                            justifyContent="space-between"
-                                                            alignItems="center"
-                                                        >
-                                                            <IconButton
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    decreaseQuantity(id);
-                                                                }}
-                                                                size="small"
-                                                                disabled={cartItem.quantity <= 1}
-                                                            >
-                                                                <RemoveIcon />
-                                                            </IconButton>
-                                                            <Typography
-                                                                variant="body1"
-                                                                sx={{ mx: 2 }}
-                                                            >
-                                                                {cartItem.quantity}
-                                                            </Typography>
-                                                            <IconButton
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    increaseQuantity(id);
-                                                                }}
-                                                                size="small"
-                                                            >
-                                                                <AddIcon />
-                                                            </IconButton>
-                                                        </Box>
-                                                        <Button
+                                                        <IconButton
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                deleteCart(cartItem);
+                                                                decreaseQuantity(id);
                                                             }}
-                                                            variant="outlined"
-                                                            color="error"
-                                                            startIcon={<DeleteIcon />}
-                                                            fullWidth
+                                                            size="small"
+                                                            disabled={cartItem.quantity <= 1}
+                                                            sx={{
+                                                                backgroundColor: 'white',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: '#667eea',
+                                                                    color: 'white',
+                                                                },
+                                                                '&:disabled': {
+                                                                    backgroundColor: '#e9ecef',
+                                                                }
+                                                            }}
                                                         >
-                                                            Delete From Cart
-                                                        </Button>
+                                                            <RemoveIcon fontSize="small" />
+                                                        </IconButton>
+                                                        <Typography
+                                                            variant="h6"
+                                                            sx={{ 
+                                                                mx: 3,
+                                                                fontWeight: 600,
+                                                                color: '#2c3e50',
+                                                            }}
+                                                        >
+                                                            {cartItem.quantity}
+                                                        </Typography>
+                                                        <IconButton
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                increaseQuantity(id);
+                                                            }}
+                                                            size="small"
+                                                            sx={{
+                                                                backgroundColor: 'white',
+                                                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: '#667eea',
+                                                                    color: 'white',
+                                                                }
+                                                            }}
+                                                        >
+                                                            <AddIcon fontSize="small" />
+                                                        </IconButton>
                                                     </Box>
-                                                ) : (
                                                     <Button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            addCart(item);
+                                                            deleteCart(cartItem);
                                                         }}
                                                         variant="outlined"
-                                                        color="primary"
-                                                        startIcon={<ShoppingCartIcon />}
+                                                        startIcon={<DeleteIcon />}
                                                         fullWidth
+                                                        sx={{
+                                                            borderRadius: '10px',
+                                                            textTransform: 'none',
+                                                            fontWeight: 600,
+                                                            borderColor: '#e74c3c',
+                                                            color: '#e74c3c',
+                                                            padding: '8px',
+                                                            '&:hover': {
+                                                                borderColor: '#c0392b',
+                                                                backgroundColor: '#ffe6e6',
+                                                            }
+                                                        }}
                                                     >
-                                                        Add To Cart
+                                                        Remove
                                                     </Button>
-                                                )}
-                                            </Box>
-                                        </Card>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    ) : (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minHeight: '200px',
-                                             
+                                                </Box>
+                                            ) : (
+                                                <Button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        addCart(item);
+                                                    }}
+                                                    variant="contained"
+                                                    startIcon={<ShoppingCartIcon />}
+                                                    fullWidth
+                                                    sx={{
+                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                        borderRadius: '10px',
+                                                        textTransform: 'none',
+                                                        fontWeight: 600,
+                                                        padding: '10px',
+                                                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
+                                                        '&:hover': {
+                                                            background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                                            boxShadow: '0 6px 16px rgba(102, 126, 234, 0.4)',
+                                                        }
+                                                    }}
+                                                >
+                                                    Add to Cart
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    </Card>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                ) : (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '400px',
+                            py: 6,
+                        }}
+                    >
+                        <img 
+                            src={noProductsFound} 
+                            alt="No products found"
+                            style={{
+                                maxWidth: '280px',
+                                width: '100%',
+                                height: 'auto',
+                                marginBottom: '24px',
+                                opacity: 0.8,
+                            }}
+                        />
+                        <Typography 
+                            variant="h4" 
+                            sx={{ 
+                                color: '#2c3e50',
+                                fontWeight: '600',
+                                mb: 1.5,
+                                fontFamily: "'Poppins', sans-serif",
                             }}
                         >
-                            <img 
-                                src={noProductsFound} 
-                                alt="No products found"
-                                style={{
-                                    maxWidth: '300px',
-                                    width: '100%',
-                                    height: 'auto',
-                                    
+                            No Products Found
+                        </Typography>
+                        <Typography 
+                            variant="body1" 
+                            sx={{ 
+                                color: '#7f8c8d',
+                                textAlign: 'center',
+                                maxWidth: '450px',
+                                mb: 3,
+                                fontSize: '15px',
+                                lineHeight: 1.6,
+                            }}
+                        >
+                            We couldn't find any products matching your criteria. Try adjusting your filters or explore other categories.
+                        </Typography>
+
+                        {(selectedCategory2 || selectedSubcategory || priceRange[0] !== 0 || priceRange[1] !== 1000) && (
+                            <Button
+                                onClick={() => {
+                                    setPriceRange([0, 1000]);
+                                    setSelectedCategory2('');
+                                    setSelectedSubcategory('');
                                 }}
-                            />
-                            <Typography 
-                                variant="h5" 
+                                variant="contained"
                                 sx={{ 
-                                    color: '#666',
-                                    fontWeight: 'medium',
-                                    mb: 2
+                                    mt: 2,
+                                    borderRadius: '10px',
+                                    padding: '10px 24px',
+                                    textTransform: 'none',
+                                    fontSize: '15px',
+                                    fontWeight: '600',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)',
+                                    }
                                 }}
                             >
-                                No products found
-                            </Typography>
-                            <Typography 
-                                variant="body1" 
-                                sx={{ 
-                                    color: '#888',
-                                    textAlign: 'center',
-                                    maxWidth: '400px'
-                                }}
-                            >
-                                We couldn't find any products matching your criteria. Try adjusting your filters or check back later.
-                            </Typography>
+                                Clear All Filters
+                            </Button>
+                        )}
+                    </Box>
+                )}
 
-                            {(selectedCategory2 || selectedSubcategory || priceRange[0] !== 0 || priceRange[1] !== 1000) && (
-                                <Button
-                                    onClick={() => {
-                                        setPriceRange([0, 1000]);
-                                        setSelectedCategory2('');
-                                        setSelectedSubcategory('');
-                                    }}
-                                    variant="outlined"
-                                    sx={{ mt: 3 }}
-                                >
-                                    Clear All Filters
-                                </Button>
-                            )}
-                        </Box>
-                    )}
-
-                    {/* Pagination - Only show if there are products */}
-                    {currentProducts.length > 0 && (
-                        <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
-                            <Pagination
-                                count={totalPages}
-                                page={currentPage}
-                                onChange={handlePageChange}
-                                siblingCount={1}
-                                boundaryCount={1}
-                                sx={{ ml: 2 }}
-                            />
-                        </Box>
-                    )}
-                </Container>
+                {/* Modern Pagination */}
+                {currentProducts.length > 0 && (
+                    <Box 
+                        display="flex" 
+                        justifyContent="center" 
+                        alignItems="center" 
+                        mt={6}
+                        mb={4}
+                    >
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            siblingCount={1}
+                            boundaryCount={1}
+                            size="large"
+                            sx={{
+                                '& .MuiPaginationItem-root': {
+                                    borderRadius: '8px',
+                                    fontWeight: 600,
+                                    fontSize: '15px',
+                                    '&:hover': {
+                                        backgroundColor: '#e7eaf6',
+                                    },
+                                },
+                                '& .Mui-selected': {
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    color: 'white',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                    }
+                                },
+                            }}
+                        />
+                    </Box>
+                )}
             </Container>
         </Layout>
     );

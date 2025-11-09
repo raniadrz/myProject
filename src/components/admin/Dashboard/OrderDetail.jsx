@@ -4,10 +4,27 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Typography, Grid, MenuItem, Select, Button } from '@mui/material';
+import { 
+  Box, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Typography, 
+  Grid, 
+  MenuItem, 
+  Select, 
+  Button,
+  Paper,
+  Card,
+  CardContent,
+  Chip
+} from '@mui/material';
 import myContext from "../../../context/myContext";
 import Loader from "../../loader/Loader";
 import { styled } from '@mui/material/styles';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     borderRadius: '10px',
@@ -17,24 +34,26 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
-  '& .MuiDataGrid-root': {
-    backgroundColor: '#f0f8ff',
-    border: '1px solid rgb(241, 208, 241)',
-    overflowX: 'auto',
-  },
+  border: 'none',
   '& .MuiDataGrid-columnHeaders': {
-    textAlign: 'center',
-    fontSize: '1.1rem',
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+    borderBottom: '2px solid rgba(102, 126, 234, 0.1)',
+    fontSize: '14px',
+    fontWeight: 600,
+    color: '#667eea',
   },
   '& .MuiDataGrid-columnHeaderTitle': {
-    fontWeight: 'bold',
-    color: '#010103',
+    fontWeight: 600,
+    color: '#667eea',
   },
   '& .MuiDataGrid-row': {
-   
+    borderBottom: '1px solid #f0f0f0',
     '&:hover': {
-      backgroundColor: '#f1d1fd',
+      backgroundColor: 'rgba(102, 126, 234, 0.02)',
     },
+  },
+  '& .MuiDataGrid-cell': {
+    borderBottom: 'none',
   },
 }));
 
@@ -125,13 +144,18 @@ const OrderDetail = () => {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   // DataGrid columns
   const columns = [
     { field: 'id', headerName: 'Order ID', flex: 2, headerAlign: 'center', align: 'center' },
     { field: 'name', headerName: 'Customer Name', flex: 3, headerAlign: 'center', align: 'center' },
     { field: 'email', headerName: 'Email Address', flex: 3, headerAlign: 'center', align: 'center' },
-    { field: 'date', headerName: 'Order Date', flex: 3, headerAlign: 'center', align: 'center' },
-    { field: 'totalPrice', headerName: 'Total Price (EUR)', flex: 3, headerAlign: 'center', align: 'center' },
+    { field: 'date', headerName: 'Order Date', flex: 2, headerAlign: 'center', align: 'center' },
+    { field: 'totalPrice', headerName: 'Total Price (EUR)', flex: 2, headerAlign: 'center', align: 'center' },
+    { field: 'paymentMethod', headerName: 'Payment Method', flex: 2, headerAlign: 'center', align: 'center' },
     {
       field: 'status',
       headerName: 'Order Status',
@@ -143,11 +167,24 @@ const OrderDetail = () => {
           value={params.row.status}
           onChange={(event) => handleStatusChange(event.target.value, params.row.id)}
           displayEmpty
+          size="small"
           inputProps={{ 'aria-label': 'Without label' }}
-          sx={{ width: '100%', bgcolor: 'white', border: '1px solid #1976d2', borderRadius: '5px', '&:hover': { borderColor: '#1976d2' } }}
+          sx={{ 
+            width: '100%', 
+            borderRadius: '8px',
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'rgba(102, 126, 234, 0.3)',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#667eea',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#667eea',
+            }
+          }}
         >
           {orderStatuses.map((status) => (
-            <MenuItem key={status} value={status} sx={{ '&:hover': { backgroundColor: '#e3f2fd' } }}>
+            <MenuItem key={status} value={status} sx={{ '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' } }}>
               {status}
             </MenuItem>
           ))}
@@ -161,51 +198,186 @@ const OrderDetail = () => {
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
-        <div>
-          <IconButton onClick={() => handleClickOpenDetailDialog(params.row.order)}>
-            <PrintIcon style={{ color: 'blue' }} />
+        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+          <IconButton 
+            onClick={() => handleClickOpenDetailDialog(params.row.order)}
+            sx={{
+              color: '#667eea',
+              '&:hover': {
+                bgcolor: 'rgba(102, 126, 234, 0.1)',
+              }
+            }}
+            size="small"
+          >
+            <PrintIcon />
           </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon style={{ color: 'red' }} />
+          <IconButton 
+            onClick={() => handleDelete(params.row.id)}
+            sx={{
+              color: '#ef4444',
+              '&:hover': {
+                bgcolor: 'rgba(239, 68, 68, 0.1)',
+              }
+            }}
+            size="small"
+          >
+            <DeleteIcon />
           </IconButton>
-        </div>
+        </Box>
       )
     }
   ];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-1">All Orders</h1>
-        <p className="text-gray-500">Manage and view all orders here.</p>
-      </div>
+    <Box sx={{ width: '100%' }}>
+      {/* Header with Gradient */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          px: 4,
+          py: 4,
+          mb: 4,
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
+        }}
+      >
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            fontWeight: 700, 
+            mb: 0.5,
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          All Orders
+        </Typography>
+        <Typography 
+          variant="body1" 
+          sx={{ 
+            opacity: 0.95,
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          Manage and view all customer orders
+        </Typography>
+      </Box>
 
-      <div className="flex justify-center relative top-20">
-        {loading && <Loader />}
-      </div>
+      {/* Stats Cards */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3, mb: 4 }}>
+        <Card 
+          sx={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            borderRadius: '16px',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+            }
+          }}
+        >
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  Total Orders
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {rows.length}
+                </Typography>
+              </Box>
+              <ShoppingCartIcon sx={{ fontSize: 48, opacity: 0.3 }} />
+            </Box>
+          </CardContent>
+        </Card>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="w-full mb-5" style={{ height: 'auto', maxHeight: '400px', overflowY: 'auto' }}>
+        <Card 
+          sx={{ 
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            color: 'white',
+            borderRadius: '16px',
+            transition: 'transform 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+            }
+          }}
+        >
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="body2" sx={{ opacity: 0.9, mb: 1 }}>
+                  Revenue
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {rows.reduce((sum, order) => sum + order.totalPrice, 0).toFixed(2)}€
+                </Typography>
+              </Box>
+              <LocalShippingIcon sx={{ fontSize: 48, opacity: 0.3 }} />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <Loader />
+        </Box>
+      )}
+
+      <Paper 
+        elevation={0}
+        sx={{ 
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          border: '1px solid rgba(0,0,0,0.05)'
+        }}
+      >
+        <Box sx={{ width: '100%', minHeight: '400px' }}>
           <StyledDataGrid
             rows={rows}
             columns={columns}
             pageSize={usersPerPage}
             rowsPerPageOptions={[usersPerPage]}
             disableSelectionOnClick
+            autoHeight
           />
-        </div>
+        </Box>
 
         {rows.length > 0 && (
-          <div className="flex justify-between items-center p-4 border-t">
-            <div className="text-sm text-gray-500">
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              p: 3, 
+              borderTop: '1px solid #f0f0f0',
+              background: 'rgba(102, 126, 234, 0.02)'
+            }}
+          >
+            <Typography variant="body2" sx={{ color: '#666' }}>
               Showing {startIndex + 1} to {Math.min(endIndex, rows.length)} of {rows.length} orders
-            </div>
-            <div className="flex gap-2">
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
                 variant="outlined"
-                className={`px-3 py-1 rounded ${page === 1 ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-700'}`}
+                size="small"
+                sx={{
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  borderColor: 'rgba(102, 126, 234, 0.3)',
+                  color: page === 1 ? '#ccc' : '#667eea',
+                  '&:hover': {
+                    borderColor: '#667eea',
+                    bgcolor: 'rgba(102, 126, 234, 0.05)',
+                  },
+                  '&:disabled': {
+                    borderColor: '#e0e0e0',
+                    color: '#ccc',
+                  }
+                }}
               >
                 Previous
               </Button>
@@ -216,7 +388,26 @@ const OrderDetail = () => {
                     key={pageNumber}
                     onClick={() => handlePageChange(pageNumber)}
                     variant={page === pageNumber ? 'contained' : 'outlined'}
-                    className={`px-3 py-1 rounded ${page === pageNumber ? 'bg-gray-100 text-gray-700 font-medium' : 'hover:bg-gray-50 text-gray-600'}`}
+                    size="small"
+                    sx={{
+                      minWidth: '40px',
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      ...(page === pageNumber ? {
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                        }
+                      } : {
+                        borderColor: 'rgba(102, 126, 234, 0.3)',
+                        color: '#667eea',
+                        '&:hover': {
+                          borderColor: '#667eea',
+                          bgcolor: 'rgba(102, 126, 234, 0.05)',
+                        }
+                      })
+                    }}
                   >
                     {pageNumber}
                   </Button>
@@ -226,85 +417,234 @@ const OrderDetail = () => {
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
                 variant="outlined"
-                className={`px-3 py-1 rounded ${page === totalPages ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-700'}`}
+                size="small"
+                sx={{
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  borderColor: 'rgba(102, 126, 234, 0.3)',
+                  color: page === totalPages ? '#ccc' : '#667eea',
+                  '&:hover': {
+                    borderColor: '#667eea',
+                    bgcolor: 'rgba(102, 126, 234, 0.05)',
+                  },
+                  '&:disabled': {
+                    borderColor: '#e0e0e0',
+                    color: '#ccc',
+                  }
+                }}
               >
                 Next
               </Button>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Paper>
 
-      <StyledDialog
+      <Dialog
         open={openDetailDialog}
         onClose={handleCloseDetailDialog}
         fullWidth
-        maxWidth="sm"
+        maxWidth="md"
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+          }
+        }}
       >
-        <DialogTitle sx={{ backgroundColor: '#e3f2fd' }}>Order Details</DialogTitle>
-        <DialogContent id="printable-content">
+        <DialogTitle 
+          sx={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            fontWeight: 700,
+            fontSize: '20px',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          Order Details
+        </DialogTitle>
+        <DialogContent id="printable-content" sx={{ p: 3, mt: 2 }}>
           {selectedOrder && (
-            <Box sx={{ padding: 2 }}>
-              <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                Order ID/CODE: {selectedOrder.id}
+            <Box>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  mb: 3, 
+                  pb: 2, 
+                  borderBottom: '2px solid rgba(102, 126, 234, 0.1)',
+                  color: '#667eea',
+                  fontWeight: 600
+                }}
+              >
+                Order ID: {selectedOrder.id}
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Date:</strong> {formatDate(selectedOrder.date)}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Name:</strong> {selectedOrder.addressInfo?.name}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Address:</strong> {selectedOrder.addressInfo?.address}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Postal Code:</strong> {selectedOrder.addressInfo?.pincode}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Mobile Number:</strong> {selectedOrder.addressInfo?.mobileNumber}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Email:</strong> {selectedOrder.email}
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Payment Method:</strong> {selectedOrder.addressInfo?.paymentMethod}
-                  </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ 
+                    p: 2, 
+                    bgcolor: 'rgba(102, 126, 234, 0.05)', 
+                    borderRadius: '12px',
+                    mb: 2
+                  }}>
+                    <Typography variant="subtitle2" sx={{ color: '#667eea', fontWeight: 700, mb: 2 }}>
+                      Customer Information
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Typography variant="body2">
+                        <strong>Date:</strong> {formatDate(selectedOrder.date)}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Name:</strong> {selectedOrder.addressInfo?.name}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Email:</strong> {selectedOrder.email}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Mobile:</strong> {selectedOrder.addressInfo?.mobileNumber}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Address:</strong> {selectedOrder.addressInfo?.address}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Postal Code:</strong> {selectedOrder.addressInfo?.pincode}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ 
+                    p: 2, 
+                    bgcolor: 'rgba(240, 147, 251, 0.05)', 
+                    borderRadius: '12px'
+                  }}>
+                    <Typography variant="subtitle2" sx={{ color: '#f093fb', fontWeight: 700, mb: 2 }}>
+                      Payment Information
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <strong>Method:</strong>
+                        <Chip 
+                          label={selectedOrder.paymentMethod || "N/A"}
+                          size="small"
+                          sx={{ 
+                            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                            color: 'white',
+                            fontWeight: 600
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <strong>Status:</strong>
+                        <Chip 
+                          label={selectedOrder.paymentStatus || "N/A"}
+                          size="small"
+                          sx={{ 
+                            background: selectedOrder.paymentStatus === 'paid' 
+                              ? 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)'
+                              : 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                            color: 'white',
+                            fontWeight: 600
+                          }}
+                        />
+                      </Box>
+                      {selectedOrder.transactionId && (
+                        <Typography variant="body2">
+                          <strong>Transaction ID:</strong> {selectedOrder.transactionId}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>Cart Items:</strong>
+                
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle2" sx={{ color: '#667eea', fontWeight: 700, mb: 2 }}>
+                    Order Items
                   </Typography>
-                  <Grid container spacing={2}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {selectedOrder.cartItems.map((item, index) => (
-                      <Grid item xs={12} key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={item.productImageUrl} alt="product" style={{ width: '50px', height: '50px', marginRight: '10px' }} />
-                        <Box>
-                          <Typography variant="body2" component="div"><strong>Title:</strong> {item.title}</Typography>
-                          <Typography variant="body2" component="div"><strong>Category:</strong> {item.category}</Typography>
-                          <Typography variant="body2" component="div"><strong>Price:</strong> {item.price}€</Typography>
-                          <Typography variant="body2" component="div"><strong>Quantity:</strong> {item.quantity}</Typography>
-                          <Typography variant="body2" component="div"><strong>Total:</strong> {item.price * item.quantity}€</Typography>
+                      <Box 
+                        key={index} 
+                        sx={{ 
+                          display: 'flex', 
+                          gap: 2,
+                          p: 2,
+                          bgcolor: '#fafafa',
+                          borderRadius: '12px',
+                          border: '1px solid #f0f0f0'
+                        }}
+                      >
+                        <img 
+                          src={item.productImageUrl} 
+                          alt="product" 
+                          style={{ 
+                            width: '60px', 
+                            height: '60px', 
+                            borderRadius: '8px',
+                            objectFit: 'cover'
+                          }} 
+                        />
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                            {item.title}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>
+                            {item.category}
+                          </Typography>
+                          <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                            <Typography variant="caption">
+                              <strong>Price:</strong> {item.price}€
+                            </Typography>
+                            <Typography variant="caption">
+                              <strong>Qty:</strong> {item.quantity}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#667eea', fontWeight: 700 }}>
+                              <strong>Total:</strong> {(item.price * item.quantity).toFixed(2)}€
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Grid>
+                      </Box>
                     ))}
-                  </Grid>
+                  </Box>
                 </Grid>
               </Grid>
             </Box>
           )}
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'space-between' }}>
-          <IconButton onClick={handlePrint}>
-            <PrintIcon color="primary" />
-          </IconButton>
-          <IconButton onClick={handleCloseDetailDialog}>
-            <CloseIcon />
-          </IconButton>
+        <DialogActions sx={{ p: 3, gap: 1, borderTop: '1px solid #f0f0f0' }}>
+          <Button
+            onClick={handlePrint}
+            startIcon={<PrintIcon />}
+            sx={{
+              textTransform: 'none',
+              color: '#667eea',
+              borderRadius: '12px',
+              fontWeight: 600,
+              '&:hover': {
+                bgcolor: 'rgba(102, 126, 234, 0.1)',
+              }
+            }}
+          >
+            Print
+          </Button>
+          <Button
+            onClick={handleCloseDetailDialog}
+            variant="outlined"
+            sx={{
+              textTransform: 'none',
+              borderRadius: '12px',
+              borderColor: 'rgba(102, 126, 234, 0.3)',
+              color: '#667eea',
+              fontWeight: 600,
+              '&:hover': {
+                borderColor: '#667eea',
+                bgcolor: 'rgba(102, 126, 234, 0.05)',
+              }
+            }}
+          >
+            Close
+          </Button>
         </DialogActions>
-      </StyledDialog>
-    </div>
+      </Dialog>
+    </Box>
   );
 };
 
