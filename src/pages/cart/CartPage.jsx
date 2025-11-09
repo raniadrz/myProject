@@ -309,6 +309,8 @@ const CartPage = () => {
                                                 addressInfo={addressInfo}
                                                 setAddressInfo={setAddressInfo}
                                                 buyNowFunction={buyNowFunction}
+                                                totalAmount={totalAmount}
+                                                orderInfo={cartItems}
                                             />
                                         ) : (
                                             <button

@@ -32,7 +32,7 @@ import FAQ from './pages/footer/faq/faq';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { initializeCart } from './redux/cartSlice';
+import { initializeCart, loadCart } from './redux/cartSlice';
 
 function App() {
   const dispatch = useDispatch();
@@ -41,7 +41,12 @@ function App() {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(initializeCart());
+        // Load cart from localStorage when user logs in
+        const savedCart = loadCart();
+        dispatch(initializeCart(savedCart));
+      } else {
+        // Clear cart when user logs out
+        dispatch(initializeCart([]));
       }
     });
 

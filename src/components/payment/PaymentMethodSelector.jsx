@@ -123,14 +123,14 @@ const PaymentMethodSelector = ({ open, onClose, totalAmount, orderInfo, onPaymen
                     sx={{
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         color: 'white',
-                        p: 3,
+                        p: 2,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <PaymentIcon sx={{ fontSize: 28 }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <PaymentIcon sx={{ fontSize: 30 }} />
                         <Box>
                             <Typography variant="h6" sx={{ fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>
                                 Choose Payment Method
@@ -157,8 +157,9 @@ const PaymentMethodSelector = ({ open, onClose, totalAmount, orderInfo, onPaymen
                     {/* Order Total */}
                     <Box
                         sx={{
-                            p: 3,
+                            p: 2,
                             mb: 4,
+                            marginTop: 3,
                             borderRadius: '16px',
                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             textAlign: 'center',
@@ -185,9 +186,9 @@ const PaymentMethodSelector = ({ open, onClose, totalAmount, orderInfo, onPaymen
                                 <Paper
                                     elevation={0}
                                     sx={{
-                                        p: 3,
-                                        borderRadius: '16px',
-                                        border: '2px solid',
+                                        p: 1,
+                                        borderRadius: '10px',
+                                        border: '1px solid',
                                         borderColor: selectedMethod === method.id ? '#667eea' : '#e9ecef',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s ease',
@@ -208,12 +209,12 @@ const PaymentMethodSelector = ({ open, onClose, totalAmount, orderInfo, onPaymen
                                         sx={{
                                             width: 80,
                                             height: 80,
-                                            borderRadius: '50%',
+                                            borderRadius: '10%',
                                             background: method.gradient,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            mb: 2,
+                                            mb: 1,
                                             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                                         }}
                                     >

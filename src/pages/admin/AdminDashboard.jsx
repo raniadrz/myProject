@@ -40,7 +40,6 @@ import OrderDetail from '../../components/admin/Dashboard/OrderDetail';
 import UserDetail from '../../components/admin/Dashboard/UserDetail';
 import TestimonialDetail from '../../components/admin/Dashboard/TestimonialDetail';
 import FAQDetail from '../../components/admin/Dashboard/FAQDetail';
-import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const context = useContext(myContext);
@@ -756,24 +755,34 @@ const AdminDashboard = () => {
                                 </Tab>
                             </TabList>
 
-                            <TabPanel style={{ padding: '24px' }}>
-                                <ProductDetail />
+                            <TabPanel>
+                                <Box sx={{ p: 2 }}>
+                                    <ProductDetail />
+                                </Box>
                             </TabPanel>
 
-                            <TabPanel style={{ padding: '24px' }}>
-                                <OrderDetail />
+                            <TabPanel>
+                                <Box sx={{ p: 2 }}>
+                                    <OrderDetail />
+                                </Box>
                             </TabPanel>
 
-                            <TabPanel style={{ padding: '24px' }}>
-                                <UserDetail />
+                            <TabPanel>
+                                <Box sx={{ p: 2 }}>
+                                    <UserDetail />
+                                </Box>
                             </TabPanel>
 
-                            <TabPanel style={{ padding: '24px' }}>
-                                <TestimonialDetail />
+                            <TabPanel>
+                                <Box sx={{ p: 2 }}>
+                                    <TestimonialDetail />
+                                </Box>
                             </TabPanel>
 
-                            <TabPanel style={{ padding: '24px' }}>
-                                <FAQDetail />
+                            <TabPanel>
+                                <Box sx={{ p: 2 }}>
+                                    <FAQDetail />
+                                </Box>
                             </TabPanel>
                         </Tabs>
                     </Paper>

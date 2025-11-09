@@ -11,7 +11,14 @@ const loadState = () => {
 
     const serializedState = localStorage.getItem(`cart_${userId}`);
     if (serializedState === null) return undefined;
-    return { cart: JSON.parse(serializedState) };
+    
+    const cartData = JSON.parse(serializedState);
+    // Check if it's the new format with items and timestamp
+    if (cartData && cartData.items) {
+      return { cart: cartData.items };
+    }
+    // Fallback for old format (just array of items)
+    return { cart: cartData };
   } catch (err) {
     return undefined;
   }
@@ -24,7 +31,11 @@ const saveState = (state) => {
     const userId = auth.currentUser?.uid;
     if (!userId) return;
 
-    const serializedState = JSON.stringify(state.cart);
+    const cartData = {
+      items: state.cart,
+      timestamp: Date.now(),
+    };
+    const serializedState = JSON.stringify(cartData);
     localStorage.setItem(`cart_${userId}`, serializedState);
   } catch (err) {
     // Handle errors
