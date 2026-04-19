@@ -539,7 +539,7 @@ const ProductDetail = () => {
           border: '1px solid rgba(0,0,0,0.05)'
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
             placeholder="Search products..."
             variant="outlined"
@@ -550,7 +550,7 @@ const ProductDetail = () => {
               startAdornment: <SearchIcon sx={{ color: '#999', mr: 1 }} />,
             }}
             sx={{
-              minWidth: '250px',
+              width: '100%',
               '& .MuiOutlinedInput-root': {
                 borderRadius: '12px',
                 bgcolor: '#f8f9fa',
@@ -567,8 +567,8 @@ const ProductDetail = () => {
             }}
           />
 
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+            <FormControl size="small" sx={{ minWidth: 140, flex: 1 }}>
               <Select
                 value={productType}
                 onChange={handleProductTypeChange}
@@ -592,7 +592,7 @@ const ProductDetail = () => {
               </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: 160, flex: 1 }}>
               <Select
                 value={sortBy}
                 onChange={handleSortChange}
@@ -620,10 +620,11 @@ const ProductDetail = () => {
               </Select>
             </FormControl>
 
-            <Link to="/addproduct" style={{ textDecoration: 'none' }}>
+            <Link to="/addproduct" style={{ textDecoration: 'none', width: '100%' }}>
               <Button
                 variant="contained"
                 startIcon={<AddToPhotosIcon />}
+                fullWidth
                 sx={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   color: 'white',
@@ -652,15 +653,16 @@ const ProductDetail = () => {
         </Box>
       )}
 
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           borderRadius: '16px',
           overflow: 'hidden',
           boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
           border: '1px solid rgba(0,0,0,0.05)'
         }}
       >
+        <Box sx={{ overflowX: 'auto' }}>
         <StyledDataGrid
           rows={rows}
           columns={columns}
@@ -675,6 +677,7 @@ const ProductDetail = () => {
             }
           }}
         />
+        </Box>
       </Paper>
     </Box>
   );

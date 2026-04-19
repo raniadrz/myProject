@@ -72,30 +72,17 @@ const TestimonialDetail = () => {
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          px: 4,
-          py: 4,
+          px: { xs: 2, sm: 4 },
+          py: { xs: 3, sm: 4 },
           mb: 4,
           borderRadius: '16px',
           boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
         }}
       >
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            fontWeight: 700, 
-            mb: 0.5,
-            fontFamily: "'Poppins', sans-serif",
-          }}
-        >
+        <Typography sx={{ fontWeight: 700, mb: 0.5, fontFamily: "'Poppins', sans-serif", fontSize: { xs: '20px', sm: '28px' } }}>
           All Testimonials
         </Typography>
-        <Typography 
-          variant="body1" 
-          sx={{ 
-            opacity: 0.95,
-            fontFamily: "'Poppins', sans-serif",
-          }}
-        >
+        <Typography variant="body2" sx={{ opacity: 0.95, fontFamily: "'Poppins', sans-serif" }}>
           Manage your customer testimonials and reviews
         </Typography>
       </Box>

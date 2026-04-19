@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -62,6 +63,8 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 const OrderDetail = () => {
   const context = useContext(myContext);
   const { loading, setLoading, getAllOrder, orderDelete, updateOrderStatus, updatePaymentStatus } = context;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -396,30 +399,17 @@ const OrderDetail = () => {
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          px: 4,
-          py: 4,
+          px: { xs: 2, sm: 4 },
+          py: { xs: 3, sm: 4 },
           mb: 4,
           borderRadius: '16px',
           boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
         }}
       >
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            fontWeight: 700, 
-            mb: 0.5,
-            fontFamily: "'Poppins', sans-serif",
-          }}
-        >
+        <Typography sx={{ fontWeight: 700, mb: 0.5, fontFamily: "'Poppins', sans-serif", fontSize: { xs: '20px', sm: '28px' } }}>
           All Orders
         </Typography>
-        <Typography 
-          variant="body1" 
-          sx={{ 
-            opacity: 0.95,
-            fontFamily: "'Poppins', sans-serif",
-          }}
-        >
+        <Typography variant="body2" sx={{ opacity: 0.95, fontFamily: "'Poppins', sans-serif" }}>
           Manage and view all customer orders
         </Typography>
       </Box>
@@ -485,16 +475,16 @@ const OrderDetail = () => {
         </Box>
       )}
 
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           borderRadius: '16px',
           overflow: 'hidden',
           boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
           border: '1px solid rgba(0,0,0,0.05)'
         }}
       >
-        <Box sx={{ width: '100%', minHeight: '400px' }}>
+        <Box sx={{ width: '100%', minHeight: '400px', overflowX: 'auto' }}>
           <StyledDataGrid
             rows={rows}
             columns={columns}
@@ -511,6 +501,7 @@ const OrderDetail = () => {
         open={openDetailDialog}
         onClose={handleCloseDetailDialog}
         fullWidth
+        fullScreen={isMobile}
         maxWidth="md"
         PaperProps={{
           sx: {
