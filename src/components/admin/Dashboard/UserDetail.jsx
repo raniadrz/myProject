@@ -38,8 +38,6 @@ const UserDetail = () => {
     const context = useContext(MyContext);
     const { getAllUser, updateUserRole, deleteUser } = context;
 
-    // Add this debug log
-    console.log('Raw getAllUser data:', getAllUser);
 
     const [openRoleDialog, setOpenRoleDialog] = useState(false);
     const [openCreateDialog, setOpenCreateDialog] = useState(false); // State for create user dialog
@@ -97,16 +95,6 @@ const UserDetail = () => {
     const startIndex = (page - 1) * usersPerPage;
     const endIndex = Math.min(startIndex + usersPerPage, filteredUsers.length);
     const currentUsers = filteredUsers.slice(startIndex, endIndex);
-
-    // Add this console log to debug pagination
-    console.log({
-        totalUsers: filteredUsers.length,
-        startIndex,
-        endIndex,
-        currentUsers: currentUsers.length,
-        page,
-        totalPages
-    });
 
     // Handle page change
     const handlePageChange = (newPage) => {
@@ -171,7 +159,6 @@ const UserDetail = () => {
     };
 
     const handleOpenDeleteDialog = (user) => {
-        toast.success('Opening delete dialog for user:', user);
         setSelectedUser(user);
         setOpenDeleteDialog(true);
     };
@@ -253,30 +240,17 @@ const UserDetail = () => {
                 sx={{
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     color: 'white',
-                    px: 4,
-                    py: 4,
+                    px: { xs: 2, sm: 4 },
+                    py: { xs: 3, sm: 4 },
                     mb: 4,
                     borderRadius: '16px',
                     boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
                 }}
             >
-                <Typography 
-                    variant="h4" 
-                    sx={{ 
-                        fontWeight: 700, 
-                        mb: 0.5,
-                        fontFamily: "'Poppins', sans-serif",
-                    }}
-                >
+                <Typography sx={{ fontWeight: 700, mb: 0.5, fontFamily: "'Poppins', sans-serif", fontSize: { xs: '20px', sm: '28px' } }}>
                     User Management
                 </Typography>
-                <Typography 
-                    variant="body1" 
-                    sx={{ 
-                        opacity: 0.95,
-                        fontFamily: "'Poppins', sans-serif",
-                    }}
-                >
+                <Typography variant="body2" sx={{ opacity: 0.95, fontFamily: "'Poppins', sans-serif" }}>
                     Manage your team members and their account permissions here.
                 </Typography>
             </Box>
@@ -358,7 +332,7 @@ const UserDetail = () => {
                     border: '1px solid rgba(0,0,0,0.05)'
                 }}
             >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, flexWrap: 'wrap', gap: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>
                             All users
@@ -373,7 +347,7 @@ const UserDetail = () => {
                         />
                     </Box>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                         <TextField
                             placeholder="Search users..."
                             size="small"
@@ -387,7 +361,7 @@ const UserDetail = () => {
                                 ),
                             }}
                             sx={{
-                                width: '240px',
+                                width: { xs: '100%', sm: '240px' },
                                 '& .MuiOutlinedInput-root': {
                                     backgroundColor: 'white',
                                     borderRadius: '12px',

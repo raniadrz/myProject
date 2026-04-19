@@ -57,7 +57,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 
 const ProductDetail = () => {
   const context = useContext(myContext);
-  const { loading, setLoading, getAllProduct, getAllProductFunction } = context;
+  const { loading, setLoading, getAllProduct, getAllProductFunction, updateProductStock } = context;
 
   const navigate = useNavigate();
 
@@ -299,9 +299,6 @@ const ProductDetail = () => {
       headerAlign: 'left',
       align: 'left',
       renderCell: (params) => {
-        const context = useContext(myContext);
-        const { updateProductStock } = context;
-
         const handleStockChange = async (e) => {
           const newStock = parseInt(e.target.value) || 0;
           if (newStock >= 0) {
@@ -428,30 +425,24 @@ const ProductDetail = () => {
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          px: 4,
-          py: 4,
+          px: { xs: 2, sm: 4 },
+          py: { xs: 3, sm: 4 },
           mb: 4,
           borderRadius: '16px',
           boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
         }}
       >
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            fontWeight: 700, 
+        <Typography
+          sx={{
+            fontWeight: 700,
             mb: 0.5,
             fontFamily: "'Poppins', sans-serif",
+            fontSize: { xs: '20px', sm: '28px' },
           }}
         >
           Product Management
         </Typography>
-        <Typography 
-          variant="body1" 
-          sx={{ 
-            opacity: 0.95,
-            fontFamily: "'Poppins', sans-serif",
-          }}
-        >
+        <Typography variant="body2" sx={{ opacity: 0.95, fontFamily: "'Poppins', sans-serif" }}>
           Manage your product inventory and catalog
         </Typography>
       </Box>
@@ -548,7 +539,7 @@ const ProductDetail = () => {
           border: '1px solid rgba(0,0,0,0.05)'
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
             placeholder="Search products..."
             variant="outlined"
@@ -559,7 +550,7 @@ const ProductDetail = () => {
               startAdornment: <SearchIcon sx={{ color: '#999', mr: 1 }} />,
             }}
             sx={{
-              minWidth: '250px',
+              width: '100%',
               '& .MuiOutlinedInput-root': {
                 borderRadius: '12px',
                 bgcolor: '#f8f9fa',
@@ -576,8 +567,8 @@ const ProductDetail = () => {
             }}
           />
 
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+            <FormControl size="small" sx={{ minWidth: 140, flex: 1 }}>
               <Select
                 value={productType}
                 onChange={handleProductTypeChange}
@@ -601,7 +592,7 @@ const ProductDetail = () => {
               </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: 160, flex: 1 }}>
               <Select
                 value={sortBy}
                 onChange={handleSortChange}
@@ -629,10 +620,11 @@ const ProductDetail = () => {
               </Select>
             </FormControl>
 
-            <Link to="/addproduct" style={{ textDecoration: 'none' }}>
+            <Link to="/addproduct" style={{ textDecoration: 'none', width: '100%' }}>
               <Button
                 variant="contained"
                 startIcon={<AddToPhotosIcon />}
+                fullWidth
                 sx={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   color: 'white',
@@ -661,15 +653,16 @@ const ProductDetail = () => {
         </Box>
       )}
 
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           borderRadius: '16px',
           overflow: 'hidden',
           boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
           border: '1px solid rgba(0,0,0,0.05)'
         }}
       >
+        <Box sx={{ overflowX: 'auto' }}>
         <StyledDataGrid
           rows={rows}
           columns={columns}
@@ -684,6 +677,7 @@ const ProductDetail = () => {
             }
           }}
         />
+        </Box>
       </Paper>
     </Box>
   );

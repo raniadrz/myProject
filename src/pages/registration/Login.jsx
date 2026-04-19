@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -28,6 +28,8 @@ import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import SendIcon from '@mui/icons-material/Send';
 // clearCartOnLogout,
 
 //Login Page
@@ -53,7 +55,21 @@ const Login = () => {
     // State for showing/hiding forgot password form
     const [showForgotPassword, setShowForgotPassword] = useState(false);
 
+    // Magic link states
+    const [showMagicLink, setShowMagicLink] = useState(false);
+    const [magicLinkEmail, setMagicLinkEmail] = useState("");
+    const [magicLinkSent, setMagicLinkSent] = useState(false);
+
     const dispatch = useDispatch();
+
+    // Complete sign-in if this page was opened from a magic link
+    useEffect(() => {
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+            const email = localStorage.getItem('emailForSignIn')
+                || window.prompt('Please enter your email to confirm sign-in');
+            if (email) completeEmailLinkSignIn(email);
+        }
+    }, []);
 
     // Toggle password visibility
     const handleTogglePasswordVisibility = () => {
@@ -111,8 +127,58 @@ const Login = () => {
         }
     };
 
+    const completeEmailLinkSignIn = async (email) => {
+        setLoading(true);
+        try {
+            const result = await signInWithEmailLink(auth, email, window.location.href);
+            localStorage.removeItem('emailForSignIn');
+            window.history.replaceState({}, document.title, '/login');
+
+            const q = query(collection(fireDB, "user"), where('uid', '==', result.user.uid));
+            const unsub = onSnapshot(q, (snap) => {
+                let user;
+                snap.forEach((doc) => user = doc.data());
+                if (user) {
+                    localStorage.setItem("users", JSON.stringify(user));
+                    toast.success("Login Successfully");
+                    setLoading(false);
+                    navigate(user.role === "admin" ? '/admin-dashboard' : '/user-dashboard');
+                } else {
+                    setLoading(false);
+                    toast.error("No account found. Please sign up first.");
+                }
+            });
+            return () => unsub();
+        } catch (error) {
+            setLoading(false);
+            toast.error("Magic link sign-in failed. Please try again.");
+        }
+    };
+
+    const handleSendMagicLink = async () => {
+        if (!magicLinkEmail) {
+            toast.error("Email is required");
+            return;
+        }
+        setLoading(true);
+        try {
+            const actionCodeSettings = {
+                url: window.location.origin + '/login',
+                handleCodeInApp: true,
+            };
+            await sendSignInLinkToEmail(auth, magicLinkEmail, actionCodeSettings);
+            localStorage.setItem('emailForSignIn', magicLinkEmail);
+            setMagicLinkSent(true);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error("Magic link error:", error.code, error.message);
+            toast.error(error.message || "Failed to send magic link. Please try again.");
+        }
+    };
+
     /**========================================================================
-     *                          User Login Function 
+     *                          User Login Function
     *========================================================================**/
 
     const userLoginFunction = async () => {
@@ -229,29 +295,111 @@ const Login = () => {
                             textAlign: 'center',
                         }}
                     >
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
+                        <Typography
+                            variant="h4"
+                            sx={{
                                 fontWeight: 700,
                                 fontFamily: "'Poppins', sans-serif",
                                 mb: 1
                             }}
                         >
-                            {showForgotPassword ? "Reset Password" : "Welcome Back"}
+                            {showForgotPassword ? "Reset Password" : showMagicLink ? "Magic Link Login" : "Welcome Back"}
                         </Typography>
-                        <Typography 
-                            variant="body1" 
-                            sx={{ 
+                        <Typography
+                            variant="body1"
+                            sx={{
                                 opacity: 0.95,
                                 fontFamily: "'Poppins', sans-serif",
                             }}
                         >
-                            {showForgotPassword ? "Enter your email to reset password" : "Login to your account"}
+                            {showForgotPassword ? "Enter your email to reset password" : showMagicLink ? "We'll send a sign-in link to your email" : "Login to your account"}
                         </Typography>
                     </Box>
 
                     <Box sx={{ px: 4, py: 4 }}>
-                        {showForgotPassword ? (
+                        {showMagicLink ? (
+                            <Box component="form">
+                                {magicLinkSent ? (
+                                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                                        <AutoFixHighIcon sx={{ fontSize: 56, color: '#667eea', mb: 2 }} />
+                                        <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                                            Check your inbox!
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: '#666', mb: 3 }}>
+                                            We sent a sign-in link to <strong>{magicLinkEmail}</strong>. Click it to log in instantly — no password needed.
+                                        </Typography>
+                                        <Button
+                                            variant="text"
+                                            onClick={() => { setMagicLinkSent(false); setMagicLinkEmail(""); setShowMagicLink(false); }}
+                                            sx={{ color: '#667eea', fontWeight: 600, textTransform: 'none' }}
+                                        >
+                                            Back to Login
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <>
+                                        <TextField
+                                            fullWidth
+                                            label="Email Address"
+                                            placeholder="Enter your email"
+                                            type="email"
+                                            value={magicLinkEmail}
+                                            onChange={(e) => setMagicLinkEmail(e.target.value)}
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <EmailIcon sx={{ color: '#667eea' }} />
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                            sx={{
+                                                mb: 3,
+                                                '& .MuiOutlinedInput-root': {
+                                                    borderRadius: '12px',
+                                                    '&.Mui-focused fieldset': { borderColor: '#667eea' }
+                                                },
+                                                '& .MuiInputLabel-root.Mui-focused': { color: '#667eea' }
+                                            }}
+                                        />
+                                        <Button
+                                            fullWidth
+                                            variant="contained"
+                                            size="large"
+                                            endIcon={<SendIcon />}
+                                            onClick={handleSendMagicLink}
+                                            sx={{
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                color: 'white',
+                                                py: 1.5,
+                                                borderRadius: '12px',
+                                                textTransform: 'none',
+                                                fontWeight: 700,
+                                                fontSize: '16px',
+                                                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                                                mb: 2,
+                                                '&:hover': {
+                                                    background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                                                    boxShadow: '0 6px 16px rgba(102, 126, 234, 0.5)',
+                                                }
+                                            }}
+                                        >
+                                            Send Magic Link
+                                        </Button>
+                                        <Box sx={{ textAlign: 'center' }}>
+                                            <Typography variant="body2" sx={{ color: '#666' }}>
+                                                Prefer a password?{' '}
+                                                <span
+                                                    onClick={() => setShowMagicLink(false)}
+                                                    style={{ color: '#667eea', cursor: 'pointer', fontWeight: 600 }}
+                                                >
+                                                    Login
+                                                </span>
+                                            </Typography>
+                                        </Box>
+                                    </>
+                                )}
+                            </Box>
+                        ) : showForgotPassword ? (
                             <Box component="form">
                                 <TextField
                                     fullWidth
@@ -475,18 +623,26 @@ const Login = () => {
                                     </Button>
                                 </Box>
 
-                                <Box sx={{ textAlign: 'center', mb: 2 }}>
+                                <Box sx={{ textAlign: 'center', mb: 1 }}>
                                     <Typography variant="body2" sx={{ color: '#666' }}>
                                         Forgot your password?{' '}
-                                        <span 
+                                        <span
                                             onClick={() => setShowForgotPassword(true)}
-                                            style={{ 
-                                                color: '#667eea', 
-                                                cursor: 'pointer',
-                                                fontWeight: 600
-                                            }}
+                                            style={{ color: '#667eea', cursor: 'pointer', fontWeight: 600 }}
                                         >
                                             Reset Password
+                                        </span>
+                                    </Typography>
+                                </Box>
+
+                                <Box sx={{ textAlign: 'center', mb: 2 }}>
+                                    <Typography variant="body2" sx={{ color: '#666' }}>
+                                        No password?{' '}
+                                        <span
+                                            onClick={() => setShowMagicLink(true)}
+                                            style={{ color: '#667eea', cursor: 'pointer', fontWeight: 600 }}
+                                        >
+                                            Send me a magic link ✨
                                         </span>
                                     </Typography>
                                 </Box>

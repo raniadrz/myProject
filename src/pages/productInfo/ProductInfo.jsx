@@ -127,60 +127,40 @@ const ProductInfo = () => {
                                         mb: 2,
                                         color: '#667eea',
                                         fontWeight: 600,
-                                        '&:hover': {
-                                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                                        }
+                                        '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' }
                                     }}
                                 >
                                     Back
                                 </Button>
-                                
-                                <Breadcrumbs 
+
+                                <Breadcrumbs
                                     aria-label="breadcrumb"
                                     sx={{
-                                        '& .MuiBreadcrumbs-separator': {
-                                            color: '#667eea',
-                                        }
+                                        '& .MuiBreadcrumbs-separator': { color: '#667eea' },
+                                        '& .MuiBreadcrumbs-ol': { flexWrap: 'nowrap' },
                                     }}
                                 >
-                                    <Link 
-                                        underline="hover" 
-                                        sx={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center',
-                                            color: '#667eea',
-                                            cursor: 'pointer',
-                                            '&:hover': {
-                                                color: '#764ba2',
-                                            }
-                                        }} 
+                                    <Link
+                                        underline="hover"
+                                        sx={{ display: 'flex', alignItems: 'center', color: '#667eea', cursor: 'pointer', whiteSpace: 'nowrap', '&:hover': { color: '#764ba2' } }}
                                         onClick={() => navigate('/')}
                                     >
-                                        <HomeIcon sx={{ mr: 0.5, fontSize: 20 }} />
+                                        <HomeIcon sx={{ mr: 0.5, fontSize: 18 }} />
                                         Home
                                     </Link>
                                     <Link
                                         underline="hover"
-                                        sx={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center',
-                                            color: '#667eea',
-                                            cursor: 'pointer',
-                                            '&:hover': {
-                                                color: '#764ba2',
-                                            }
-                                        }}
+                                        sx={{ display: 'flex', alignItems: 'center', color: '#667eea', cursor: 'pointer', whiteSpace: 'nowrap', '&:hover': { color: '#764ba2' } }}
                                         onClick={() => navigate(`/category/${product.category}`)}
                                     >
-                                        <CategoryIcon sx={{ mr: 0.5, fontSize: 20 }} />
+                                        <CategoryIcon sx={{ mr: 0.5, fontSize: 18 }} />
                                         {product.category}
                                     </Link>
-                                    <Typography 
-                                        sx={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center',
-                                            color: '#495057',
-                                            fontWeight: 600,
+                                    <Typography
+                                        sx={{
+                                            color: '#495057', fontWeight: 600, fontSize: { xs: 12, sm: 14 },
+                                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                            maxWidth: { xs: 120, sm: 280 },
                                         }}
                                     >
                                         {product.title}
@@ -200,11 +180,11 @@ const ProductInfo = () => {
                                 <Grid container>
                                     {/* Product Image Section */}
                                     <Grid item xs={12} md={6}>
-                                        <Box 
-                                            sx={{ 
+                                        <Box
+                                            sx={{
                                                 position: 'relative',
                                                 height: '100%',
-                                                minHeight: { xs: '400px', md: '600px' },
+                                                minHeight: { xs: '280px', sm: '380px', md: '560px' },
                                                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -318,12 +298,12 @@ const ProductInfo = () => {
 
                                             {/* Price */}
                                             <Box sx={{ mb: 3 }}>
-                                                <Typography 
-                                                    variant="h2" 
-                                                    sx={{ 
+                                                <Typography
+                                                    variant="h2"
+                                                    sx={{
                                                         color: '#667eea',
                                                         fontWeight: 800,
-                                                        fontSize: { xs: '42px', md: '52px' },
+                                                        fontSize: { xs: '32px', sm: '42px', md: '52px' },
                                                         fontFamily: "'Poppins', sans-serif",
                                                     }}
                                                 >
@@ -440,7 +420,6 @@ const ProductInfo = () => {
                                                 </Box>
                                             </Box>
 
-                                            <Divider sx={{ my: 3 }} />
                                             <Divider sx={{ my: 3 }} />
 
                                             {/* Cart Actions */}
