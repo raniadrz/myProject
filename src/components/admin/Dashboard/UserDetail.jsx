@@ -38,8 +38,6 @@ const UserDetail = () => {
     const context = useContext(MyContext);
     const { getAllUser, updateUserRole, deleteUser } = context;
 
-    // Add this debug log
-    console.log('Raw getAllUser data:', getAllUser);
 
     const [openRoleDialog, setOpenRoleDialog] = useState(false);
     const [openCreateDialog, setOpenCreateDialog] = useState(false); // State for create user dialog
@@ -97,16 +95,6 @@ const UserDetail = () => {
     const startIndex = (page - 1) * usersPerPage;
     const endIndex = Math.min(startIndex + usersPerPage, filteredUsers.length);
     const currentUsers = filteredUsers.slice(startIndex, endIndex);
-
-    // Add this console log to debug pagination
-    console.log({
-        totalUsers: filteredUsers.length,
-        startIndex,
-        endIndex,
-        currentUsers: currentUsers.length,
-        page,
-        totalPages
-    });
 
     // Handle page change
     const handlePageChange = (newPage) => {
@@ -171,7 +159,6 @@ const UserDetail = () => {
     };
 
     const handleOpenDeleteDialog = (user) => {
-        toast.success('Opening delete dialog for user:', user);
         setSelectedUser(user);
         setOpenDeleteDialog(true);
     };

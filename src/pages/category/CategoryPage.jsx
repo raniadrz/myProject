@@ -45,25 +45,9 @@ const CategoryPage = () => {
     const productsPerPage = 12;
 
     useEffect(() => {
-        // Debug: Log all products and their categories
-        console.log('All Products:', getAllProduct);
-        console.log('Current Category:', categoryname);
-        
-        // Debug: Log products that should match the current category
-        const matchingProducts = getAllProduct.filter(product => 
-            product.category && product.category.toLowerCase() === categoryname.toLowerCase()
-        );
-        console.log('Matching Products:', matchingProducts);
-        
-        // Populate filter options based on the available products
-        const categories = Array.from(new Set(getAllProduct.map(product => product.category)));
-        const categories2 = Array.from(new Set(getAllProduct.map(product => product.category2)));
-        const subcategories = Array.from(new Set(getAllProduct.map(product => product.subcategory)));
-
-        console.log('Available Categories:', categories);
-        console.log('Available Category2:', categories2);
-        console.log('Available Subcategories:', subcategories);
-
+        const categories = Array.from(new Set(getAllProduct.map((p) => p.category)));
+        const categories2 = Array.from(new Set(getAllProduct.map((p) => p.category2)));
+        const subcategories = Array.from(new Set(getAllProduct.map((p) => p.subcategory)));
         setAvailableCategories(categories);
         setAvailableCategory2(categories2);
         setAvailableSubcategories(subcategories);
@@ -85,19 +69,14 @@ const CategoryPage = () => {
         setAvailableSubcategories([]);
     }, [categoryname]);
 
-    // Add this effect to update subcategories when category2 changes
     useEffect(() => {
         if (selectedCategory2) {
-            // Get subcategories for the selected category2 from the subcategoryList
-            const subcategoryOptions = subcategoryList[selectedCategory2] || [];
-            console.log('Selected Category2:', selectedCategory2);
-            console.log('Available Subcategories:', subcategoryOptions);
-            setAvailableSubcategories(subcategoryOptions);
+            setAvailableSubcategories(subcategoryList[selectedCategory2] || []);
         } else {
             setAvailableSubcategories([]);
         }
-        // Reset subcategory selection when category2 changes
         setSelectedSubcategory('');
+        setCurrentPage(1);
     }, [selectedCategory2]);
 
     // Filter products based on selected filters

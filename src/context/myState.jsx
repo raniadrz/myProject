@@ -256,6 +256,20 @@ const fetchTestimonials = async () => {
     }
   };
 
+  const updatePaymentStatus = async (orderId, paymentStatus) => {
+    setLoading(true);
+    try {
+      const orderDocRef = doc(fireDB, "order", orderId);
+      await updateDoc(orderDocRef, { paymentStatus });
+      toast.success("Payment status updated successfully");
+      getAllOrderFunction();
+    } catch (error) {
+      toast.error("Failed to update payment status");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Delete User
   const deleteUser = async (uid) => {
     setLoading(true);
@@ -441,16 +455,18 @@ const fetchTestimonials = async () => {
   const fetchQuestions = async () => {
     setLoading(true);
     try {
-      const q = query(collection(fireDB, "questions"), orderBy("time", "desc"));
+      const q = query(collection(fireDB, "faqs"), orderBy("time", "desc"));
       const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
         let questionsArray = [];
         QuerySnapshot.forEach((doc) => {
-          questionsArray.push({ 
-            ...doc.data(), 
-            id: doc.id,
-            type: 'question',
-            status: doc.data().status || 'pending'
-          });
+          const data = doc.data();
+          if (data.type === 'question') {
+            questionsArray.push({
+              ...data,
+              id: doc.id,
+              status: data.status || 'pending'
+            });
+          }
         });
         setQuestions(questionsArray);
         setLoading(false);
@@ -488,7 +504,7 @@ const fetchTestimonials = async () => {
     <MyContext.Provider
       value={{
         loading,setLoading,getAllProduct,getAllProductFunction,getAllOrder,orderDelete,getAllUser,
-        updateUserRole,updateUserDetails,updateOrderStatus,deleteUser,createUser,testimonials,
+        updateUserRole,updateUserDetails,updateOrderStatus,updatePaymentStatus,deleteUser,createUser,testimonials,
         addTestimonial,getAllTestimonials: testimonials,deleteTestimonial,updateProductStock,
         calculateAverageRating,updateUserPassword,saveUserCart,loadUserCart,faqs,setFaqs,addFAQ,
         addQuestion,fetchFaqs,questions,setQuestions,fetchQuestions,updateFAQ,

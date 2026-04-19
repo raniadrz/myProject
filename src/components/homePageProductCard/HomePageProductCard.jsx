@@ -25,8 +25,8 @@ const HomePageProductCard = () => {
 
     const cartItems = useSelector((state) => state.cart);
 
-    // Show all products without filtering by status
-    const visibleProducts = getAllProduct;
+    // Only show active products
+    const visibleProducts = getAllProduct.filter((p) => p.status !== false);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -200,41 +200,43 @@ const HomePageProductCard = () => {
                                 onClick={() => navigate(`/productinfo/${id}`)}
                             >
                                 {/* Product Image Section */}
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    alignItems: 'center', 
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
                                     height: 220,
                                     backgroundColor: '#fafafa',
                                     p: 2,
                                     position: 'relative',
                                 }}>
-                                    {stock === 0 ? (
-                                        <CardMedia
-                                            component="img"
-                                            image={OutOfStockImage}
-                                            alt="Out of Stock"
-                                            sx={{ 
-                                                width: 'auto',
-                                                maxHeight: '100%',
-                                                maxWidth: '100%',
-                                                objectFit: 'contain',
-                                            }}
-                                        />
-                                    ) : (
-                                        <CardMedia
-                                            component="img"
-                                            image={productImageUrl}
-                                            alt="product"
-                                            sx={{ 
-                                                width: 'auto',
-                                                maxHeight: '100%',
-                                                maxWidth: '100%',
-                                                objectFit: 'contain',
-                                                transition: 'transform 0.3s ease',
-                                                '&:hover': {
-                                                    transform: 'scale(1.05)',
-                                                }
+                                    <CardMedia
+                                        component="img"
+                                        image={productImageUrl}
+                                        alt="product"
+                                        sx={{
+                                            width: 'auto',
+                                            maxHeight: '100%',
+                                            maxWidth: '100%',
+                                            objectFit: 'contain',
+                                            transition: 'transform 0.3s ease',
+                                            opacity: stock === 0 ? 0.5 : 1,
+                                            '&:hover': {
+                                                transform: stock === 0 ? 'none' : 'scale(1.05)',
+                                            }
+                                        }}
+                                    />
+                                    {stock === 0 && (
+                                        <Chip
+                                            label="Out of Stock"
+                                            sx={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                backgroundColor: 'rgba(0,0,0,0.65)',
+                                                color: 'white',
+                                                fontWeight: 700,
+                                                fontSize: '12px',
                                             }}
                                         />
                                     )}
@@ -296,15 +298,18 @@ const HomePageProductCard = () => {
                                     >
                                         {title}
                                     </Typography>
-                                    <Typography 
-                                        variant="body2" 
+                                    <Typography
+                                        variant="body2"
                                         sx={{
                                             color: '#7f8c8d',
                                             fontSize: '13px',
                                             mb: 1.5,
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
                                         }}
                                     >
-                                        E-ctb
+                                        {item.category}{item.category2 ? ` • ${item.category2}` : ''}
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         <Typography 
@@ -333,47 +338,86 @@ const HomePageProductCard = () => {
                                     </Box>
                                 </CardContent>
 
-                                <Box sx={{ p: 2 }}>
+                                <Box sx={{ p: 2.5, pt: 0 }}>
                                     {cartItem ? (
-                                        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" gap={1}>
-                                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                                        <Box display="flex" flexDirection="column" gap={1.5}>
+                                            <Box
+                                                display="flex"
+                                                justifyContent="center"
+                                                alignItems="center"
+                                                sx={{
+                                                    backgroundColor: '#f8f9fa',
+                                                    borderRadius: '12px',
+                                                    padding: '8px',
+                                                }}
+                                            >
                                                 <IconButton
                                                     onClick={(e) => { e.stopPropagation(); decreaseQuantity(id); }}
                                                     size="small"
                                                     disabled={cartItem.quantity <= 1}
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                        '&:hover': { backgroundColor: '#667eea', color: 'white' },
+                                                        '&:disabled': { backgroundColor: '#e9ecef' },
+                                                    }}
                                                 >
-                                                    <RemoveIcon />
+                                                    <RemoveIcon fontSize="small" />
                                                 </IconButton>
-                                                <Typography variant="body1" sx={{ mx: 2 }}>
+                                                <Typography variant="h6" sx={{ mx: 3, fontWeight: 600, color: '#2c3e50' }}>
                                                     {cartItem.quantity}
                                                 </Typography>
                                                 <IconButton
                                                     onClick={(e) => { e.stopPropagation(); increaseQuantity(id); }}
                                                     size="small"
+                                                    sx={{
+                                                        backgroundColor: 'white',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                        '&:hover': { backgroundColor: '#667eea', color: 'white' },
+                                                    }}
                                                 >
-                                                    <AddIcon />
+                                                    <AddIcon fontSize="small" />
                                                 </IconButton>
                                             </Box>
                                             <Button
-                                            onClick={(e) => { e.stopPropagation(); deleteCart(item); }} // Pass the item object
-                                            variant="outlined"
-                                            color="error"
-                                            startIcon={<DeleteIcon />}
-                                            fullWidth
-                                        >
-                                            Delete From Cart
-                                        </Button>
-
+                                                onClick={(e) => { e.stopPropagation(); deleteCart(item); }}
+                                                variant="outlined"
+                                                startIcon={<DeleteIcon />}
+                                                fullWidth
+                                                sx={{
+                                                    borderRadius: '10px',
+                                                    textTransform: 'none',
+                                                    fontWeight: 600,
+                                                    borderColor: '#e74c3c',
+                                                    color: '#e74c3c',
+                                                    padding: '8px',
+                                                    '&:hover': { borderColor: '#c0392b', backgroundColor: '#ffe6e6' },
+                                                }}
+                                            >
+                                                Remove
+                                            </Button>
                                         </Box>
                                     ) : (
                                         <Button
                                             onClick={(e) => { e.stopPropagation(); addCart(item); }}
-                                            variant="outlined" // Outlined button like the delete button
-                                            color="primary"   // Blue color for the Add to Cart button
-                                            startIcon={<ShoppingCartIcon />} // Add a cart icon
+                                            variant="contained"
+                                            startIcon={<ShoppingCartIcon />}
                                             fullWidth
+                                            disabled={stock === 0}
+                                            sx={{
+                                                background: stock === 0 ? '#e9ecef' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                borderRadius: '10px',
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                padding: '10px',
+                                                boxShadow: stock === 0 ? 'none' : '0 4px 12px rgba(102, 126, 234, 0.3)',
+                                                '&:hover': {
+                                                    background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                                                    boxShadow: '0 6px 16px rgba(102, 126, 234, 0.4)',
+                                                },
+                                            }}
                                         >
-                                            Add To Cart
+                                            {stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                                         </Button>
                                     )}
                                 </Box>
@@ -383,14 +427,26 @@ const HomePageProductCard = () => {
                 })}
             </Grid>
             
-            {/* Add Pagination */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
-                <Pagination 
-                    count={totalPages} 
-                    page={currentPage} 
+            {/* Pagination */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: { xs: 2, md: 4 } }}>
+                <Pagination
+                    count={totalPages}
+                    page={currentPage}
                     onChange={handlePageChange}
-                    color="primary"
                     size="large"
+                    siblingCount={1}
+                    boundaryCount={1}
+                    sx={{
+                        '& .MuiPaginationItem-root': {
+                            borderRadius: '8px', fontWeight: 600, fontSize: { xs: 13, sm: 15 },
+                            '&:hover': { backgroundColor: '#e7eaf6' },
+                        },
+                        '& .Mui-selected': {
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            '&:hover': { background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)' },
+                        },
+                    }}
                 />
             </Box>
         </Container>

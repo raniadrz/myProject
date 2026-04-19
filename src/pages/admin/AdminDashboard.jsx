@@ -20,7 +20,9 @@ import {
     CardContent,
     ButtonGroup,
     Button,
-    Chip
+    Chip,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import {
     BarChart,
@@ -47,6 +49,8 @@ const AdminDashboard = () => {
     const [dailyStats, setDailyStats] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [timeFilter, setTimeFilter] = useState('30'); // Default to 30 days
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Add this to calculate pending questions
     const pendingQuestions = faqs.filter(faq => !faq.answer || faq.answer.trim() === '').length;
@@ -121,7 +125,6 @@ const AdminDashboard = () => {
                     dailyProfits: Number(stat.dailyProfits.toFixed(2))
                 }));
 
-            console.log('Daily Stats:', statsArray); // Debug log
             setDailyStats(statsArray);
             setIsLoading(false);
         } catch (error) {
@@ -132,8 +135,6 @@ const AdminDashboard = () => {
 
     // Memoize the filtered data
     const filteredData = useMemo(() => {
-        console.log('Filtering data, timeFilter:', timeFilter, 'dailyStats length:', dailyStats.length);
-        
         if (!dailyStats || dailyStats.length === 0) return [];
         if (timeFilter === 'all') return dailyStats;
 
@@ -153,13 +154,7 @@ const AdminDashboard = () => {
         cutoffDate.setDate(cutoffDate.getDate() - daysToFilter);
         cutoffDate.setHours(0, 0, 0, 0); // Set to start of day
 
-        const filtered = dailyStats.filter(item => {
-            const itemDate = new Date(item.fullDate);
-            return itemDate >= cutoffDate;
-        });
-        
-        console.log('Filtered data length:', filtered.length);
-        return filtered;
+        return dailyStats.filter(item => new Date(item.fullDate) >= cutoffDate);
     }, [timeFilter, dailyStats]);
 
     return (
@@ -170,29 +165,30 @@ const AdminDashboard = () => {
                     sx={{
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         color: 'white',
-                        px: 4,
-                        py: 6,
+                        px: { xs: 2, sm: 4 },
+                        py: { xs: 4, sm: 6 },
                         mb: 4,
                         boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
                     }}
                 >
-                    <Typography 
-                        variant="h3" 
-                        sx={{ 
-                            fontWeight: 800, 
+                    <Typography
+                        sx={{
+                            fontWeight: 800,
                             mb: 1,
                             fontFamily: "'Poppins', sans-serif",
-                            textShadow: '0 2px 10px rgba(0,0,0,0.2)'
+                            textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                            fontSize: { xs: '24px', sm: '34px', md: '48px' },
                         }}
                     >
                         Admin Dashboard
                     </Typography>
-                    <Typography 
-                        variant="h6" 
-                        sx={{ 
+                    <Typography
+                        variant="body1"
+                        sx={{
                             opacity: 0.95,
                             fontFamily: "'Poppins', sans-serif",
-                            fontWeight: 300
+                            fontWeight: 300,
+                            fontSize: { xs: '13px', sm: '16px' },
                         }}
                     >
                         Manage your e-commerce platform efficiently
@@ -200,7 +196,7 @@ const AdminDashboard = () => {
                 </Box>
                 
                 {/* Stats Cards with Modern Design */}
-                <Box sx={{ px: 4, mb: 4 }}>
+                <Box sx={{ px: { xs: 2, sm: 4 }, mb: 4 }}>
                     <Box 
                         sx={{ 
                             display: 'grid', 
@@ -410,7 +406,7 @@ const AdminDashboard = () => {
                 </Box>
 
                 {/* Chart Section */}
-                <Box sx={{ px: 4, mb: 4 }}>
+                <Box sx={{ px: { xs: 2, sm: 4 }, mb: 4 }}>
                     <Paper 
                         elevation={0}
                         sx={{ 
@@ -420,7 +416,7 @@ const AdminDashboard = () => {
                             border: '1px solid rgba(0,0,0,0.05)'
                         }}
                     >
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                             <Box>
                                 <Typography 
                                     variant="h5" 
@@ -439,9 +435,10 @@ const AdminDashboard = () => {
                                     Track your sales and order trends
                                 </Typography>
                             </Box>
-                            <ButtonGroup 
-                                variant="outlined" 
-                                sx={{
+                            <Box sx={{ overflowX: 'auto', '&::-webkit-scrollbar': { display: 'none' }, scrollbarWidth: 'none' }}>
+                            <ButtonGroup
+                                variant="outlined"
+                                sx={{ flexShrink: 0,
                                     '& .MuiButton-root': {
                                         borderColor: 'rgba(102, 126, 234, 0.3)',
                                         color: '#667eea',
@@ -498,6 +495,7 @@ const AdminDashboard = () => {
                                     All
                                 </Button>
                             </ButtonGroup>
+                            </Box>
                         </Box>
                     {isLoading ? (
                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
@@ -597,7 +595,7 @@ const AdminDashboard = () => {
                 </Box>
 
                 {/* Tabs Section */}
-                <Box sx={{ px: 4, pb: 4 }}>
+                <Box sx={{ px: { xs: 2, sm: 4 }, pb: { xs: 10, sm: 4 } }}>
                     <Paper 
                         elevation={0}
                         sx={{ 
@@ -610,171 +608,97 @@ const AdminDashboard = () => {
                         <Tabs
                             selectedTabClassName="selected-tab"
                         >
-                            <TabList 
+                            <TabList
                                 style={{
                                     display: 'flex',
                                     background: 'white',
                                     margin: 0,
-                                    padding: '16px 24px 0',
+                                    padding: isMobile ? '10px 10px 0' : '16px 24px 0',
                                     borderBottom: '2px solid #f0f0f0',
                                     listStyle: 'none',
-                                    gap: '8px'
+                                    gap: '4px',
+                                    overflowX: 'auto',
+                                    flexWrap: 'nowrap',
+                                    scrollbarWidth: 'none',
+                                    msOverflowStyle: 'none',
                                 }}
                             >
-                                <Tab
-                                    style={{
-                                        padding: '12px 24px',
-                                        cursor: 'pointer',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        borderRadius: '8px 8px 0 0',
-                                        fontSize: '14px',
-                                        fontWeight: 600,
-                                        color: '#666',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        outline: 'none',
-                                        marginBottom: '-2px'
-                                    }}
-                                    selectedClassName="selected-tab"
-                                >
-                                    <Inventory2 sx={{ fontSize: 20 }} />
-                                    <span>Products ({getAllProduct.length})</span>
-                                </Tab>
-
-                                <Tab
-                                    style={{
-                                        padding: '12px 24px',
-                                        cursor: 'pointer',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        borderRadius: '8px 8px 0 0',
-                                        fontSize: '14px',
-                                        fontWeight: 600,
-                                        color: '#666',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        outline: 'none',
-                                        marginBottom: '-2px'
-                                    }}
-                                >
-                                    <ShoppingCart sx={{ fontSize: 20 }} />
-                                    <span>Orders ({getAllOrder.length})</span>
-                                </Tab>
-
-                                <Tab
-                                    style={{
-                                        padding: '12px 24px',
-                                        cursor: 'pointer',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        borderRadius: '8px 8px 0 0',
-                                        fontSize: '14px',
-                                        fontWeight: 600,
-                                        color: '#666',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        outline: 'none',
-                                        marginBottom: '-2px'
-                                    }}
-                                >
-                                    <People sx={{ fontSize: 20 }} />
-                                    <span>Users ({getAllUser.length})</span>
-                                </Tab>
-
-                                <Tab
-                                    style={{
-                                        padding: '12px 24px',
-                                        cursor: 'pointer',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        borderRadius: '8px 8px 0 0',
-                                        fontSize: '14px',
-                                        fontWeight: 600,
-                                        color: '#666',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        outline: 'none',
-                                        marginBottom: '-2px'
-                                    }}
-                                >
-                                    <Comment sx={{ fontSize: 20 }} />
-                                    <span>Testimonials ({getAllTestimonials.length})</span>
-                                </Tab>
-
-                                <Tab
-                                    style={{
-                                        padding: '12px 24px',
-                                        cursor: 'pointer',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        borderRadius: '8px 8px 0 0',
-                                        fontSize: '14px',
-                                        fontWeight: 600,
-                                        color: '#666',
-                                        transition: 'all 0.3s ease',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        outline: 'none',
-                                        marginBottom: '-2px',
-                                        position: 'relative'
-                                    }}
-                                >
-                                    <QuestionAnswer sx={{ fontSize: 20 }} />
-                                    <span>FAQs ({faqs.length})</span>
-                                    {pendingQuestions > 0 && (
-                                        <Box
-                                            sx={{
+                                {[
+                                    { icon: <Inventory2 sx={{ fontSize: isMobile ? 18 : 20 }} />, label: `Products`, count: getAllProduct.length },
+                                    { icon: <ShoppingCart sx={{ fontSize: isMobile ? 18 : 20 }} />, label: `Orders`, count: getAllOrder.length },
+                                    { icon: <People sx={{ fontSize: isMobile ? 18 : 20 }} />, label: `Users`, count: getAllUser.length },
+                                    { icon: <Comment sx={{ fontSize: isMobile ? 18 : 20 }} />, label: `Reviews`, count: getAllTestimonials.length },
+                                    { icon: <QuestionAnswer sx={{ fontSize: isMobile ? 18 : 20 }} />, label: `FAQs`, count: faqs.length, badge: pendingQuestions },
+                                ].map((tab, i) => (
+                                    <Tab
+                                        key={i}
+                                        style={{
+                                            padding: isMobile ? '8px 10px' : '12px 20px',
+                                            cursor: 'pointer',
+                                            border: 'none',
+                                            background: 'transparent',
+                                            borderRadius: '8px 8px 0 0',
+                                            fontSize: isMobile ? '11px' : '14px',
+                                            fontWeight: 600,
+                                            color: '#666',
+                                            transition: 'all 0.3s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            flexDirection: isMobile ? 'column' : 'row',
+                                            gap: isMobile ? '2px' : '8px',
+                                            outline: 'none',
+                                            marginBottom: '-2px',
+                                            flexShrink: 0,
+                                            position: 'relative',
+                                            whiteSpace: 'nowrap',
+                                            minWidth: isMobile ? '56px' : 'auto',
+                                        }}
+                                    >
+                                        {tab.icon}
+                                        <span>{tab.label} ({tab.count})</span>
+                                        {tab.badge > 0 && (
+                                            <Box sx={{
                                                 position: 'absolute',
-                                                top: '8px',
-                                                right: '8px',
-                                                width: '20px',
-                                                height: '20px',
+                                                top: '6px',
+                                                right: '6px',
+                                                width: '16px',
+                                                height: '16px',
                                                 borderRadius: '50%',
                                                 bgcolor: '#ff5252',
                                                 color: 'white',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                fontSize: '11px',
-                                                fontWeight: 700
-                                            }}
-                                        >
-                                            {pendingQuestions}
-                                        </Box>
-                                    )}
-                                </Tab>
+                                                fontSize: '10px',
+                                                fontWeight: 700,
+                                            }}>
+                                                {tab.badge}
+                                            </Box>
+                                        )}
+                                    </Tab>
+                                ))}
                             </TabList>
 
                             <TabPanel>
-                                <Box sx={{ p: 2 }}>
+                                <Box sx={{ p: { xs: 1, sm: 2 } }}>
                                     <ProductDetail />
                                 </Box>
                             </TabPanel>
 
                             <TabPanel>
-                                <Box sx={{ p: 2 }}>
+                                <Box sx={{ p: { xs: 1, sm: 2 } }}>
                                     <OrderDetail />
                                 </Box>
                             </TabPanel>
 
                             <TabPanel>
-                                <Box sx={{ p: 2 }}>
+                                <Box sx={{ p: { xs: 1, sm: 2 } }}>
                                     <UserDetail />
                                 </Box>
                             </TabPanel>
 
                             <TabPanel>
-                                <Box sx={{ p: 2 }}>
+                                <Box sx={{ p: { xs: 1, sm: 2 } }}>
                                     <TestimonialDetail />
                                 </Box>
                             </TabPanel>
