@@ -28,7 +28,7 @@
 ## 📧 Contact
 
 Ourania Ntrizi - drizirania@gmail.com
-Project Link: https://github.com/raniadrz/myProject
+Project Link: [https://github.com/raniadrz/myProject](https://github.com/raniadrz/petshop)
 
 ## 🙏 Acknowledgments
 
